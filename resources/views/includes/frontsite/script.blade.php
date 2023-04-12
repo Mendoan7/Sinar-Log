@@ -1,7 +1,12 @@
 <script src="https://cdn.tailwindcss.com/?plugins=forms"></script>
 
+<script src="{{ asset('/assets/frontsite/js/vendors/alpinejs.min.js') }}" defer></script>
+<script src="{{ asset('/assets/frontsite/js/vendors/aos.js') }}"></script>
+<script src="{{ asset('/assets/frontsite/js/vendors/sticky.min.js') }}"></script>
+<script src="{{ asset('/assets/frontsite/js/main.js') }}"></script>
+
 {{-- Swiper --}}
-<script>
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function () {
       const swiper = new Swiper('.swiper-container', {
         loop: true,
@@ -21,4 +26,4 @@
         },
       })
     })
-  </script>
+</script> --}}

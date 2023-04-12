@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('tindakan');
             $table->string('modal');
             $table->string('biaya');
+            $table->string('teknisi');
             $table->timestamps();
             $table->softDeletes();
         });

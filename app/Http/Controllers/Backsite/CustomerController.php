@@ -19,6 +19,8 @@ use Gate;
 use Auth;
 
 use App\Models\Operational\Customer;
+use App\Models\Operational\Service;
+
 
 class CustomerController extends Controller
 {
@@ -37,7 +39,7 @@ class CustomerController extends Controller
     public function index()
     {
         // for table grid
-        $customer = Customer::orderBy('created_at', 'desc')->get();
+        $customer = Customer::with('service')->orderBy('created_at', 'desc')->get();
 
         return view('pages.backsite.operational.customer.index', compact('customer'));
     }
@@ -62,6 +64,7 @@ class CustomerController extends Controller
     {
         // get all request from frontsite
         $data = $request->all();
+        $data['contact'] = str_replace('0', '62', $data['contact']);
 
         // store to database
         $customer = Customer::create($data);

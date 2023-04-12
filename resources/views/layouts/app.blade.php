@@ -7,8 +7,6 @@
         <title>@yield('title') | Sinar Cell Backoffice</title>
 
         <link rel="shortcut icon" href="{{ asset('/assets/backsite/images/favicon.ico')}}">
-
-        @vite(['resources/js/app.js'])
         
         @stack('before-style')
             @include('includes.backsite.style')

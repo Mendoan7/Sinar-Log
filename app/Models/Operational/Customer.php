@@ -34,6 +34,6 @@ class Customer extends Model
     // one to many
     public function service()
     {
-        return $this->hasMany('App\Models\Operational\Service', 'service_id');
+        return $this->hasMany(Service::class);
     }
 }

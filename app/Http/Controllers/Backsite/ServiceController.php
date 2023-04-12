@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Auth\AuthManager;
 
+use Carbon\Carbon;
+
 // request
 use App\Http\Requests\Service\StoreServiceRequest;
 use App\Http\Requests\Service\UpdateServiceRequest;
@@ -32,12 +34,22 @@ class ServiceController extends Controller
 
     public function index()
     {
-        $service = Service::orderBy('created_at', 'desc')->get();
+        $service = Service::orderBy('created_at', 'asc')->whereIn('status', [1,2,3,4,5,6])->get();
+
+        // hitung lama servis yang masuk
+        foreach ($service as $service_item) {
+            $now = Carbon::now();
+            $created_at = Carbon::parse($service_item->created_at);
+            
+            if ($created_at->isToday()) {
+                $service_item->duration = "Hari Ini";
+            } else {
+                $service_item->duration = $created_at->diffInDays($now) . " Hari";
+            }
+        }
 
         // for select2 = ascending a to z
         $customer = Customer::orderBy('name', 'asc')->get();
-        $service = Service::whereIn('status', [1,2,3,4,5,6])->get();
-
 
         return view('pages.backsite.operational.service.index', compact('service', 'customer'));
     }
@@ -64,7 +76,7 @@ class ServiceController extends Controller
         $data = $request->all();
 
         // set random code for transaction code
-        $data['kode_servis'] = Str::upper(Str::random(8).'-'.date('Ymd'));
+        $data['kode_servis'] = Str::upper(Str::random(6).date('dmy'));
 
         $service = new Service;
         $service->user_id = Auth::user()->id;
@@ -74,11 +86,11 @@ class ServiceController extends Controller
         $service->tipe = $data['tipe'];
         $service->kelengkapan = $data['kelengkapan'];
         $service->kerusakan = $data['kerusakan'];
-        $service->penerima = $data['penerima'];
+        $service->penerima =  Auth::user()->name;
         $service->status = 1; // set to belum cek
         $service->save();
 
-        alert()->success('Success Message', 'Sukses menambahkan data servis baru');
+        alert()->success('Berhasil', 'Sukses menambahkan data servis baru');
         return redirect()->route('backsite.service.index');
     }
 
@@ -90,8 +102,9 @@ class ServiceController extends Controller
      */
     public function show(Service $service)
     {
-        dd($service);
-        return view('pages.backsite.operational.service.index', compact('service'));
+        $service->load('customer');
+
+        return view('pages.backsite.operational.service.index', compact('service','customer'));
     }
 
     /**
@@ -102,7 +115,9 @@ class ServiceController extends Controller
      */
     public function edit(Service $service)
     {
-        return view('pages.backsite.operational.service.index', compact('service'));
+        $service->load('customer');
+
+        return view('pages.backsite.operational.service.index', compact('service', 'customer'));
     }
 
     /**
@@ -119,7 +134,6 @@ class ServiceController extends Controller
 
         // update to database
         $service->update($data);
-        // $service->status()->sync($request->input('status', []));
 
         alert()->success('Success Message', 'Berhasil memperbarui status');
         return redirect()->route('backsite.service.index');
@@ -137,5 +151,40 @@ class ServiceController extends Controller
 
         alert()->success('Success Message', 'Berhasil menghapus data pelanggan');
         return back();
+    }
+
+    // Custom
+    public function sendConfirmation(Request $request) {
+
+        $service_item = Service::find($request->service_id);
+        $contacts = $service_item->customer->contact;
+        $jenis = $service_item->jenis;
+        $tipe = $service_item->tipe;
+        $kode = $service_item->kode_servis;
+        
+        // Menentukan ucapan selamat
+        $time = date("H");
+        $selamat = "";
+        
+        if ($time >= 5 && $time <= 11) {
+            $selamat = "Selamat Pagi";
+        } elseif ($time >= 12 && $time <= 14) {
+            $selamat = "Selamat Siang";
+        } elseif ($time >= 15 && $time <= 17) {
+            $selamat = "Selamat Sore";
+        } else {
+            $selamat = "Selamat Malam";
+        }
+    
+        // Teks pesan yang akan dikirim
+        $tindakan = $request->input('tindakan');
+        $biaya = $request->input('biaya');
+        $message = "*Konfirmasi Servis | SINAR CELL*\n\n$selamat, pelanggan yang terhormat.\nKami ingin melakukan konfirmasi untuk mengatasi kerusakan pada barang servis $jenis $tipe dengan No. Servis $kode akan dilakukan tindakan *$tindakan* dengan biaya *$biaya*.\nMohon segera konfirmasi kembali untuk melanjutkan tidaknya servis. Terima Kasih.";
+    
+        // Link whatsapp
+        $waLink = "https://wa.me/$contacts?text=".urlencode($message);
+    
+        // Redirect ke halaman whatsapp
+        return redirect($waLink);
     }
 }

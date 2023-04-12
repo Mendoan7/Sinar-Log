@@ -11,21 +11,26 @@
         @stack('after-style')
 
     </head>
-    <body>
+    <body class="font-inter antialiased bg-white text-gray-900 tracking-tight">
 
-        @include('sweetalert::alert')
-        
-        @include('components.frontsite.header')
+        <!-- Page wrapper -->
+        <div class="flex flex-col min-h-screen overflow-hidden">
+
+            @include('sweetalert::alert')
             
-            @yield('content')
+            @include('components.frontsite.header')
+                
+                @yield('content')
 
-        @include('components.frontsite.footer')
-        
-        @stack('before-script')
-            @include('includes.frontsite.script')
-        @stack('after-script')
+            @include('components.frontsite.footer')
+            
+            @stack('before-script')
+                @include('includes.frontsite.script')
+            @stack('after-script')
 
-        {{-- modals --}}
-        {{-- if you have a modal, create here --}}
+            {{-- modals --}}
+            {{-- if you have a modal, create here --}}
+
+        </div>
     </body>
 </html>

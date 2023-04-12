@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 // frontsite
 use App\Http\Controllers\Frontsite\LandingController;
+use App\Http\Controllers\Frontsite\TrackingController;
 
 // backsite
 use App\Http\Controllers\Backsite\DashboardController;
@@ -15,6 +16,8 @@ use App\Http\Controllers\Backsite\CustomerController;
 use App\Http\Controllers\Backsite\ServiceController;
 use App\Http\Controllers\Backsite\ServiceDetailController;
 use App\Http\Controllers\Backsite\TransactionController;
+use App\Http\Controllers\Backsite\ReportTransactionController;
+use App\Http\Controllers\Backsite\ReportEmployeesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +31,11 @@ use App\Http\Controllers\Backsite\TransactionController;
 */
 
 Route::resource('/', LandingController::class);
+
+Route::get('tracking', [TrackingController::class, 'index']);
+Route::post('tracking', [TrackingController::class, 'track']);
+Route::get('tracking/service/{id}', [TrackingController::class, 'show'])->name('tracking.show');
+
 
 // backsite
 Route::group(['prefix' => 'backsite', 'as' => 'backsite.', 'middleware' => ['auth:sanctum', 'verified']], function () {
@@ -51,14 +59,20 @@ Route::group(['prefix' => 'backsite', 'as' => 'backsite.', 'middleware' => ['aut
     Route::resource('customer', CustomerController::class);
 
     // service
+    Route::post('service/confirmation/', [ServiceController::class, 'sendConfirmation']);
     Route::resource('service', ServiceController::class);
 
     // service detail
+    Route::post('service-detail/notification/', [ServiceDetailController::class, 'sendNotification']);
     Route::resource('service-detail', ServiceDetailController::class);
 
     // transaction
+    Route::post('transaction/notification/', [TransactionController::class, 'sendNotification']);
     Route::resource('transaction', TransactionController::class);
 
+    // report
+    Route::resource('report-transaction', ReportTransactionController::class);
+    Route::resource('report-employees', ReportEmployeesController::class);
 });
 
 // Route::middleware([

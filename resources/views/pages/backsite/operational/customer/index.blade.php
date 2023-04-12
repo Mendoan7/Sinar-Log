@@ -11,7 +11,7 @@
         <div class="row">
           <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-              <h4 class="mb-sm-0 font-size-18">List Pelanggan</h4>
+              <h4 class="mb-sm-0 font-size-18">Pelanggan</h4>
             </div>
           </div>
         </div>
@@ -21,10 +21,11 @@
                 <div class="card">
                         <div class="card-body border-bottom">
                             <div class="d-flex align-items-center">
-                                <h5 class="mb-0 card-title flex-grow-1">List Data Pelanggan</h5>
+                                <h5 class="mb-0 card-title flex-grow-1">List Pelanggan</h5>
                                 <div class="flex-shrink-0">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customerModal"
-                                        data-bs-whatever="@getbootstrap">Tambah Pelanggan</button>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customerModal">
+                                        Tambah Pelanggan
+                                    </button>
                                 </div>
 
                                 <div class="modal fade bs-example-modal-center" id="customerModal" tabindex="-1" aria-hidden="true">
@@ -67,11 +68,15 @@
                             <div class="table-rep-plugin">
                                 <div class="table-responsive">
                                     <table id="datatable" class="table table-hover mb-0">
-                                        <thead class="table-light">
+                                        <thead class="table-dark">
                                             <tr>
                                                 <th>Nama</th>
                                                 <th>Nomer Telepon</th>
                                                 <th>Alamat</th>
+                                                <th>Proses Servis</th>
+                                                <th>Bisa Diambil</th>
+                                                <th>Servis Selesai</th>
+                                                <th>Total Servis</th>
                                                 <th style="text-align:center; width:150px;">Action</th>
                                             </tr>
                                         </thead>
@@ -82,6 +87,10 @@
                                                 <td>{{ $customer_item->name ?? '' }}</td>
                                                 <td>{{ $customer_item->contact ?? '' }}</td>
                                                 <td>{{ $customer_item->address ?? '' }}</td>
+                                                <td>{{ $customer_item->service->where('status', '<=', 6)->count() }}</td>
+                                                <td>{{ $customer_item->service->where('status', 7)->count() }}</td>
+                                                <td>{{ $customer_item->service->where('status', 8)->count() }}</td>
+                                                <td>{{ $customer_item->service->count() }}</td>
                                                 <td class="text-center">
 
                                                     <div class="btn-group mr-1 mb-1">
@@ -122,4 +131,13 @@
       </div>
     </div>
 </div>
+
 @endsection
+
+@push('after-script')
+
+<script>
+    $('.contact').mask('+62 000-0000-00000');
+</script>
+
+@endpush

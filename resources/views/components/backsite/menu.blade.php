@@ -11,55 +11,55 @@
 
                 <li>
                     <a href="{{ route('backsite.dashboard.index') }}" class="waves-effect">
-                        <i class="bx bx-chat"></i>
+                        <i class="bx bx-grid-alt"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
 
                 <li>
                     <a href="{{ route('backsite.customer.index') }}" class="waves-effect">
-                        <i class="bx bx-chat"></i>
+                        <i class="bx bx-user"></i>
                         <span>Pelanggan</span>
                     </a>
                 </li>
 
                 <li>
                     <a href="{{ route('backsite.service.index') }}" class="waves-effect">
-                        <i class="bx bx-chat"></i>
+                        <i class="bx bx-log-in"></i>
                         <span>Servis</span>
                     </a>
                 </li>
 
                 <li>
                     <a href="{{ route('backsite.service-detail.index') }}" class="waves-effect">
-                        <i class="bx bx-chat"></i>
-                        <span>Bisa Diambil</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{{ route('backsite.transaction.index') }}" class="waves-effect">
-                        <i class="bx bx-chat"></i>
+                        <i class="bx bx-check"></i>
                         <span>Servis Selesai</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-home-circle"></i>
+                    <a href="{{ route('backsite.transaction.index') }}" class="waves-effect">
+                        <i class="bx bx-log-out"></i>
+                        <span>Servis Keluar</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a class="has-arrow waves-effect">
+                        <i class="bx bx-bar-chart-square"></i>
                         <span>Laporan</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="index.html">Servis</a></li>
-                        <li><a href="dashboard-saas.html">Teknisi</a></li>
+                        <li><a href="{{ route('backsite.report-transaction.index') }}">Servis</a></li>
+                        <li><a href="{{ route('backsite.report-employees.index') }}">Teknisi</a></li>
                     </ul>
                 </li>
 
                 <li class="menu-title">Pengaturan</li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-store"></i>
+                    <a class="has-arrow waves-effect">
+                        <i class="bx bx-slider-alt"></i>
                         <span>Kelola Akses</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
