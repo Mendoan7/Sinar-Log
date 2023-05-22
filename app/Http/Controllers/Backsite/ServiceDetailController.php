@@ -100,7 +100,6 @@ class ServiceDetailController extends Controller
         $service_detail->tindakan = $data['tindakan'];
         $service_detail->modal = $data['modal'];
         $service_detail->biaya = $data['biaya'];
-        $service_detail->teknisi = Auth::user()->name;
         $service_detail->save();
         $service->status = 7;
         $service->save();

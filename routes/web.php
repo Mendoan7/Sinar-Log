@@ -62,6 +62,8 @@ Route::group(['prefix' => 'backsite', 'as' => 'backsite.', 'middleware' => ['aut
     Route::post('service/confirmation/', [ServiceController::class, 'sendConfirmation']);
     Route::resource('service', ServiceController::class);
 
+    Route::post('service/add-technician', [ServiceController::class, 'addTechnician'])->name('service.addTechnician');
+
     // service detail
     Route::post('service-detail/notification/', [ServiceDetailController::class, 'sendNotification']);
     Route::resource('service-detail', ServiceDetailController::class);

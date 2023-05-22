@@ -28,7 +28,6 @@ class ServiceDetail extends Model
         'tindakan',
         'modal',
         'biaya',
-        'teknisi',
         'created_at',
         'updated_at',
         'deleted_at',

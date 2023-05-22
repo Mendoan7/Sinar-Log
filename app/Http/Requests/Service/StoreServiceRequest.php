@@ -48,6 +48,9 @@ class StoreServiceRequest extends FormRequest
             'penerima' => [
                 'required', 'string', 'max:255',
             ],
+            'teknisi' => [
+                'nullable',
+            ],
             'status' => [
                 'required', 'integer',
             ],

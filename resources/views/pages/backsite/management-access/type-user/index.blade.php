@@ -16,13 +16,13 @@
           </div>
         </div>
         <!-- end page title -->
-            <div class="row">
+        <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="table-rep-plugin">
+                            
                                 <div class="table-responsive">
-                                    <table id="datatable" class="table table-bordered mb-0">
+                                    <table class="table table-striped mb-0">
                                         <thead class="table-dark">
                                             <tr>
                                                 <th>Tipe User</th>
@@ -40,11 +40,12 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </div> 
+                            
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

@@ -2,13 +2,14 @@
 
 namespace App\Models\Operational;
 
+use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Customer extends Model
 {
-    // use HasFactory;
+    use HasFactory;
     use SoftDeletes;
 
     // declare table name
@@ -30,6 +31,11 @@ class Customer extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    protected static function newFactory()
+    {
+        return CustomerFactory::new();
+    }  
 
     // one to many
     public function service()

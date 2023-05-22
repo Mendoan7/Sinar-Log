@@ -22,47 +22,43 @@
 
                         <div class="card-body border-bottom">
                             <div class="d-flex align-items-center">
+                                <h4 class="mb-0 card-title flex-grow-1">List Role</h4>
                                 <div class="flex-shrink-0">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#roleModal"
-                                        data-bs-whatever="@getbootstrap">Tambah Role Baru
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#roleModal">
+                                        Tambah Role Baru
                                     </button>
-                                </div>
-
-                                <div class="modal fade bs-example-modal-center" id="roleModal" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Role Baru</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-
-                                            <form class="form form-horizontal" action="{{ route('backsite.role.store') }}" method="POST" enctype="multipart/form-data">
-                                                @csrf
-                                                <div class="modal-body">
-                                                    <div class="mb-2">
-                                                        <label for="title" class="col-form-label">Role</label>
-                                                        <input type="text" id="title" name="title" class="form-control" placeholder="Contoh seperti Admin / User" value="{{old('title')}}" autocomplete="off" required>
-                                                            @if($errors->has('title'))
-                                                                <p style="font-style: bold; color: red;">{{ $errors->first('title') }}</p>
-                                                            @endif
+                                    <div class="modal fade bs-example-modal-center" id="roleModal" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Role Baru</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+    
+                                                <form class="form form-horizontal" action="{{ route('backsite.role.store') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <div class="modal-body">
+                                                        <div class="mb-2">
+                                                            <label for="title" class="col-form-label">Role</label>
+                                                            <input type="text" id="title" name="title" class="form-control" placeholder="Contoh seperti Admin / User" value="{{old('title')}}" autocomplete="off" required>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                    <button type="submit" class="btn btn-primary" onclick="return confirm('Yakin untuk menyimpan data ?')">Tambah Role</button>
-                                                </div>
-                                            </form>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                        <button type="submit" class="btn btn-primary" onclick="return confirm('Yakin untuk menyimpan data?')">Tambah Role</button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                         
                         <div class="card-body">
                             <div class="table-rep-plugin">
                                 <div class="table-responsive">
-                                    <table id="datatable" class="table table-striped-columns table-bordered mb-0">
+                                    <table class="table mb-0">
                                         <thead class="table-dark">
                                             <tr>
                                                 <th>Tanggal</th>
@@ -98,7 +94,7 @@
                                                             </a>
                                                         
                                                             @if($role_item->id > 3)
-                                                                <form onsubmit="return confirm('Are you sure want to delete this data ?');"
+                                                                <form onsubmit="return confirm('Yakin untuk menghapus data role ?');"
                                                                     action="{{ route('backsite.role.destroy', $role_item->id) }}" method="POST">
                                                                     <input type="hidden" name="_method" value="DELETE">
                                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -149,8 +145,9 @@
                                     </table>
                                 </div>
                             </div> 
+
+                            
                         </div>
-                    </div>
                 </div>
             </div>
         </div>

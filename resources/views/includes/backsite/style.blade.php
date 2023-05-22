@@ -17,8 +17,8 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('/assets/backsite/libs/sweetalert2/sweetalert2.min.css') }}"/>
 
 <!-- Bootstrap Css -->
-<link rel="stylesheet" type="text/css" href="{{ asset('/assets/backsite/css/bootstrap.min.css') }}"/>
+<link href="{{ asset('/assets/backsite/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css"/>
 <!-- Icons Css -->
-<link rel="stylesheet" type="text/css" href="{{ asset('/assets/backsite/css/icons.min.css') }}"/>
+<link href="{{ asset('/assets/backsite/css/icons.min.css') }}" rel="stylesheet" type="text/css"/>
 <!-- App Css-->
-<link rel="stylesheet" type="text/css" href="{{ asset('/assets/backsite/css/app.min.css') }}"/>
+<link href="{{ asset('/assets/backsite/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css"/>

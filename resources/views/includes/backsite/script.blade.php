@@ -16,8 +16,8 @@
 <!-- Required datatable js -->
 <script src="{{  asset('/assets/backsite/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{  asset('/assets/backsite/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-{{-- <!-- Responsive Table js -->
-<script src="{{  asset('/assets/backsite/libs/admin-resources/rwd-table/rwd-table.min.js') }}"></script> --}}
+<!-- Responsive Table js -->
+<script src="{{  asset('/assets/backsite/libs/admin-resources/rwd-table/rwd-table.min.js') }}"></script>
 
 <!-- Buttons examples -->
 <script src="{{  asset('/assets/backsite/libs/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
@@ -35,8 +35,8 @@
 
 <!-- Datatable init js -->
 <script src="{{ asset('/assets/backsite/js/pages/datatables.init.js') }}"></script>
-<script src="{{ asset('/assets/backsite/js/pages/table-responsive.init.js') }}"></script>
-<script src="{{ asset('/assets/backsite/js/pages/form-advanced.init.js') }}"></script>
+{{-- <script src="{{ asset('/assets/backsite/js/pages/table-responsive.init.js') }}"></script> --}}
+{{-- <script src="{{ asset('/assets/backsite/js/pages/form-advanced.init.js') }}"></script> --}}
 <script src="{{ asset('/assets/backsite/js/pages/form-mask.init.js') }}"></script>
 <script src="{{ asset('/assets/backsite/js/pages/modal.init.js') }}"></script>
 

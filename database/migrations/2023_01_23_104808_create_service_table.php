@@ -21,7 +21,8 @@ return new class extends Migration
             $table->string('kelengkapan');
             $table->string('kerusakan');
             $table->string('penerima');
-            $table->enum('status', [1,2,3,4,5,6,7,8]);
+            $table->string('teknisi')->nullable();
+            $table->enum('status', [1,2,3,4,5,6,7,8,9]);
             $table->timestamps();
             $table->softDeletes();
         });

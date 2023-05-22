@@ -126,6 +126,7 @@
                                                 <th scope="col">Kerusakan</th>
                                                 <th scope="col">Lama</th>
                                                 <th scope="col">Status</th>
+                                                <th scope="col">Teknisi</th>
                                                 <th scope="col">Aksi</th>
                                                 <th scope="col">Ubah Status</th>
                                             </tr>
@@ -144,16 +145,119 @@
                                                         @if($service_item->status == 1)
                                                             <span class="badge bg-secondary">{{ 'Belum Cek' }}</span>
                                                         @elseif($service_item->status == 2)
-                                                            <span class="badge bg-info">{{ 'Sedang Cek' }}</span>
+                                                            <span class="badge bg-info">{{ 'Akan Dikerjakan' }}</span>
                                                         @elseif($service_item->status == 3)
-                                                            <span class="badge bg-success">{{ 'Sedang Dikerjakan' }}</span>
+                                                            <span class="badge bg-info">{{ 'Sedang Cek' }}</span>
                                                         @elseif($service_item->status == 4)
-                                                            <span class="badge bg-warning">{{ 'Sedang Tes' }}</span>
+                                                            <span class="badge bg-success">{{ 'Sedang Dikerjakan' }}</span>
                                                         @elseif($service_item->status == 5)
-                                                            <span class="badge bg-danger">{{ 'Menunggu Konfirmasi' }}</span>
+                                                            <span class="badge bg-warning">{{ 'Sedang Tes' }}</span>
                                                         @elseif($service_item->status == 6)
+                                                            <span class="badge bg-danger">{{ 'Menunggu Konfirmasi' }}</span>
+                                                        @elseif($service_item->status == 7)
                                                             <span class="badge bg-primary">{{ 'Menunggu Sparepart' }}</span>    
                                                         @endif
+                                                    </td>
+
+                                                    <td>
+                                                        <ul class="list-unstyled hstack gap-1 mb-0">
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Ubah Status">
+                                                                <button class="btn btn-sm {{ $service_item->teknisi ? 'btn-soft-primary' : 'btn-primary' }}" 
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#teknisiModal{{ $service_item->id }}">
+                                                                    Teknisi
+                                                                </button>
+                                                                <div class="modal fade bs-example-modal-center" id="teknisiModal{{ $service_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="teknisiModalLabel">
+                                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title">Teknisi</h5>
+                                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                            </div>
+
+                                                                            <form class="form form-horizontal" action="{{ route('backsite.service.addTechnician', [$service_item->id]) }}" method="POST">
+                                                                            
+                                                                                @csrf
+
+                                                                                <div class="modal-body">
+                                                                                    @if ($service_item->teknisi)
+                                                                                        <p>No. Servis <b>{{ $service_item->kode_servis}}</b> ini telah diserahkan oleh : <b>{{ $service_item->teknisi }}</b>
+                                                                                        <br>Dengan status saat ini 
+                                                                                            @if($service_item->status == 1)
+                                                                                                <b>{{ 'Belum Cek' }}</b>
+                                                                                            @elseif($service_item->status == 2)
+                                                                                                <b>{{ 'Akan Dikerjakan' }}</b>
+                                                                                            @elseif($service_item->status == 3)
+                                                                                                <b>{{ 'Sedang Cek' }}</b>
+                                                                                            @elseif($service_item->status == 4)
+                                                                                                <b>{{ 'Sedang Dikerjakan' }}</b>
+                                                                                            @elseif($service_item->status == 5)
+                                                                                                <b>{{ 'Sedang Tes' }}</b>
+                                                                                            @elseif($service_item->status == 6)
+                                                                                                <b>{{ 'Menunggu Konfirmasi' }}</b>
+                                                                                            @elseif($service_item->status == 7)
+                                                                                                <b>{{ 'Menunggu Sparepart' }}</b>    
+                                                                                            @endif
+                                                                                        </p>
+                                                                                        <input type="hidden" name="service_id" value="{{ $service_item->id }}">
+
+                                                                                        <div class="form-group mb-2">
+                                                                                            <label for="teknisi" class="form-label">Edit Teknisi</label>
+                                                                                            <select class="form-control select2" data-placeholder="Pilih Teknisi" title="teknisi" name="teknisi" id="teknisi" required>
+                                                                                                <option value="" disabled selected>Pilih Teknisi</option>
+                                                                                                @foreach($technicians as $technician)
+                                                                                                    <option value="{{ $technician->name }}" {{ $technician->name == $service_item->teknisi ? 'selected' : '' }}>{{ $technician->name }}</option>
+                                                                                                @endforeach
+                                                                                            </select>
+                                                                                            @if($errors->has('teknisi'))
+                                                                                                <p style="font-style: bold; color: red;">{{ $errors->first('teknisi') }}</p>
+                                                                                            @endif
+                                                                                        </div>
+                                                                                        <!-- Form Check -->
+                                                                                        <div class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                                                            <input class="form-check-input" type="checkbox" value="" id="teknisiCheckbox{{ $service_item->id }}" required>
+                                                                                            <label class="form-check-label" for="teknisiCheckbox{{ $service_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju untuk mengganti teknisi</label>
+                                                                                        </div>
+                                                                                        <!-- End Form Check -->
+                                                                                    @else
+                                                                                        <p>Pilih teknisi untuk melakukan perbaikan pada No. Servis <b>{{ $service_item->kode_servis}}</b></p>
+                                                                                        <input type="hidden" name="service_id" value="{{ $service_item->id }}">
+
+                                                                                        <div class="form-group mb-2">
+                                                                                            <label for="teknisi" class="form-label">Teknisi</label>
+                                                                                            <select class="form-control select2" data-placeholder="Pilih Teknisi" title="teknisi" name="teknisi" id="teknisi" required>
+                                                                                                <option value="" disabled selected>Pilih Teknisi</option>
+                                                                                                @foreach($technicians as $technician)
+                                                                                                    <option value="{{ $technician->name }}">{{ $technician->name }}</option>
+                                                                                                @endforeach
+                                                                                            </select>
+                                                                                            @if($errors->has('teknisi'))
+                                                                                                <p style="font-style: bold; color: red;">{{ $errors->first('teknisi') }}</p>
+                                                                                            @endif
+                                                                                        </div>
+                                                                                        <!-- Form Check -->
+                                                                                        <div class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                                                            <input class="form-check-input" type="checkbox" value="" id="teknisiCheckbox{{ $service_item->id }}" required>
+                                                                                            <label class="form-check-label" for="teknisiCheckbox{{ $service_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju untuk dikerjakan oleh teknisi</label>
+                                                                                        </div>
+                                                                                        <!-- End Form Check -->
+                                                                                    @endif
+                                                                                </div>
+                                                                                
+                                                                                
+                             
+                                                                                
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                                                                </div>
+                                                                            </form>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
                                                     </td>
 
                                                     <td>
@@ -295,45 +399,106 @@
                                                                                 
                                                                                     <div class="modal-body">
                                                                                         <p>Pilih progres perbaikan untuk No. Servis <b>{{ $service_item->kode_servis}}</b></p>
-                                                                                        <div class="form-group">
+                                                                                        <div class="row">
+                                                                                            {{-- bagian pertama --}}
+                                                                                            <div class="col-md-6">
+                                                                                                <div class="form-group">
+                                                                                                    <div class="mb-2">
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status1{{ $service_item->id }}" value="1" {{ $service_item->status == '1' ? 'checked' : '' }}>
+                                                                                                        <label class="form-check-label" for="status1{{ $service_item->id }}">
+                                                                                                            <span class="badge bg-secondary"> Belum Cek</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                    <div class="mb-2">
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status2{{ $service_item->id }}" value="2" {{ $service_item->status == '2' ? 'checked' : '' }}>
+                                                                                                        <label class="form-check-label" for="status2{{ $service_item->id }}">
+                                                                                                            <span class="badge bg-info"> Akan Dikerjakan</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                    <div class="mb-2">
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status3{{ $service_item->id }}" value="3" {{ $service_item->status == '3' ? 'checked' : '' }}>
+                                                                                                        <label class="form-check-label" for="status3{{ $service_item->id }}">
+                                                                                                            <span class="badge bg-info"> Sedang Cek</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                    <div class="mb-2">
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status4{{ $service_item->id }}" value="4" {{ $service_item->status == '4' ? 'checked' : '' }}>
+                                                                                                        <label class="form-check-label" for="status4{{ $service_item->id }}">
+                                                                                                            <span class="badge bg-success"> Sedang Dikerjakan</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            {{-- bagian kedua --}}
+                                                                                            <div class="col-md-6">
+                                                                                                <div class="form-group">
+                                                                                                    <div class="mb-2">
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status5{{ $service_item->id }}" value="5" {{ $service_item->status == '5' ? 'checked' : '' }}>
+                                                                                                        <label class="form-check-label" for="status5{{ $service_item->id }}">
+                                                                                                            <span class="badge bg-warning"> Sedang Tes</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                    <div class="mb-2">
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status6{{ $service_item->id }}" value="6" {{ $service_item->status == '6' ? 'checked' : '' }}>
+                                                                                                        <label class="form-check-label" for="status6{{ $service_item->id }}">
+                                                                                                            <span class="badge bg-danger"> Menunggu Konfirmasi</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                    <div class="mb-2">
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status7{{ $service_item->id }}" value="7" {{ $service_item->status == '7' ? 'checked' : '' }}>
+                                                                                                        <label class="form-check-label" for="status7{{ $service_item->id }}">
+                                                                                                            <span class="badge bg-primary"> Menunggu Sparepart</span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        
+                                                                                        {{-- <div class="form-group">
                                                                                             <div class="mb-2">
                                                                                                 <input class="form-check-input" type="radio" name="status" id="status1{{ $service_item->id }}" value="1" {{ $service_item->status == '1' ? 'checked' : '' }}>
                                                                                                 <label class="form-check-label" for="status1{{ $service_item->id }}">
                                                                                                     <span class="badge bg-secondary"> Belum Cek</span>
                                                                                                 </label>
                                                                                             </div>
-
                                                                                             <div class="mb-2">
                                                                                                 <input class="form-check-input" type="radio" name="status" id="status2{{ $service_item->id }}" value="2" {{ $service_item->status == '2' ? 'checked' : '' }}>
                                                                                                 <label class="form-check-label" for="status2{{ $service_item->id }}">
-                                                                                                    <span class="badge bg-info"> Sedang Cek</span>
+                                                                                                    <span class="badge bg-info"> Akan Dikerjakan</span>
                                                                                                 </label>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <input class="form-check-input" type="radio" name="status" id="status3{{ $service_item->id }}" value="3" {{ $service_item->status == '3' ? 'checked' : '' }}>
                                                                                                 <label class="form-check-label" for="status3{{ $service_item->id }}">
-                                                                                                    <span class="badge bg-success"> Sedang Dikerjakan</span>
+                                                                                                    <span class="badge bg-info"> Sedang Cek</span>
                                                                                                 </label>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <input class="form-check-input" type="radio" name="status" id="status4{{ $service_item->id }}" value="4" {{ $service_item->status == '4' ? 'checked' : '' }}>
                                                                                                 <label class="form-check-label" for="status4{{ $service_item->id }}">
-                                                                                                    <span class="badge bg-warning"> Sedang Tes</span>
+                                                                                                    <span class="badge bg-success"> Sedang Dikerjakan</span>
                                                                                                 </label>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <input class="form-check-input" type="radio" name="status" id="status5{{ $service_item->id }}" value="5" {{ $service_item->status == '5' ? 'checked' : '' }}>
                                                                                                 <label class="form-check-label" for="status5{{ $service_item->id }}">
-                                                                                                    <span class="badge bg-danger"> Menunggu Konfirmasi</span>
+                                                                                                    <span class="badge bg-warning"> Sedang Tes</span>
                                                                                                 </label>
                                                                                             </div>
                                                                                             <div class="mb-2">
                                                                                                 <input class="form-check-input" type="radio" name="status" id="status6{{ $service_item->id }}" value="6" {{ $service_item->status == '6' ? 'checked' : '' }}>
                                                                                                 <label class="form-check-label" for="status6{{ $service_item->id }}">
+                                                                                                    <span class="badge bg-danger"> Menunggu Konfirmasi</span>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                            <div class="mb-2">
+                                                                                                <input class="form-check-input" type="radio" name="status" id="status7{{ $service_item->id }}" value="7" {{ $service_item->status == '7' ? 'checked' : '' }}>
+                                                                                                <label class="form-check-label" for="status7{{ $service_item->id }}">
                                                                                                     <span class="badge bg-primary"> Menunggu Sparepart</span>
                                                                                                 </label>
                                                                                             </div>
-                                                                                        </div>
+                                                                                        </div> --}}
+
                                                                                         <p class="mt-4">Informasi : Detail Status Proses Servis ini akan muncul saat Pelanggan melakukan Cek Status (Tracking).</p>
                                                                                     </div>
                                                                                     <div class="modal-footer">
@@ -420,7 +585,7 @@
 
                                                                                         <div class="mb-2">
                                                                                             <label for="kondisi" class="form-label">Kondisi</label>
-                                                                                            <select class="form-select" data-control="select2" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi" id="select2insidemodal" required>
+                                                                                            <select class="form-select select2-search-disable" data-minimum-results-for-search="Infinity" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi" id="select2insidemodal" required>
                                                                                                 <option value="{{ '' }}" disabled selected>Pilih Kondisi Servis</option>
                                                                                                     <option value="1">Sudah Jadi</option>
                                                                                                     <option value="2">Tidak Bisa</option>
@@ -441,11 +606,6 @@
                                                                                         <div class="mb-2">
                                                                                             <label for="biaya" class="form-label">Biaya</label>
                                                                                             <input type="text" class="form-control input-mask text-start" name="biaya" id="biaya" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
-                                                                                        </div>
-
-                                                                                        <div class="mb-2">
-                                                                                            <label for="teknisi" class="form-label">Teknisi</label>
-                                                                                            <input type="text" class="form-control" name="teknisi" id="teknisi" placeholder="Teknisi Servis" value="{{ Auth::user()->name }}" required disabled>
                                                                                         </div>
 
                                                                                         <!-- Form Check -->
@@ -502,6 +662,28 @@
                 dropdownParent: $("#addServiceModal")
             });
         })
+    </script>
+
+    <script>
+            $(document).ready(function () {
+                $('body').on('shown.bs.modal', '.modal', function () {
+                    var modal = $(this);
+                    modal.find(".select2").select2({
+                        dropdownParent: modal
+                    });
+                });
+            });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('body').on('shown.bs.modal', '.modal', function () {
+                var modal = $(this);
+                modal.find(".select2-search-disable").select2({
+                    dropdownParent: modal
+                });
+            });
+        });
     </script>
 
     <script>

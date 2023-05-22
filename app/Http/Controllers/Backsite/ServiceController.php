@@ -17,6 +17,8 @@ use App\Http\Requests\Service\UpdateServiceRequest;
 
 // use model here
 use App\Models\User;
+use App\Models\TypeUser;
+use App\Models\DetailUser;
 use App\Models\Operational\Customer;
 use App\Models\Operational\Service;
 
@@ -34,7 +36,12 @@ class ServiceController extends Controller
 
     public function index()
     {
-        $service = Service::orderBy('created_at', 'asc')->whereIn('status', [1,2,3,4,5,6])->get();
+        $service = Service::orderBy('created_at', 'asc')->whereIn('status', [1,2,3,4,5,6,7])->get();
+
+        // Mengambil pengguna dengan tipe pengguna 3
+        $technicians = User::whereHas('detail_user', function ($query) {
+            $query->where('type_user_id', 3);
+        })->get();
 
         // hitung lama servis yang masuk
         foreach ($service as $service_item) {
@@ -51,7 +58,7 @@ class ServiceController extends Controller
         // for select2 = ascending a to z
         $customer = Customer::orderBy('name', 'asc')->get();
 
-        return view('pages.backsite.operational.service.index', compact('service', 'customer'));
+        return view('pages.backsite.operational.service.index', compact('service', 'customer', 'technicians'));
     }
 
     /**
@@ -148,12 +155,34 @@ class ServiceController extends Controller
     public function destroy(Service $service)
     {
         $service->forceDelete();
+        $service->status = 2;
 
         alert()->success('Success Message', 'Berhasil menghapus data pelanggan');
         return back();
     }
 
     // Custom
+
+    public function addTechnician(Request $request)
+    {
+        // Mendapatkan input teknisi yang dipilih dari form
+        $selectedTechnician = $request->input('teknisi');
+
+        // Mendapatkan data service yang akan diperbarui
+        $service = Service::findOrFail($request->input('service_id'));
+
+        // Melakukan update data service
+        $service->teknisi = $selectedTechnician;
+        $service->status = 2;
+
+        // Simpan data service yang telah diperbarui
+        $service->save();
+
+        alert()->success('Success Message', 'Berhasil menambahkan teknisi');
+        return back();
+    }
+
+
     public function sendConfirmation(Request $request) {
 
         $service_item = Service::find($request->service_id);

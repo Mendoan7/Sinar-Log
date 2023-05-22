@@ -32,6 +32,7 @@ class Service extends Model
         'kelengkapan',
         'kerusakan',
         'penerima',
+        'teknisi',
         'status',
         'created_at',
         'updated_at',
