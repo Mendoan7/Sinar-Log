@@ -22,12 +22,6 @@ class ReportTransactionController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-            // // Tambahkan kondisi untuk menampilkan laporan periode bulan saat ini
-            // if (!$request->input('start_date') && !$request->input('end_date')) {
-            //     $start_date = Carbon::now()->startOfMonth();
-            //     $end_date = Carbon::now()->endOfMonth();
-            // }
-
     public function __construct()
     {
         $this->middleware('auth');
@@ -59,20 +53,22 @@ class ReportTransactionController extends Controller
             $transaction = Transaction::whereDate('created_at', $date)->get();
             $service = Service::selectRaw('COUNT(id) as count')
                 ->whereDate('created_at', $date)
-                ->whereIn('status', [1, 7, 8])
+                ->whereIn('status', [1, 8, 9])
                 ->first();
+            
+            if ($transaction->isNotEmpty()) {
 
                 // Hitung total biaya untuk setiap service yang berhasil dilakukan pada hari ini
                 $total_income = 0;
                 foreach ($transaction as $data) {
-                    if ($data->service_detail->service->status == 8) {
+                    if ($data->service_detail->service->status == 9) {
                         $total_income += $data->service_detail->biaya;
                     }
                 }
 
                 $modal = 0;
                 foreach ($transaction as $data) {
-                    if ($data->service_detail->service->status == 8) {
+                    if ($data->service_detail->service->status == 9) {
                         $modal += $data->service_detail->modal;
                     }
                 }
@@ -98,6 +94,7 @@ class ReportTransactionController extends Controller
             $total_modal += $modal;
             $total_profit += $profit;
         }
+    }
 
         return view('pages.backsite.report.report-transaction.index', compact('report', 'start_date', 'end_date', 'total_service', 
             'total_success', 'total_out', 'total_revenue', 'total_modal', 'total_profit'));

@@ -21,10 +21,11 @@
                         <div class="card-body border-bottom">
                             <form method="GET" action="{{ route('backsite.report-transaction.index') }}">
                                 <div class="d-flex align-items-center">
-                                    <p class="mb-0 card-title">Periode : {{ $start_date->isoFormat('D MMMM Y') }} - {{ $end_date->isoFormat('D MMMM Y') }}</p>
                                     <div class="flex-grow-1">
                                         <div class="row g-3">
-                                            <div class="col-xxl-6 col-lg-8"></div>
+                                            <div class="col-xxl-6 col-lg-8 align-self-center">
+                                                <p class="mb-0 card-title">Periode : {{ $start_date->isoFormat('D MMMM Y') }} - {{ $end_date->isoFormat('D MMMM Y') }}</p>
+                                            </div>
                                             <div class="col-xxl-4 col-lg-6">
                                                 <div class="input-daterange input-group" id="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker'>
                                                     <input type="text" class="form-control" id="start_date" name="start_date" placeholder="Tanggal Mulai" />
@@ -58,7 +59,7 @@
                                         <tbody>
                                             @foreach ($report as $data)
                                                 <tr>
-                                                    <td>{{ \Carbon\Carbon::parse($data['date'])->isoFormat('D MMMM Y')}}</td>
+                                                    <td>{{ $data['date']->isoFormat('dddd, D MMMM Y') }}</td>
                                                     <td>{{ $data['service'] }}</td>
                                                     <td>{{ $data['service_detail'] }}</td>
                                                     <td>{{ $data['transaction'] }}</td>

@@ -15,6 +15,7 @@ use App\Models\Operational\Customer;
 use App\Models\Operational\Service;
 use App\Models\Operational\ServiceDetail;
 use App\Models\Operational\Transaction;
+use App\Models\Operational\WarrantyHistory;
 
 class ServiceDetailController extends Controller
 {
@@ -34,23 +35,23 @@ class ServiceDetailController extends Controller
         $status = $request->query('status');
 
         $all_count = ServiceDetail::with('service')->whereHas('service', function ($query) {
-            $query->whereIn('status', [7]);
+            $query->whereIn('status', [8,11]);
         })->count();
     
         $done_count = ServiceDetail::with('service')->whereHas('service', function ($query) {
-            $query->whereIn('status', [7]);
+            $query->whereIn('status', [8,11]);
         })->where('kondisi', 1)->count();
     
         $notdone_count = ServiceDetail::with('service')->whereHas('service', function ($query) {
-            $query->whereIn('status', [7]);
+            $query->whereIn('status', [8,11]);
         })->where('kondisi', 2)->count();
     
         $cancel_count = ServiceDetail::with('service')->whereHas('service', function ($query) {
-            $query->whereIn('status', [7]);
+            $query->whereIn('status', [8,11]);
         })->where('kondisi', 3)->count();
 
         $service_detail = ServiceDetail::with('service')->whereHas('service', function ($query) {
-            $query->whereIn('status', [7]);
+            $query->whereIn('status', [8,11]);
         });
 
         if ($status == 'done') {
@@ -62,6 +63,9 @@ class ServiceDetailController extends Controller
         }
 
         $service_detail = $service_detail->orderBy('created_at', 'desc')->get();
+
+        // Warranty
+        
         
         return view('pages.backsite.operational.service-detail.index', compact('service_detail', 'all_count', 'done_count', 'notdone_count', 'cancel_count' ));
     }
@@ -101,7 +105,7 @@ class ServiceDetailController extends Controller
         $service_detail->modal = $data['modal'];
         $service_detail->biaya = $data['biaya'];
         $service_detail->save();
-        $service->status = 7;
+        $service->status = 8;
         $service->save();
 
         alert()->success('Success Message', 'Berhasil, barang siap diambil');
@@ -157,6 +161,35 @@ class ServiceDetailController extends Controller
     }
 
     // Custom
+    public function warranty(Request $request)
+    {
+        $data = $request->only(['kondisi', 'tindakan', 'catatan']);
+
+        $service_id = $request->input('service_id');
+        $service_detail = ServiceDetail::where('service_id', $service_id)->first();
+
+        $warranty_history = $service_detail->transaction->warranty_history;
+
+        // Cek apakah sudah ada warranty_history terkait
+        if (!$warranty_history) {
+            $warranty_history = new WarrantyHistory;
+            $warranty_history->transaction_id = $service_detail->transaction_id;
+        }
+
+        // save to database
+        $warranty_history->kondisi = $data['kondisi'];
+        $warranty_history->tindakan = $data['tindakan'];
+        $warranty_history->catatan = $data['catatan'];
+        $warranty_history->save();
+
+        // Ubah status transaksi
+        $service_detail->service->status = 11;
+        $service_detail->service->save();
+
+        alert()->success('Success Message', 'Garansi siap untuk diambil');
+        return redirect()->route('backsite.transaction.index');
+    }
+
     public function sendNotification(Request $request) {
 
         $services_item = ServiceDetail::with('service.customer')
@@ -189,9 +222,9 @@ class ServiceDetailController extends Controller
         // Status
         $statusnya = "";
 
-        if ($status == 7) {
+        if ($status == 8) {
             $statusnya = "Bisa Diambil";
-        } elseif ($status == 8) {
+        } elseif ($status == 9) {
             $statusnya = "Sudah Diambil";
         }
         

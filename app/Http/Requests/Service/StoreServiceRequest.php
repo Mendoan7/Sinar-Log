@@ -24,14 +24,8 @@ class StoreServiceRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => [
-                'required','integer',
-            ],
             'customer_id' => [
                 'required', 'integer',
-            ],
-            'kode_servis' => [
-                'required', 'string',
             ],
             'jenis' => [
                 'required','string', 'max:255',
@@ -44,15 +38,6 @@ class StoreServiceRequest extends FormRequest
             ],
             'kerusakan' => [
                 'required','string', 'max:255',
-            ],
-            'penerima' => [
-                'required', 'string', 'max:255',
-            ],
-            'teknisi' => [
-                'nullable',
-            ],
-            'status' => [
-                'required', 'integer',
             ],
         ];
     }

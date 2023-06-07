@@ -2,6 +2,21 @@
 
 @section('title', 'Servis')
 
+{{-- @push('after-style')
+    <style>
+        .table {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        .table td, .table th {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+@endpush --}}
+
 @section('content')
 
 <div class="main-content">
@@ -39,7 +54,7 @@
                                                     <div class="modal-body">
                                                         <div class="form-group mb-2">
                                                             <label for="customer_id" class="form-label">Pemilik Barang</label>
-                                                            <select class="form-control select2" 
+                                                            <select class="form-control select2 @error('customer_id') is-invalid @enderror" 
                                                                 data-placeholder="Pilih Pemilik Barang" 
                                                                 title="customer_id" 
                                                                 name="customer_id" 
@@ -48,16 +63,15 @@
                                                                     @foreach($customer as $key => $customer_item)
                                                                         <option value="{{ $customer_item->id }}">{{ $customer_item->name }} - No.Telepon {{ $customer_item->contact }}</option>
                                                                     @endforeach
-                                                            </select>    
-                                                            
-                                                            @if($errors->has('customer_id'))
-                                                                <p style="font-style: bold; color: red;">{{ $errors->first('customer_id') }}</p>
-                                                            @endif
+                                                            </select>
+                                                            @error('customer_id')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror    
                                                         </div>
 
                                                         <div class="mb-2">
                                                             <label for="jenis" class="form-label">Jenis Barang</label>
-                                                            <input type="text" class="form-control" list="jenisOption" name="jenis" id="jenis" placeholder="Jenis barang" required>
+                                                            <input type="text" class="form-control @error('jenis') is-invalid @enderror" list="jenisOption" name="jenis" id="jenis" placeholder="Jenis barang">
                                                                 <datalist id="jenisOption">
                                                                     <option value="HP">
                                                                     <option value="Tablet">
@@ -65,26 +79,38 @@
                                                                     <option value="Laptop">
                                                                     <option value="Powerbank">
                                                                 </datalist>
+                                                            @error('jenis')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror 
                                                         </div>
 
                                                         <div class="mb-2">
                                                             <label for="tipe" class="form-label">Tipe/Merek</label>
-                                                            <input type="text" class="form-control" name="tipe" id="tipe" placeholder="Tipe barang yang di servis" required>
+                                                            <input type="text" class="form-control @error('tipe') is-invalid @enderror" name="tipe" id="tipe" placeholder="Tipe barang yang di servis" required>
+                                                            @error('tipe')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror 
                                                         </div>
 
                                                         <div class="mb-2">
                                                             <label for="kelengkapan" class="form-label">Kelengkapan</label>
-                                                            <input type="text" class="form-control" list="kelengkapanOption" name="kelengkapan" id="kelengkapan" placeholder="Isi kelengkapan barang yang diterima" required>
+                                                            <input type="text" class="form-control @error('kelengkapan') is-invalid @enderror" list="kelengkapanOption" name="kelengkapan" id="kelengkapan" placeholder="Isi kelengkapan barang yang diterima" required>
                                                                 <datalist id="kelengkapanOption">
                                                                     <option value="Unit Only">
                                                                     <option value="Unit, Simcard, dan MicroSD">
                                                                     <option value="Unit dan Simcard">
                                                                 </datalist>
+                                                            @error('kelengkapan')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror 
                                                         </div>
 
                                                         <div class="mb-2">
                                                             <label for="kerusakan" class="form-label">Kerusakan</label>
-                                                            <input type="text" class="form-control" name="kerusakan" id="kerusakan" placeholder="Silahkan isi kerusakan barang" required>
+                                                            <input type="text" class="form-control @error('kerusakan') is-invalid @enderror" name="kerusakan" id="kerusakan" placeholder="Silahkan isi kerusakan barang" required>
+                                                            @error('kerusakan')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror 
                                                         </div>
 
                                                         <div class="mb-2">
@@ -135,10 +161,23 @@
                                             @forelse($service as $key => $service_item)
                                                 <tr data-entry-id="{{ $service_item->id }}">
                                                     <th scope="row" class="text-body fw-bold">{{ $service_item->kode_servis ?? '' }}</th>
-                                                    <td>{{ $service_item->created_at->format('d M Y') }}</td>
+                                                    <td>
+                                                        @if($service_item->status == 10)
+                                                        {{ $service_item->service_detail->transaction->warranty_history->created_at->format('d M Y') }}
+                                                        @else
+                                                        {{ $service_item->created_at->format('d M Y') }}
+                                                        @endif
+                                                    </td>
                                                     <td class="text-body fw-bold">{{ $service_item->customer->name ?? '' }}</td>
-                                                    <td>{{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}</td>
-                                                    <td>{{ $service_item->kerusakan ?? '' }}</td>
+                                                    <td data-toggle="tooltip" data-placement="top" title="{{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}">
+                                                        {{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}</td>
+                                                    <td>
+                                                        @if($service_item->status == 10)
+                                                        {{ $service_item->service_detail->transaction->warranty_history->keterangan ?? '' }}
+                                                        @else
+                                                        {{ $service_item->kerusakan ?? '' }}
+                                                        @endif
+                                                    </td>
                                                     <td>{{ $service_item->duration ?? '' }}</td>
 
                                                     <td>
@@ -155,13 +194,15 @@
                                                         @elseif($service_item->status == 6)
                                                             <span class="badge bg-danger">{{ 'Menunggu Konfirmasi' }}</span>
                                                         @elseif($service_item->status == 7)
-                                                            <span class="badge bg-primary">{{ 'Menunggu Sparepart' }}</span>    
+                                                            <span class="badge bg-primary">{{ 'Menunggu Sparepart' }}</span>
+                                                        @elseif($service_item->status == 10)
+                                                            <span class="badge bg-warning">{{ 'Garansi' }}</span>          
                                                         @endif
                                                     </td>
 
                                                     <td>
                                                         <ul class="list-unstyled hstack gap-1 mb-0">
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Ubah Status">
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Pilih Teknisi">
                                                                 <button class="btn btn-sm {{ $service_item->teknisi ? 'btn-soft-primary' : 'btn-primary' }}" 
                                                                     data-bs-toggle="modal"
                                                                     data-bs-target="#teknisiModal{{ $service_item->id }}">
@@ -181,7 +222,7 @@
 
                                                                                 <div class="modal-body">
                                                                                     @if ($service_item->teknisi)
-                                                                                        <p>No. Servis <b>{{ $service_item->kode_servis}}</b> ini telah diserahkan oleh : <b>{{ $service_item->teknisi }}</b>
+                                                                                        <p>No. Servis <b>{{ $service_item->kode_servis}}</b> ini telah diserahkan oleh : <b>{{ $service_item->teknisi_detail->name }}</b>
                                                                                         <br>Dengan status saat ini 
                                                                                             @if($service_item->status == 1)
                                                                                                 <b>{{ 'Belum Cek' }}</b>
@@ -206,7 +247,9 @@
                                                                                             <select class="form-control select2" data-placeholder="Pilih Teknisi" title="teknisi" name="teknisi" id="teknisi" required>
                                                                                                 <option value="" disabled selected>Pilih Teknisi</option>
                                                                                                 @foreach($technicians as $technician)
-                                                                                                    <option value="{{ $technician->name }}" {{ $technician->name == $service_item->teknisi ? 'selected' : '' }}>{{ $technician->name }}</option>
+                                                                                                    @if ($technician->id != $service_item->teknisi)
+                                                                                                        <option value="{{ $technician->id }}">{{ $technician->name }}</option>
+                                                                                                    @endif
                                                                                                 @endforeach
                                                                                             </select>
                                                                                             @if($errors->has('teknisi'))
@@ -228,7 +271,7 @@
                                                                                             <select class="form-control select2" data-placeholder="Pilih Teknisi" title="teknisi" name="teknisi" id="teknisi" required>
                                                                                                 <option value="" disabled selected>Pilih Teknisi</option>
                                                                                                 @foreach($technicians as $technician)
-                                                                                                    <option value="{{ $technician->name }}">{{ $technician->name }}</option>
+                                                                                                    <option value="{{ $technician->id }}">{{ $technician->name }}</option>
                                                                                                 @endforeach
                                                                                             </select>
                                                                                             @if($errors->has('teknisi'))
@@ -244,12 +287,14 @@
                                                                                     @endif
                                                                                 </div>
                                                                                 
-                                                                                
-                             
-                                                                                
                                                                                 <div class="modal-footer">
-                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                                                                    @if ($service_item->teknisi)
+                                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                        <button type="submit" class="btn btn-primary" onclick="return confirm('Yakin mengganti teknisi {{ $service_item->teknisi }} ?')">Simpan</button>
+                                                                                    @else
+                                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                                                                    @endif
                                                                                 </div>
                                                                             </form>
 
@@ -312,12 +357,14 @@
                                                                 </button>
                                                                 
                                                                 <div class="modal fade bs-example-modal-center" id="show{{ $service_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="showServiceModalLabel" aria-expanded="false">
-                                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
                                                                         <div class="modal-content">
                                                                             <div class="modal-header">
                                                                                 <h5 class="modal-title" id="showServiceModalLabel">Detail Servis</h5>
                                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                             </div>
+                                                                            @if ($service_item->status == 10)
+                                                                            {{-- Start Body Garansi --}}
                                                                             <div class="modal-body">
                                                                                 <table class="table table-striped mb-0">
                                                                                     <tbody>
@@ -327,7 +374,95 @@
                                                                                         </tr>
                                                                                         <tr>
                                                                                             <th scope="row">Tgl. Masuk</th>
-                                                                                            <td>{{ \Carbon\Carbon::parse($service_item['created_at'])->isoFormat('dddd, D MMMM Y HH:mm')}} WIB
+                                                                                            <td>{{ $service_item['created_at']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
+                                                                                                [{{ isset($service_item->penerima) ? $service_item->penerima : 'N/A' }}]
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Pemilik</th>
+                                                                                            <td>{{ isset($service_item->customer->name) ? $service_item->customer->name : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Barang Servis</th>
+                                                                                            <td>{{ isset($service_item->tipe) ? $service_item->tipe : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Kerusakan Awal</th>
+                                                                                            <td>{{ isset($service_item->kerusakan) ? $service_item->kerusakan : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Tindakan</th>
+                                                                                            <td>{{ isset($service_item->service_detail->tindakan) ? $service_item->service_detail->tindakan : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Modal</th>
+                                                                                            <td>{{ isset($service_item->service_detail->modal) ? 'RP. '.number_format($service_item->service_detail->modal) : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Biaya</th>
+                                                                                            <td>{{ isset($service_item->service_detail->biaya) ? 'RP. '.number_format($service_item->service_detail->biaya) : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr class="table-info">
+                                                                                            <th colspan="2" class="text-center fw-bold">Detail Garansi</th>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Tanggal Klaim </th>
+                                                                                            <td>{{ $service_item->service_detail->transaction->warranty_history->created_at->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Ket. Klaim</th>
+                                                                                            <td>{{ $service_item->service_detail->transaction->warranty_history->keterangan }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Garansi</th>
+                                                                                            <td>{{ isset($service_item->service_detail->transaction->garansi) ? $service_item->service_detail->transaction->garansi : 'N/A' }} Hari</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Garansi Berakhir</th>
+                                                                                            <td>{{ $warrantyInfo[$service_item->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Status Garansi</th>
+                                                                                            <td>Tersisa {{ $warrantyInfo[$service_item->id]['sisa_warranty'] }}</td>
+                                                                                        </tr>                                              
+                                                                                        <tr>
+                                                                                            <th scope="row">Status</th>
+                                                                                            <td>
+                                                                                                @if($service_item->status == 1)
+                                                                                                    <span class="badge bg-secondary">{{ 'Belum Cek' }}</span>
+                                                                                                @elseif($service_item->status == 2)
+                                                                                                    <span class="badge bg-info">{{ 'Akan Dikerjakan' }}</span>
+                                                                                                @elseif($service_item->status == 3)
+                                                                                                    <span class="badge bg-info">{{ 'Sedang Cek' }}</span>
+                                                                                                @elseif($service_item->status == 4)
+                                                                                                    <span class="badge bg-success">{{ 'Sedang Dikerjakan' }}</span>
+                                                                                                @elseif($service_item->status == 5)
+                                                                                                    <span class="badge bg-warning">{{ 'Sedang Tes' }}</span>
+                                                                                                @elseif($service_item->status == 6)
+                                                                                                    <span class="badge bg-danger">{{ 'Menunggu Konfirmasi' }}</span>
+                                                                                                @elseif($service_item->status == 7)
+                                                                                                    <span class="badge bg-primary">{{ 'Menunggu Sparepart' }}</span>
+                                                                                                @elseif($service_item->status == 10)
+                                                                                                    <span class="badge bg-warning">{{ 'Proses Garansi' }}</span>    
+                                                                                                @endif
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                            {{-- End Body Garansi --}}
+                                                                            @else
+                                                                            {{-- Start Body Non-Garansi --}}
+                                                                            <div class="modal-body">
+                                                                                <table class="table table-striped mb-0">
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <th scope="row">No. Servis</th>
+                                                                                            <td>{{ isset($service_item->kode_servis) ? $service_item->kode_servis : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Tgl. Masuk</th>
+                                                                                            <td>{{ $service_item['created_at']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
                                                                                                 [{{ isset($service_item->penerima) ? $service_item->penerima : 'N/A' }}]
                                                                                             </td>
                                                                                         </tr>
@@ -353,21 +488,27 @@
                                                                                                 @if($service_item->status == 1)
                                                                                                     <span class="badge bg-secondary">{{ 'Belum Cek' }}</span>
                                                                                                 @elseif($service_item->status == 2)
-                                                                                                    <span class="badge bg-info">{{ 'Sedang Cek' }}</span>
+                                                                                                    <span class="badge bg-info">{{ 'Akan Dikerjakan' }}</span>
                                                                                                 @elseif($service_item->status == 3)
-                                                                                                    <span class="badge bg-success">{{ 'Sedang Dikerjakan' }}</span>
+                                                                                                    <span class="badge bg-info">{{ 'Sedang Cek' }}</span>
                                                                                                 @elseif($service_item->status == 4)
-                                                                                                    <span class="badge bg-warning">{{ 'Sedang Tes' }}</span>
+                                                                                                    <span class="badge bg-success">{{ 'Sedang Dikerjakan' }}</span>
                                                                                                 @elseif($service_item->status == 5)
-                                                                                                    <span class="badge bg-danger">{{ 'Menunggu Konfirmasi' }}</span>
+                                                                                                    <span class="badge bg-warning">{{ 'Sedang Tes' }}</span>
                                                                                                 @elseif($service_item->status == 6)
-                                                                                                    <span class="badge bg-primary">{{ 'Menunggu Sparepart' }}</span>    
+                                                                                                    <span class="badge bg-danger">{{ 'Menunggu Konfirmasi' }}</span>
+                                                                                                @elseif($service_item->status == 7)
+                                                                                                    <span class="badge bg-primary">{{ 'Menunggu Sparepart' }}</span>
+                                                                                                @elseif($service_item->status == 10)
+                                                                                                    <span class="badge bg-warning">{{ 'Proses Garansi' }}</span>    
                                                                                                 @endif
                                                                                             </td>
                                                                                         </tr>
                                                                                     </tbody>
                                                                                 </table>
                                                                             </div>
+                                                                            {{-- End Body Non-Garansi --}}
+                                                                            @endif
                                                                             <div class="modal-footer">
                                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                                                                             </div>        
@@ -378,6 +519,7 @@
                                                             {{-- End Button View --}}
 
                                                             {{-- Button Edit --}}
+                                                            @if ($service_item->status != 10)
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Status Servis">
                                                                 <button class="btn btn-sm btn-soft-info" 
                                                                         data-bs-toggle="modal" 
@@ -404,25 +546,25 @@
                                                                                             <div class="col-md-6">
                                                                                                 <div class="form-group">
                                                                                                     <div class="mb-2">
-                                                                                                        <input class="form-check-input" type="radio" name="status" id="status1{{ $service_item->id }}" value="1" {{ $service_item->status == '1' ? 'checked' : '' }}>
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status1{{ $service_item->id }}" value="1" {{ $service_item->status == '1' ? 'checked' : '' }} {{ $service_item->teknisi ? 'disabled' : '' }}>
                                                                                                         <label class="form-check-label" for="status1{{ $service_item->id }}">
                                                                                                             <span class="badge bg-secondary"> Belum Cek</span>
                                                                                                         </label>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
-                                                                                                        <input class="form-check-input" type="radio" name="status" id="status2{{ $service_item->id }}" value="2" {{ $service_item->status == '2' ? 'checked' : '' }}>
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status2{{ $service_item->id }}" value="2" {{ $service_item->status == '2' ? 'checked' : '' }} {{ $service_item->teknisi ? '' : 'disabled' }}>
                                                                                                         <label class="form-check-label" for="status2{{ $service_item->id }}">
                                                                                                             <span class="badge bg-info"> Akan Dikerjakan</span>
                                                                                                         </label>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
-                                                                                                        <input class="form-check-input" type="radio" name="status" id="status3{{ $service_item->id }}" value="3" {{ $service_item->status == '3' ? 'checked' : '' }}>
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status3{{ $service_item->id }}" value="3" {{ $service_item->status == '3' ? 'checked' : '' }} {{ $service_item->teknisi ? '' : 'disabled' }}>
                                                                                                         <label class="form-check-label" for="status3{{ $service_item->id }}">
                                                                                                             <span class="badge bg-info"> Sedang Cek</span>
                                                                                                         </label>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
-                                                                                                        <input class="form-check-input" type="radio" name="status" id="status4{{ $service_item->id }}" value="4" {{ $service_item->status == '4' ? 'checked' : '' }}>
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status4{{ $service_item->id }}" value="4" {{ $service_item->status == '4' ? 'checked' : '' }} {{ $service_item->teknisi ? '' : 'disabled' }}>
                                                                                                         <label class="form-check-label" for="status4{{ $service_item->id }}">
                                                                                                             <span class="badge bg-success"> Sedang Dikerjakan</span>
                                                                                                         </label>
@@ -433,19 +575,19 @@
                                                                                             <div class="col-md-6">
                                                                                                 <div class="form-group">
                                                                                                     <div class="mb-2">
-                                                                                                        <input class="form-check-input" type="radio" name="status" id="status5{{ $service_item->id }}" value="5" {{ $service_item->status == '5' ? 'checked' : '' }}>
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status5{{ $service_item->id }}" value="5" {{ $service_item->status == '5' ? 'checked' : '' }} {{ $service_item->teknisi ? '' : 'disabled' }}>
                                                                                                         <label class="form-check-label" for="status5{{ $service_item->id }}">
                                                                                                             <span class="badge bg-warning"> Sedang Tes</span>
                                                                                                         </label>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
-                                                                                                        <input class="form-check-input" type="radio" name="status" id="status6{{ $service_item->id }}" value="6" {{ $service_item->status == '6' ? 'checked' : '' }}>
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status6{{ $service_item->id }}" value="6" {{ $service_item->status == '6' ? 'checked' : '' }} {{ $service_item->teknisi ? '' : 'disabled' }}>
                                                                                                         <label class="form-check-label" for="status6{{ $service_item->id }}">
                                                                                                             <span class="badge bg-danger"> Menunggu Konfirmasi</span>
                                                                                                         </label>
                                                                                                     </div>
                                                                                                     <div class="mb-2">
-                                                                                                        <input class="form-check-input" type="radio" name="status" id="status7{{ $service_item->id }}" value="7" {{ $service_item->status == '7' ? 'checked' : '' }}>
+                                                                                                        <input class="form-check-input" type="radio" name="status" id="status7{{ $service_item->id }}" value="7" {{ $service_item->status == '7' ? 'checked' : '' }} {{ $service_item->teknisi ? '' : 'disabled' }}>
                                                                                                         <label class="form-check-label" for="status7{{ $service_item->id }}">
                                                                                                             <span class="badge bg-primary"> Menunggu Sparepart</span>
                                                                                                         </label>
@@ -453,52 +595,6 @@
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
-                                                                                        
-                                                                                        {{-- <div class="form-group">
-                                                                                            <div class="mb-2">
-                                                                                                <input class="form-check-input" type="radio" name="status" id="status1{{ $service_item->id }}" value="1" {{ $service_item->status == '1' ? 'checked' : '' }}>
-                                                                                                <label class="form-check-label" for="status1{{ $service_item->id }}">
-                                                                                                    <span class="badge bg-secondary"> Belum Cek</span>
-                                                                                                </label>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <input class="form-check-input" type="radio" name="status" id="status2{{ $service_item->id }}" value="2" {{ $service_item->status == '2' ? 'checked' : '' }}>
-                                                                                                <label class="form-check-label" for="status2{{ $service_item->id }}">
-                                                                                                    <span class="badge bg-info"> Akan Dikerjakan</span>
-                                                                                                </label>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <input class="form-check-input" type="radio" name="status" id="status3{{ $service_item->id }}" value="3" {{ $service_item->status == '3' ? 'checked' : '' }}>
-                                                                                                <label class="form-check-label" for="status3{{ $service_item->id }}">
-                                                                                                    <span class="badge bg-info"> Sedang Cek</span>
-                                                                                                </label>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <input class="form-check-input" type="radio" name="status" id="status4{{ $service_item->id }}" value="4" {{ $service_item->status == '4' ? 'checked' : '' }}>
-                                                                                                <label class="form-check-label" for="status4{{ $service_item->id }}">
-                                                                                                    <span class="badge bg-success"> Sedang Dikerjakan</span>
-                                                                                                </label>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <input class="form-check-input" type="radio" name="status" id="status5{{ $service_item->id }}" value="5" {{ $service_item->status == '5' ? 'checked' : '' }}>
-                                                                                                <label class="form-check-label" for="status5{{ $service_item->id }}">
-                                                                                                    <span class="badge bg-warning"> Sedang Tes</span>
-                                                                                                </label>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <input class="form-check-input" type="radio" name="status" id="status6{{ $service_item->id }}" value="6" {{ $service_item->status == '6' ? 'checked' : '' }}>
-                                                                                                <label class="form-check-label" for="status6{{ $service_item->id }}">
-                                                                                                    <span class="badge bg-danger"> Menunggu Konfirmasi</span>
-                                                                                                </label>
-                                                                                            </div>
-                                                                                            <div class="mb-2">
-                                                                                                <input class="form-check-input" type="radio" name="status" id="status7{{ $service_item->id }}" value="7" {{ $service_item->status == '7' ? 'checked' : '' }}>
-                                                                                                <label class="form-check-label" for="status7{{ $service_item->id }}">
-                                                                                                    <span class="badge bg-primary"> Menunggu Sparepart</span>
-                                                                                                </label>
-                                                                                            </div>
-                                                                                        </div> --}}
-
                                                                                         <p class="mt-4">Informasi : Detail Status Proses Servis ini akan muncul saat Pelanggan melakukan Cek Status (Tracking).</p>
                                                                                     </div>
                                                                                     <div class="modal-footer">
@@ -510,6 +606,7 @@
                                                                     </div>
                                                                 </div>    
                                                             </li>
+                                                            @endif
                                                             {{-- End Button Edit --}}
                                                             
                                                             {{-- Button Delete --}}
@@ -549,12 +646,22 @@
 
                                                     <td>
                                                         <ul class="list-unstyled hstack gap-1 mb-0">
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Ubah Status">
-                                                                <button class="btn btn-sm btn-soft-primary" 
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#bisaDiambil{{ $service_item->id }}">
-                                                                    Bisa Diambil
-                                                                </button>
+                                                            <li>
+                                                                @if ($service_item->teknisi)
+                                                                    <button class="btn btn-sm btn-primary" 
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#bisaDiambil{{ $service_item->id }}">
+                                                                        Bisa Diambil
+                                                                    </button>
+                                                                @else
+                                                                    <button class="btn btn-sm btn-soft-primary waves-effect"
+                                                                        data-bs-toggle="popover"
+                                                                        data-bs-placement="top"  
+                                                                        data-bs-trigger="focus"
+                                                                        data-bs-content="Pilih teknisi terlebih dahulu.">
+                                                                        Bisa Diambil
+                                                                    </button>
+                                                                @endif
                                                                 <div class="modal fade bs-example-modal-center" id="bisaDiambil{{ $service_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="bisaDiambilModalLabel">
                                                                     <div class="modal-dialog modal-dialog-centered" role="document">
                                                                         <div class="modal-content">
@@ -563,62 +670,124 @@
                                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                             </div>
 
-                                                                            <form class="form form-horizontal" action="{{ route('backsite.service-detail.store') }}" method="POST">
+                                                                            <form class="form form-horizontal" action="{{ $service_item->status == 10 ? route('backsite.service-detail.warranty') : route('backsite.service-detail.store') }}" method="POST">
                                                                                 @csrf
-                                                                                    <div class="modal-body">
-                                                                                        <input type="hidden" name="service_id" value="{{ $service_item->id }}">
+                                                                                    @if ($service_item->status == 10)
+                                                                                        <div class="modal-body">
+                                                                                            <input type="hidden" name="service_id" value="{{ $service_item->id }}">
 
-                                                                                        <div class="mb-2">
-                                                                                            <label for="customer_id" class="form-label">Pemilik Barang</label>
-                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->customer->name ?? '' }} - No.Telp {{ $service_item->customer->contact ?? '' }}">    
-                                                                                        </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label for="customer_id" class="form-label">Pemilik Barang</label>
+                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->customer->name ?? '' }} - No.Telp {{ $service_item->customer->contact ?? '' }}">    
+                                                                                            </div>
 
-                                                                                        <div class="mb-2">
-                                                                                            <label for="jenis" class="form-label">Nama Barang</label>
-                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}">
-                                                                                        </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label for="jenis" class="form-label">Nama Barang</label>
+                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}">
+                                                                                            </div>
 
-                                                                                        <div class="mb-2">
-                                                                                            <label for="kerusakan" class="form-label">Kerusakan</label>
-                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->kerusakan ?? '' }}">
-                                                                                        </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label for="kerusakan" class="form-label">Kerusakan Awal</label>
+                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->kerusakan ?? '' }}">
+                                                                                            </div>
 
-                                                                                        <div class="mb-2">
-                                                                                            <label for="kondisi" class="form-label">Kondisi</label>
-                                                                                            <select class="form-select select2-search-disable" data-minimum-results-for-search="Infinity" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi" id="select2insidemodal" required>
-                                                                                                <option value="{{ '' }}" disabled selected>Pilih Kondisi Servis</option>
-                                                                                                    <option value="1">Sudah Jadi</option>
-                                                                                                    <option value="2">Tidak Bisa</option>
-                                                                                                    <option value="3">Dibatalkan</option>
-                                                                                            </select>
-                                                                                        </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label for="tindakans" class="form-label">Tindakan Sebelumnya</label>
+                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->service_detail->tindakan ?? '' }}">
+                                                                                            </div>
 
-                                                                                        <div class="mb-2">
-                                                                                            <label for="tindakan" class="form-label">Tindakan</label>
-                                                                                            <input type="text" class="form-control" name="tindakan" id="tindakan" placeholder="Tindakan Servis" required>
-                                                                                        </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label for="biaya" class="form-label">Biaya Sebelumnya</label>
+                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->service_detail->biaya ?? '' }}">
+                                                                                            </div>
 
-                                                                                        <div class="mb-2">
-                                                                                            <label for="modal" class="form-label">Modal</label>
-                                                                                            <input type="text" class="form-control input-mask text-start" name="modal" id="modal" placeholder="Modal Sparepart" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
-                                                                                        </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label for="kondisi" class="form-label">Kondisi</label>
+                                                                                                <select class="form-control select2-search-disable" data-minimum-results-for-search="Infinity" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi" required>
+                                                                                                    <option value="{{ '' }}" disabled selected>Pilih Kondisi Servis</option>
+                                                                                                        <option value="1">Sudah Jadi</option>
+                                                                                                        <option value="2">Tidak Bisa</option>
+                                                                                                        <option value="3">Dibatalkan</option>
+                                                                                                </select>
+                                                                                            </div>
 
-                                                                                        <div class="mb-2">
-                                                                                            <label for="biaya" class="form-label">Biaya</label>
-                                                                                            <input type="text" class="form-control input-mask text-start" name="biaya" id="biaya" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
-                                                                                        </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label for="tindakan" class="form-label">Tindakan</label>
+                                                                                                <input type="text" class="form-control" name="tindakan" id="tindakan" placeholder="Tindakan Servis" required>
+                                                                                            </div>
 
-                                                                                        <!-- Form Check -->
-                                                                                        <div class="form-check d-flex justify-content-end gap-2 mt-4">
-                                                                                            <input class="form-check-input" type="checkbox" value="" id="bisaDiambilCheckbox{{ $service_item->id }}" required>
-                                                                                            <label class="form-check-label" for="bisaDiambilCheckbox{{ $service_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju mengubah Status menjadi Bisa Diambil</label>
+                                                                                            <div class="mb-2">
+                                                                                                <label for="catatan" class="form-label">Catatan</label>
+                                                                                                <textarea type="text" id="catatan" name="catatan" placeholder="Keterangan claim garansi" value="{{old('catatan')}}" class="form-control"></textarea>
+                                                                                            </div>
+
+                                                                                            <!-- Form Check -->
+                                                                                            <div class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                                                                <input class="form-check-input" type="checkbox" value="" id="bisaDiambilCheckbox{{ $service_item->id }}" required>
+                                                                                                <label class="form-check-label" for="bisaDiambilCheckbox{{ $service_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju mengubah Status menjadi Bisa Diambil</label>
+                                                                                            </div>
+                                                                                            <!-- End Form Check -->
                                                                                         </div>
-                                                                                        <!-- End Form Check -->
-                                                                                    </div>
-                                                                                    <div class="modal-footer">
-                                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                                                        <button type="submit" class="btn btn-primary">Bisa Diambil</button>
-                                                                                    </div>
+                                                                                        <div class="modal-footer">
+                                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                            <button type="submit" class="btn btn-primary">Bisa Diambil</button>
+                                                                                        </div>
+                                                                                    @else
+                                                                                        <div class="modal-body">
+                                                                                            <input type="hidden" name="service_id" value="{{ $service_item->id }}">
+
+                                                                                            <div class="mb-2">
+                                                                                                <label for="customer_id" class="form-label">Pemilik Barang</label>
+                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->customer->name ?? '' }} - No.Telp {{ $service_item->customer->contact ?? '' }}">    
+                                                                                            </div>
+
+                                                                                            <div class="mb-2">
+                                                                                                <label for="jenis" class="form-label">Nama Barang</label>
+                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}">
+                                                                                            </div>
+
+                                                                                            <div class="mb-2">
+                                                                                                <label for="kerusakan" class="form-label">Kerusakan</label>
+                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->kerusakan ?? '' }}">
+                                                                                            </div>
+
+                                                                                            <div class="mb-2">
+                                                                                                <label for="kondisi" class="form-label">Kondisi</label>
+                                                                                                <select class="form-control select2-search-disable" data-minimum-results-for-search="Infinity" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi" required>
+                                                                                                    <option value="{{ '' }}" disabled selected>Pilih Kondisi Servis</option>
+                                                                                                        <option value="1">Sudah Jadi</option>
+                                                                                                        <option value="2">Tidak Bisa</option>
+                                                                                                        <option value="3">Dibatalkan</option>
+                                                                                                </select>
+                                                                                            </div>
+
+                                                                                            <div class="mb-2">
+                                                                                                <label for="tindakan" class="form-label">Tindakan</label>
+                                                                                                <input type="text" class="form-control" name="tindakan" id="tindakan" placeholder="Tindakan Servis" required>
+                                                                                            </div>
+
+                                                                                            <div class="mb-2">
+                                                                                                <label for="modal" class="form-label">Modal</label>
+                                                                                                <input type="text" class="form-control input-mask text-start" name="modal" id="modal" placeholder="Modal Sparepart" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
+                                                                                            </div>
+
+                                                                                            <div class="mb-2">
+                                                                                                <label for="biaya" class="form-label">Biaya</label>
+                                                                                                <input type="text" class="form-control input-mask text-start" name="biaya" id="biaya" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
+                                                                                            </div>
+
+                                                                                            <!-- Form Check -->
+                                                                                            <div class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                                                                <input class="form-check-input" type="checkbox" value="" id="bisaDiambilCheckbox{{ $service_item->id }}" required>
+                                                                                                <label class="form-check-label" for="bisaDiambilCheckbox{{ $service_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju mengubah Status menjadi Bisa Diambil</label>
+                                                                                            </div>
+                                                                                            <!-- End Form Check -->
+                                                                                        </div>
+                                                                                        <div class="modal-footer">
+                                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                            <button type="submit" class="btn btn-primary">Bisa Diambil</button>
+                                                                                        </div>
+                                                                                    @endif
                                                                             </form>
                                                                         </div>
                                                                     </div>
@@ -633,7 +802,6 @@
                                             @endforelse
                                         </tbody>                                        
                                     </table>
-
                                 </div>
                             </div>
                         </div>
@@ -675,7 +843,7 @@
             });
     </script>
 
-    <script>
+    {{-- <script>
         $(document).ready(function () {
             $('body').on('shown.bs.modal', '.modal', function () {
                 var modal = $(this);
@@ -684,7 +852,7 @@
                 });
             });
         });
-    </script>
+    </script> --}}
 
     <script>
         $(document).ready(function() {

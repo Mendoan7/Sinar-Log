@@ -44,5 +44,11 @@
 <script src="{{ asset('/assets/backsite/libs/sweetalert2/sweetalert2.min.js') }}"></script>
 <script src="{{ asset('/assets/backsite/js/pages/sweet-alerts.init.js') }}"></script>
 
+<!--tinymce js-->
+<script src="{{ asset('/assets/backsite/libs/tinymce/tinymce.min.js') }}"></script>
+
+<!-- email editor init -->
+<script src="{{ asset('/assets/backsite/js/pages/email-editor.init.js') }}"></script>
+
 <!-- App js -->
 <script src="{{ asset('/assets/backsite/js/app.js') }}"></script>

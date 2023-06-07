@@ -7,21 +7,13 @@
 <div class="main-content">
     <div class="page-content">
       <div class="container-fluid">
-        <!-- start page title -->
-        <div class="row">
-          <div class="col-12">
-            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-              <h4 class="mb-sm-0 font-size-18">Pelanggan</h4>
-            </div>
-          </div>
-        </div>
-        <!-- end page title -->
+        
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
                         <div class="card-body border-bottom">
                             <div class="d-flex align-items-center">
-                                <h5 class="mb-0 card-title flex-grow-1">List Pelanggan</h5>
+                                <h5 class="fw-bolder mb-0 flex-grow-1">List Pelanggan</h5>
                                 <div class="flex-shrink-0">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customerModal">
                                         Tambah Pelanggan
@@ -103,7 +95,7 @@
                                                                     Edit
                                                                 </a>
                                                             
-                                                                <form onsubmit="return confirm('Are you sure want to delete this data ?');"
+                                                                <form onsubmit="return confirm('Apakah kamu yakin ingin menghapus data pelanggan ?');"
                                                                     action="{{ route('backsite.customer.destroy', $customer_item->id) }}" method="POST">
                                                                     <input type="hidden" name="_method" value="DELETE">
                                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">

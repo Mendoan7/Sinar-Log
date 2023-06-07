@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Support\Facades\Notification;
 
 use Carbon\Carbon;
 
@@ -16,6 +17,7 @@ use App\Http\Requests\Service\StoreServiceRequest;
 use App\Http\Requests\Service\UpdateServiceRequest;
 
 // use model here
+use App\Notifications\NewTaskNotification;
 use App\Models\User;
 use App\Models\TypeUser;
 use App\Models\DetailUser;
@@ -36,29 +38,64 @@ class ServiceController extends Controller
 
     public function index()
     {
-        $service = Service::orderBy('created_at', 'asc')->whereIn('status', [1,2,3,4,5,6,7])->get();
+        $service = Service::with('service_detail.transaction', 'teknisi_detail')
+        ->orderBy('created_at', 'asc')
+        ->whereIn('status', [1, 2, 3, 4, 5, 6, 7, 10])
+        ->get();
 
         // Mengambil pengguna dengan tipe pengguna 3
         $technicians = User::whereHas('detail_user', function ($query) {
             $query->where('type_user_id', 3);
         })->get();
-
-        // hitung lama servis yang masuk
+    
+        $now = Carbon::now();
+        $warrantyInfo = [];
+    
         foreach ($service as $service_item) {
-            $now = Carbon::now();
             $created_at = Carbon::parse($service_item->created_at);
-            
+
             if ($created_at->isToday()) {
                 $service_item->duration = "Hari Ini";
+            } elseif ($created_at->isPast()) {
+                $service_item->duration = "1 Hari";
             } else {
                 $service_item->duration = $created_at->diffInDays($now) . " Hari";
             }
+    
+            if ($service_item->status == 10) {
+                $warranty_history = $service_item->service_detail->transaction->warranty_history;
+                if ($warranty_history) {
+                    $created_at = Carbon::parse($warranty_history->created_at);
+    
+                    if ($created_at->isToday()) {
+                        $service_item->duration = "Hari Ini";
+                    } elseif ($created_at->isPast()) {
+                        $service_item->duration = "1 Hari";
+                    } else {
+                        $service_item->duration = $created_at->diffInDays($now) . " Hari";
+                    }
+                }
+            }
+            
+            $serviceDetail = $service_item->service_detail;
+            if ($serviceDetail && $serviceDetail->transaction) {
+                $transaction = $serviceDetail->transaction;
+                $warranty = $transaction->garansi;
+                $endWarranty = $transaction->created_at->addDays($warranty);
+                $remainingTime = now()->diff($endWarranty);
+                $sisaWarranty = $remainingTime->format('%d Hari %h Jam');
+    
+                $warrantyInfo[$service_item->id] = [
+                    'warranty' => $warranty,
+                    'end_warranty' => $endWarranty,
+                    'sisa_warranty' => $sisaWarranty,
+                ];
+            }
         }
 
-        // for select2 = ascending a to z
         $customer = Customer::orderBy('name', 'asc')->get();
 
-        return view('pages.backsite.operational.service.index', compact('service', 'customer', 'technicians'));
+        return view('pages.backsite.operational.service.index', compact('service', 'customer', 'technicians', 'warrantyInfo'));
     }
 
     /**
@@ -77,10 +114,10 @@ class ServiceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreServiceRequest $request)
     {
         // // get all request from frontsite
-        $data = $request->all();
+        $data = $request->validated();
 
         // set random code for transaction code
         $data['kode_servis'] = Str::upper(Str::random(6).date('dmy'));
@@ -171,14 +208,38 @@ class ServiceController extends Controller
         // Mendapatkan data service yang akan diperbarui
         $service = Service::findOrFail($request->input('service_id'));
 
+        // Memeriksa apakah teknisi sebelumnya sudah ada
+        $previousTechnician = $service->teknisi;
+
         // Melakukan update data service
-        $service->teknisi = $selectedTechnician;
+        $teknisi = User::whereHas('detail_user', function ($query) {
+            $query->where('type_user_id', 3); // Filter user dengan tipe user 3 (teknisi)
+        })->findOrFail($selectedTechnician);
+        
+        $service->teknisi = $teknisi->id;
         $service->status = 2;
 
         // Simpan data service yang telah diperbarui
         $service->save();
 
-        alert()->success('Success Message', 'Berhasil menambahkan teknisi');
+        // dd($teknisi);
+        if ($teknisi) {
+            // Kirim notifikasi ke teknisi
+            try {
+                // Memeriksa apakah teknisi sebelumnya sudah ada
+                if ($previousTechnician) {
+                    alert()->success('Success Message', 'Berhasil mengganti teknisi');
+                } else {
+                    alert()->success('Success Message', 'Berhasil menambahkan teknisi');
+                }
+                $teknisi->notify(new NewTaskNotification($service));
+            } catch (\Exception $e) {
+                alert()->error('Error Message', 'Gagal mengirim notifikasi');
+            }
+        } else {
+            alert()->error('Error Message', 'Teknisi tidak ditemukan');
+        }
+        
         return back();
     }
 

@@ -4874,4 +4874,26 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
 .jobs-categories a:hover {
     color: #556ee6;
 }
+.notification-list li a {
+    color: var(--bs-gray-600);
+}
+.notification-list li:hover {
+    background: var(--bs-gray-300);
+    -webkit-transition-duration: 50ms;
+    transition-duration: 50ms;
+}
+.notification-list li.active,
+.notification-list li.active:hover {
+    -webkit-box-shadow: inset 3px 0 0 #556ee6;
+    box-shadow: inset 3px 0 0 #556ee6;
+}
+.notification-list li.unread {
+    background-color: var(--bs-gray-300);
+    font-weight: 500;
+    color: var(--bs-body-color);
+}
+.notification-list li.unread a {
+    color: var(--bs-body-color);
+    font-weight: 500;
+}
 /*# sourceMappingURL=app.min.css.map */

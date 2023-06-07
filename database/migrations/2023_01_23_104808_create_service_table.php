@@ -21,8 +21,9 @@ return new class extends Migration
             $table->string('kelengkapan');
             $table->string('kerusakan');
             $table->string('penerima');
-            $table->string('teknisi')->nullable();
-            $table->enum('status', [1,2,3,4,5,6,7,8,9]);
+            $table->unsignedBigInteger('teknisi')->nullable();
+            $table->foreign('teknisi')->references('id')->on('users');
+            $table->enum('status', [1,2,3,4,5,6,7,8,9,10,11,12]);
             $table->timestamps();
             $table->softDeletes();
         });

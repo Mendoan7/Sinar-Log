@@ -18,6 +18,7 @@ use App\Http\Controllers\Backsite\ServiceDetailController;
 use App\Http\Controllers\Backsite\TransactionController;
 use App\Http\Controllers\Backsite\ReportTransactionController;
 use App\Http\Controllers\Backsite\ReportEmployeesController;
+use App\Http\Controllers\Backsite\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,14 +68,26 @@ Route::group(['prefix' => 'backsite', 'as' => 'backsite.', 'middleware' => ['aut
     // service detail
     Route::post('service-detail/notification/', [ServiceDetailController::class, 'sendNotification']);
     Route::resource('service-detail', ServiceDetailController::class);
+    Route::post('service-detail/warranty/', [ServiceDetailController::class, 'warranty'])->name('service-detail.warranty');
 
     // transaction
     Route::post('transaction/notification/', [TransactionController::class, 'sendNotification']);
     Route::resource('transaction', TransactionController::class);
+    Route::post('transaction/warranty', [TransactionController::class, 'claimWarranty'])->name('transaction.claimWarranty');
+    Route::post('transaction/warranty-done/', [TransactionController::class, 'warranty'])->name('transaction.warranty');
 
     // report
     Route::resource('report-transaction', ReportTransactionController::class);
     Route::resource('report-employees', ReportEmployeesController::class);
+    Route::get('report-employees/{teknisiId}', [ReportEmployeesController::class, 'show'])->name('report-employees.show');
+    Route::get('report-employees/teknisi/{teknisiId}/detail/{tanggal}', [ReportEmployeesController::class, 'detailReport'])->name('report-employees.detail');
+
+
+
+    // notification
+    Route::resource('notification', NotificationController::class);
+    Route::get('notification/warranty/{id}', [NotificationController::class, 'warranty'])->name('notification.warranty');
+
 });
 
 // Route::middleware([

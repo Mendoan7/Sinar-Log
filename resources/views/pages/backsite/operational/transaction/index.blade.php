@@ -81,6 +81,7 @@
                                                 <th scope="col">Biaya</th>
                                                 <th scope="col">Status</th>
                                                 <th scope="col">Aksi</th>
+                                                <th scope="col">Ubah Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -102,9 +103,9 @@
                                                     </td>
                                                     <td>{{ 'RP. '.number_format($transaction_item->service_detail->biaya) ?? '' }}</td>
                                                     <td>
-                                                        @if($transaction_item->service_detail->service->status == 7)
+                                                        @if($transaction_item->service_detail->service->status == 8)
                                                             <span class="badge bg-primary">{{ 'Bisa Diambil' }}</span>
-                                                        @elseif($transaction_item->service_detail->service->status == 8)
+                                                        @elseif($transaction_item->service_detail->service->status == 9)
                                                             <span class="badge bg-success">{{ 'Sudah Diambil' }}</span>
                                                         @else
                                                             <span>{{ 'N/A' }}</span>
@@ -131,11 +132,11 @@
                                                                                     <tbody>
                                                                                         <tr>
                                                                                             <th scope="col">No. Servis</th>
-                                                                                            <td scope="col">{{ isset($transaction_item->service_detail->service->kode_servis) ? $transaction_item->service_detail->service->kode_servis : 'N/A' }}</td>
+                                                                                            <td scope="col"><span class="fw-bold">{{ isset($transaction_item->service_detail->service->kode_servis) ? $transaction_item->service_detail->service->kode_servis : 'N/A' }}</span></td>
                                                                                         </tr>
                                                                                         <tr>
                                                                                             <th scope="row">Tgl. Masuk</th>
-                                                                                            <td>{{ \Carbon\Carbon::parse($transaction_item->service_detail->service['created_at'])->isoFormat('dddd, D MMMM Y HH:mm')}} WIB
+                                                                                            <td>{{ $transaction_item->service_detail->service['created_at']->isoFormat('dddd, D MMMM Y HH:mm')}} WIB
                                                                                                 [{{ isset($transaction_item->service_detail->service->penerima) ? $transaction_item->service_detail->service->penerima : 'N/A' }}]</td>
                                                                                         </tr>
                                                                                         <tr>
@@ -164,7 +165,7 @@
                                                                                             @elseif($transaction_item->service_detail->kondisi == 3)
                                                                                                 <span class="badge bg-secondary">{{ 'Dibatalkan' }}</span>   
                                                                                             @endif
-                                                                                            - {{ \Carbon\Carbon::parse($transaction_item->service_detail['updated_at'])->isoFormat('dddd, D MMMM Y HH:mm')}} WIB
+                                                                                            - {{ $transaction_item->service_detail['updated_at']->isoFormat('dddd, D MMMM Y HH:mm')}} WIB
                                                                                         </td>
                                                                                         </tr>
                                                                                         <tr>
@@ -177,25 +178,28 @@
                                                                                         </tr>
                                                                                         <tr>
                                                                                             <th scope="row">Biaya</th>
-                                                                                            <td>{{ isset($transaction_item->service_detail->biaya) ? 'RP. '.number_format($transaction_item->service_detail->biaya) : 'N/A' }}</td>
+                                                                                            <td><span class="fw-bold">{{ isset($transaction_item->service_detail->biaya) ? 'RP. '.number_format($transaction_item->service_detail->biaya) : 'N/A' }}</span></td>
                                                                                         </tr>
                                                                                         <tr>
+                                                                                            <th scope="row">Teknisi</th>
+                                                                                            <td>{{ isset($transaction_item->service_detail->service->teknisi_detail->name) ? $transaction_item->service_detail->service->teknisi_detail->name : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr class="table-success">
                                                                                             <th scope="row">Status</th>
                                                                                             <td>
-                                                                                                @if($transaction_item->service_detail->service->status == 7)
+                                                                                                @if($transaction_item->service_detail->service->status == 8)
                                                                                                     <span class="badge bg-primary">{{ 'Bisa Diambil' }}</span>
-                                                                                                @elseif($transaction_item->service_detail->service->status == 8)
+                                                                                                @elseif($transaction_item->service_detail->service->status == 9)
                                                                                                     <span class="badge bg-success">{{ 'Sudah Diambil' }}</span>
                                                                                                 @else
                                                                                                     <span>{{ 'N/A' }}</span>
                                                                                                 @endif
-                                                                                                - {{ isset($transaction_item->updated_at) ? date("d/m/Y H:i:s",strtotime($transaction_item->updated_at)) : '' }}
                                                                                             </td>
                                                                                         </tr>
                                                                                         <tr>
                                                                                             <th scope="row">Tgl. Ambil</th>
                                                                                             <td>
-                                                                                                {{ \Carbon\Carbon::parse($transaction_item['updated_at'])->isoFormat('dddd, D MMMM Y HH:mm')}} WIB
+                                                                                                {{ $transaction_item['updated_at']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
                                                                                                 [{{ isset($transaction_item->penyerah) ? $transaction_item->penyerah : 'N/A' }}]
                                                                                             </td>
                                                                                         </tr>
@@ -209,13 +213,14 @@
                                                                                         </tr>
                                                                                         <tr>
                                                                                             <th scope="row">Garansi</th>
-                                                                                            <td>{{ isset($transaction_item->garansi) ? $transaction_item->garansi : 'N/A' }}</td>
+                                                                                            <td><span class="fw-bold">{{ isset($transaction_item->garansi) ? $transaction_item->garansi : 'N/A' }} Hari</span>
+                                                                                                (Berakhir {{ $warrantyInfo[$transaction_item->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }})</td>
                                                                                         </tr>
                                                                                     </tbody>
                                                                                 </table>
                                                                             </div>
                                                                             <div class="modal-footer">
-                                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                                                                             </div>        
                                                                         </div>
                                                                     </div>
@@ -269,6 +274,101 @@
                                                             {{-- End Button Delete --}}
                                                         </ul>
                                                     </td>
+
+                                                    <td>
+                                                        <ul class="list-unstyled hstack gap-1 mb-0">
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Menerima Garansi">
+                                                                <button class="btn btn-sm btn-primary" 
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#garansi{{ $transaction_item->id }}">
+                                                                    Garansi
+                                                                </button>
+                                                                <div class="modal fade bs-example-modal-center" id="garansi{{ $transaction_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="garansiModalLabel">
+                                                                    <form class="form form-horizontal" action="{{ route('backsite.transaction.claimWarranty') }}" method="POST">
+                                                                        @csrf
+                                                                    <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title" id="garansiModalLabel">Konfirmasi Terima Garansi</h5>
+                                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <input type="hidden" name="transaction_id" value="{{ $transaction_item->id }}">
+                                                                                <p>Pastikan kerusakan pada saat menerima garansi, sama dengan kerusakan awal servis.</p>
+                                                                                <table class="table table-striped">
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <th scope="col">No. Servis</th>
+                                                                                            <td scope="col">{{ isset($transaction_item->service_detail->service->kode_servis) ? $transaction_item->service_detail->service->kode_servis : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Barang Servis</th>
+                                                                                            <td>{{ isset($transaction_item->service_detail->service->jenis) ? $transaction_item->service_detail->service->jenis : 'N/A' }}
+                                                                                                {{ isset($transaction_item->service_detail->service->tipe) ? $transaction_item->service_detail->service->tipe : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Teknisi</th>
+                                                                                            <td>{{ isset($transaction_item->service_detail->service->teknisi_detail->name) ? $transaction_item->service_detail->service->teknisi_detail->name : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Tgl. Ambil</th>
+                                                                                            <td>
+                                                                                                {{ $transaction_item['updated_at']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
+                                                                                                [{{ isset($transaction_item->penyerah) ? $transaction_item->penyerah : 'N/A' }}]
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Pengambil</th>
+                                                                                            <td>{{ isset($transaction_item->pengambil) ? $transaction_item->pengambil : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Kerusakan Awal</th>
+                                                                                            <td>{{ isset($transaction_item->service_detail->service->kerusakan) ? $transaction_item->service_detail->service->kerusakan : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Tindakan</th>
+                                                                                            <td>{{ isset($transaction_item->service_detail->tindakan) ? $transaction_item->service_detail->tindakan : 'N/A' }}</td>
+                                                                                        </tr>
+                                                                                        
+                                                                                        <tr>
+                                                                                            <th scope="row">Garansi</th>
+                                                                                            <td>{{ isset($transaction_item->garansi) ? $transaction_item->garansi : 'N/A' }} Hari</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Garansi Berakhir</th>
+                                                                                            <td>{{ $warrantyInfo[$transaction_item->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Status Garansi</th>
+                                                                                            <td>Tersisa {{ $warrantyInfo[$transaction_item->id]['sisa_warranty'] }}</td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">Keterangan</th>
+                                                                                            <td>
+                                                                                                <textarea type="text" id="keterangan" name="keterangan" placeholder="Keterangan claim garansi" value="{{old('keterangan')}}" class="form-control"></textarea>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+
+                                                                                <!-- Form Check -->
+                                                                                <div class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                                                    <input class="form-check-input" type="checkbox" value="" id="garansiCheckbox{{ $transaction_item->id }}" required>
+                                                                                    <label class="form-check-label" for="garansiCheckbox{{ $transaction_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju menerima Garansi Servis</label>
+                                                                                </div>
+                                                                                <!-- End Form Check -->
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                <button type="submit" class="btn btn-primary">Terima Garansi</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    </form>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </td> 
                                                 </tr>
                                             @empty
                                             {{-- not found --}}
@@ -299,7 +399,7 @@
         $(document).ready(function() {
             // Panggil DataTables pada tabel
             $('#transactionTable').DataTable({
-                 // Urutkan data berdasarkan tanggal (kolom 2) secara descending
+                "order": [[ 2, "asc" ]], // Urutkan data berdasarkan tanggal (kolom 2) secara descending
                 "language": {
                     "sEmptyTable":      "Tidak ada data yang tersedia pada tabel",
                     "sInfo":            "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",

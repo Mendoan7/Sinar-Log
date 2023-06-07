@@ -3,6 +3,7 @@
 namespace App\Models\Operational;
 
 use App\Models\User;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -53,5 +54,10 @@ class Service extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function teknisi_detail()
+    {
+        return $this->belongsTo(User::class, 'teknisi', 'id');
     }
 }
