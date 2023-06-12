@@ -35,47 +35,69 @@ class TransactionController extends Controller
         $status = $request->query('status');
 
         $all_count = Transaction::whereHas('service_detail.service', function($query) {
-            $query->where('status', 9);
+            $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
+        })->orWhereHas('service_detail.transaction.warranty_history', function($query) {
+            $query->where('status', 3);
         })->count();
-
+    
         $done_count = Transaction::whereHas('service_detail', function($query) {
             $query->where('kondisi', 1);
         })->whereHas('service_detail.service', function($query) {
-            $query->where('status', 9);
+            $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
+        })->orWhereHas('service_detail.transaction.warranty_history', function($query) {
+            $query->where('status', 3)->where('kondisi', 1);
         })->count();
-
+    
         $notdone_count = Transaction::whereHas('service_detail', function($query) {
             $query->where('kondisi', 2);
         })->whereHas('service_detail.service', function($query) {
-            $query->where('status', 9);
+            $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
+        })->orWhereHas('service_detail.transaction.warranty_history', function($query) {
+            $query->where('status', 3)->where('kondisi', 2);
         })->count();
-
+    
         $cancel_count = Transaction::whereHas('service_detail', function($query) {
             $query->where('kondisi', 3);
         })->whereHas('service_detail.service', function($query) {
-            $query->where('status', 9);
+            $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
+        })->orWhereHas('service_detail.transaction.warranty_history', function($query) {
+            $query->where('status', 3)->where('kondisi', 3);
         })->count();
+        
+        $transactions = Transaction::with('service_detail.service', 'warranty_history')
+            ->whereHas('service_detail.service', function ($query) {
+            $query->whereIn('status', [9])->whereDoesntHave('service_detail.transaction.warranty_history')->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+                $query->where('status', 3);
+            });
+        });
 
-        $transactions = Transaction::with(['service_detail.service', 'warranty_history'])
-            ->whereHas('service_detail.service', function($query) {
-                $query->where('status', 9);
-            });
+            if ($status == 'done') {
+                $transactions->whereHas('service_detail', function ($query) {
+                    $query->where('kondisi', 1);
+                })->whereHas('service_detail.service', function ($query) {
+                    $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
+                })->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+                    $query->where('status', 3)->where('kondisi', 1);
+                });
+            } elseif ($status == 'notdone') {
+                $transactions->whereHas('service_detail', function ($query) {
+                    $query->where('kondisi', 2);
+                })->whereHas('service_detail.service', function ($query) {
+                    $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
+                })->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+                    $query->where('status', 3)->where('kondisi', 2);
+                });
+            } elseif ($status == 'cancel') {
+                $transactions->whereHas('service_detail', function ($query) {
+                    $query->where('kondisi', 3);
+                })->whereHas('service_detail.service', function ($query) {
+                    $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
+                })->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+                    $query->where('status', 3)->where('kondisi', 3);
+                });
+            }
 
-        if ($status == 'done') {
-            $transactions->whereHas('service_detail', function($query) {
-                $query->where('kondisi', 1);
-            });
-        } elseif ($status == 'notdone') {
-            $transactions->whereHas('service_detail', function($query) {
-                $query->where('kondisi', 2);
-            });
-        } elseif ($status == 'cancel') {
-            $transactions->whereHas('service_detail', function($query) {
-                $query->where('kondisi', 3);
-            });
-        }
-
-        $transactions = $transactions->latest('created_at')->get();
+        $transactions = $transactions->orderBy('created_at', 'desc')->get();
 
         $warrantyInfo = [];
 
@@ -203,11 +225,8 @@ class TransactionController extends Controller
         // save to database
         $warranty_history->pengambil = $data['pengambil'];
         $warranty_history->penyerah = Auth::user()->name;
+        $warranty_history->status = 3;
         $warranty_history->save();
-
-        // Ubah status transaksi
-        $service_detail->service->status = 9;
-        $service_detail->service->save();
 
         alert()->success('Success Message', 'Garansi sudah diambil');
         return redirect()->route('backsite.transaction.index');
@@ -223,12 +242,8 @@ class TransactionController extends Controller
         $warrantyHistory = new WarrantyHistory;
         $warrantyHistory->transaction_id = $transaction->id;
         $warrantyHistory->keterangan = $data['keterangan'];
+        $warrantyHistory->status = 1;
         $warrantyHistory->save();
-
-        // Ubah status transaksi menjadi enum 10
-        $service = $transaction->service_detail->service;
-        $service->status = 10;
-        $service->save();
 
         // Kirim notifikasi tugas ke teknisi sebelumnya
         $taskTeknisi = $transaction->service_detail->service->teknisi;
@@ -309,3 +324,5 @@ class TransactionController extends Controller
         return redirect($waLink);
     }
 }
+
+

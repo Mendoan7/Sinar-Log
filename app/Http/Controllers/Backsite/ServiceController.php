@@ -39,9 +39,14 @@ class ServiceController extends Controller
     public function index()
     {
         $service = Service::with('service_detail.transaction', 'teknisi_detail')
-        ->orderBy('created_at', 'asc')
-        ->whereIn('status', [1, 2, 3, 4, 5, 6, 7, 10])
-        ->get();
+            ->where(function ($query) {
+                $query->whereIn('status', [1, 2, 3, 4, 5, 6, 7])
+                      ->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+                          $query->where('status', 1);
+                      });
+            })
+            ->orderBy('created_at', 'asc')
+            ->get();
 
         // Mengambil pengguna dengan tipe pengguna 3
         $technicians = User::whereHas('detail_user', function ($query) {
@@ -97,6 +102,69 @@ class ServiceController extends Controller
 
         return view('pages.backsite.operational.service.index', compact('service', 'customer', 'technicians', 'warrantyInfo'));
     }
+
+    // public function index()
+    // {
+    //     $service = Service::with('service_detail.transaction', 'teknisi_detail')
+    //     ->orderBy('created_at', 'asc')
+    //     ->whereIn('status', [1, 2, 3, 4, 5, 6, 7])
+    //     ->get();
+
+    //     // Mengambil pengguna dengan tipe pengguna 3
+    //     $technicians = User::whereHas('detail_user', function ($query) {
+    //         $query->where('type_user_id', 3);
+    //     })->get();
+    
+    //     $now = Carbon::now();
+    //     $warrantyInfo = [];
+    
+    //     foreach ($service as $service_item) 
+    //     {
+    //         $created_at = Carbon::parse($service_item->created_at);
+
+    //         if ($created_at->isToday()) {
+    //             $service_item->duration = "Hari Ini";
+    //         } elseif ($created_at->isPast()) {
+    //             $service_item->duration = "1 Hari";
+    //         } else {
+    //             $service_item->duration = $created_at->diffInDays($now) . " Hari";
+    //         }
+    
+    //         if ($service_item->status == 10) {
+    //             $warranty_history = $service_item->service_detail->transaction->warranty_history;
+    //             if ($warranty_history) {
+    //                 $created_at = Carbon::parse($warranty_history->created_at);
+    
+    //                 if ($created_at->isToday()) {
+    //                     $service_item->duration = "Hari Ini";
+    //                 } elseif ($created_at->isPast()) {
+    //                     $service_item->duration = "1 Hari";
+    //                 } else {
+    //                     $service_item->duration = $created_at->diffInDays($now) . " Hari";
+    //                 }
+    //             }
+    //         }
+            
+    //         $serviceDetail = $service_item->service_detail;
+    //         if ($serviceDetail && $serviceDetail->transaction) {
+    //             $transaction = $serviceDetail->transaction;
+    //             $warranty = $transaction->garansi;
+    //             $endWarranty = $transaction->created_at->addDays($warranty);
+    //             $remainingTime = now()->diff($endWarranty);
+    //             $sisaWarranty = $remainingTime->format('%d Hari %h Jam');
+    
+    //             $warrantyInfo[$service_item->id] = [
+    //                 'warranty' => $warranty,
+    //                 'end_warranty' => $endWarranty,
+    //                 'sisa_warranty' => $sisaWarranty,
+    //             ];
+    //         }
+    //     }
+
+    //     $customer = Customer::orderBy('name', 'asc')->get();
+
+    //     return view('pages.backsite.operational.service.index', compact('service', 'customer', 'technicians', 'warrantyInfo'));
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -244,7 +312,8 @@ class ServiceController extends Controller
     }
 
 
-    public function sendConfirmation(Request $request) {
+    public function sendConfirmation(Request $request) 
+    {
 
         $service_item = Service::find($request->service_id);
         $contacts = $service_item->customer->contact;

@@ -30,6 +30,7 @@
                         <div class="card-body border-bottom">
                             <div class="d-flex align-items-center">
                                 <h5 class="mb-0 card-title flex-grow-1">Proses Servis</h5>
+                                @can('service_create')
                                 {{-- Button Add Service --}}
                                 <div class="flex-shrink-0">
                                     <button class="btn btn-primary" 
@@ -39,6 +40,7 @@
                                     </button>
                                 </div>
                                 {{-- End Button Add Service --}}
+                                @endcan
                                 
                                 {{-- Add Service Modal --}}
                                 <div class="modal fade bs-example-modal-center" id="addServiceModal" tabindex="-1" aria-hidden="true" aria-labelledby="addServiceModalLabel">
@@ -138,6 +140,7 @@
                             </div>
                         </div>
 
+                        @can('service_table')
                         {{-- Tabel Service --}}
                         <div class="card-body">
                             <div class="table-rep-plugin">
@@ -162,21 +165,17 @@
                                                 <tr data-entry-id="{{ $service_item->id }}">
                                                     <th scope="row" class="text-body fw-bold">{{ $service_item->kode_servis ?? '' }}</th>
                                                     <td>
-                                                        @if($service_item->status == 10)
-                                                        {{ $service_item->service_detail->transaction->warranty_history->created_at->format('d M Y') }}
-                                                        @else
-                                                        {{ $service_item->created_at->format('d M Y') }}
-                                                        @endif
+                                                        {{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 
+                                                            ? $service_item->service_detail->transaction->warranty_history->created_at->isoFormat('D MMM Y') 
+                                                            : $service_item->created_at->isoFormat('D MMM Y') ?? '' }}
                                                     </td>
+                                                    <input type="hidden" class="created_at" value="{{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 
+                                                        ? $service_item->service_detail->transaction->warranty_history->created_at : $service_item->created_at ?? '' }}">
                                                     <td class="text-body fw-bold">{{ $service_item->customer->name ?? '' }}</td>
                                                     <td data-toggle="tooltip" data-placement="top" title="{{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}">
                                                         {{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}</td>
                                                     <td>
-                                                        @if($service_item->status == 10)
-                                                        {{ $service_item->service_detail->transaction->warranty_history->keterangan ?? '' }}
-                                                        @else
-                                                        {{ $service_item->kerusakan ?? '' }}
-                                                        @endif
+                                                        {{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 ? $service_item->service_detail->transaction->warranty_history->keterangan : $service_item->kerusakan ?? '' }}
                                                     </td>
                                                     <td>{{ $service_item->duration ?? '' }}</td>
 
@@ -195,7 +194,7 @@
                                                             <span class="badge bg-danger">{{ 'Menunggu Konfirmasi' }}</span>
                                                         @elseif($service_item->status == 7)
                                                             <span class="badge bg-primary">{{ 'Menunggu Sparepart' }}</span>
-                                                        @elseif($service_item->status == 10)
+                                                        @elseif($service_item->service_detail->transaction->warranty_history && $service_item->service_detail->transaction->warranty_history->status == 1)
                                                             <span class="badge bg-warning">{{ 'Garansi' }}</span>          
                                                         @endif
                                                     </td>
@@ -307,6 +306,7 @@
 
                                                     <td>
                                                         <ul class="list-unstyled hstack gap-2 mb-0">
+                                                            @can('service_confirmation')
                                                             {{-- Button Konfirmasi --}}
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Konfirmasi Biaya Servis">               
                                                                 <button class="btn btn-sm btn-soft-warning" 
@@ -347,7 +347,8 @@
                                                                 </div>
                                                             </li>
                                                             {{-- End Button Konfirmasi --}}
-
+                                                            @endcan
+                                                            @can('service_show')
                                                             {{-- Button View --}}
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Melihat Detail Servis">               
                                                                 <button class="btn btn-sm btn-soft-primary" 
@@ -363,7 +364,7 @@
                                                                                 <h5 class="modal-title" id="showServiceModalLabel">Detail Servis</h5>
                                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                             </div>
-                                                                            @if ($service_item->status == 10)
+                                                                            @if ($service_item->service_detail?->transaction?->warranty_history->status == 1)
                                                                             {{-- Start Body Garansi --}}
                                                                             <div class="modal-body">
                                                                                 <table class="table table-striped mb-0">
@@ -442,7 +443,7 @@
                                                                                                     <span class="badge bg-danger">{{ 'Menunggu Konfirmasi' }}</span>
                                                                                                 @elseif($service_item->status == 7)
                                                                                                     <span class="badge bg-primary">{{ 'Menunggu Sparepart' }}</span>
-                                                                                                @elseif($service_item->status == 10)
+                                                                                                @elseif($service_item->service_detail->transaction->warranty_history->status == 1)
                                                                                                     <span class="badge bg-warning">{{ 'Proses Garansi' }}</span>    
                                                                                                 @endif
                                                                                             </td>
@@ -517,9 +518,10 @@
                                                                 </div>
                                                             </li>
                                                             {{-- End Button View --}}
-
+                                                            @endcan
+                                                            @can('service_edit')
                                                             {{-- Button Edit --}}
-                                                            @if ($service_item->status != 10)
+                                                            @if (!$service_item->service_detail?->transaction?->warranty_history?->status == 1)
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Status Servis">
                                                                 <button class="btn btn-sm btn-soft-info" 
                                                                         data-bs-toggle="modal" 
@@ -608,7 +610,8 @@
                                                             </li>
                                                             @endif
                                                             {{-- End Button Edit --}}
-                                                            
+                                                            @endcan
+                                                            @can('service_delete')
                                                             {{-- Button Delete --}}
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus Data Transaksi">
                                                                 <a  data-bs-toggle="modal"
@@ -641,11 +644,14 @@
                                                                 </div>
                                                             </li>
                                                             {{-- End Button Delete --}}
+                                                            @endcan
                                                         </ul>
                                                     </td>
 
                                                     <td>
                                                         <ul class="list-unstyled hstack gap-1 mb-0">
+                                                            @can('service_update')
+                                                            {{-- Start Button Bisa Diambil --}}
                                                             <li>
                                                                 @if ($service_item->teknisi)
                                                                     <button class="btn btn-sm btn-primary" 
@@ -670,9 +676,9 @@
                                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                             </div>
 
-                                                                            <form class="form form-horizontal" action="{{ $service_item->status == 10 ? route('backsite.service-detail.warranty') : route('backsite.service-detail.store') }}" method="POST">
+                                                                            <form class="form form-horizontal" action="{{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 ? route('backsite.service-detail.warranty') : route('backsite.service-detail.store') }}" method="POST">
                                                                                 @csrf
-                                                                                    @if ($service_item->status == 10)
+                                                                                    @if ($service_item->service_detail?->transaction?->warranty_history?->status == 1)
                                                                                         <div class="modal-body">
                                                                                             <input type="hidden" name="service_id" value="{{ $service_item->id }}">
 
@@ -698,7 +704,7 @@
 
                                                                                             <div class="mb-2">
                                                                                                 <label for="biaya" class="form-label">Biaya Sebelumnya</label>
-                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->service_detail->biaya ?? '' }}">
+                                                                                                <input type="text" class="form-control" disabled value="{{ 'RP. '.number_format($service_item->service_detail->biaya) ?? '' }}">
                                                                                             </div>
 
                                                                                             <div class="mb-2">
@@ -793,6 +799,8 @@
                                                                     </div>
                                                                 </div>
                                                             </li>
+                                                            {{-- End Button Bisa Diambil --}}
+                                                            @endcan
                                                         </ul>
                                                     </td>                                                    
 
@@ -806,6 +814,7 @@
                             </div>
                         </div>
                         {{-- End Tabel Service --}}
+                        @endcan
                     </div>
                     <!--end card-->
                 </div>
@@ -858,7 +867,7 @@
         $(document).ready(function() {
             // Panggil DataTables pada tabel
             $('#serviceTable').DataTable({
-                "order": [[ 2, "asc" ]], // Urutkan data berdasarkan tanggal (kolom 2) secara descending
+                "order": [[ 1, "asc" ]], // Urutkan data berdasarkan tanggal (kolom 2) secara descending
                 "language": {
                     "sEmptyTable":      "Tidak ada data yang tersedia pada tabel",
                     "sInfo":            "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
@@ -882,6 +891,3 @@
         });
     </script>
 @endpush
-
-
-

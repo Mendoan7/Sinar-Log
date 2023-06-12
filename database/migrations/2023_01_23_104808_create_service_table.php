@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('penerima');
             $table->unsignedBigInteger('teknisi')->nullable();
             $table->foreign('teknisi')->references('id')->on('users');
-            $table->enum('status', [1,2,3,4,5,6,7,8,9,10,11,12]);
+            $table->enum('status', [1,2,3,4,5,6,7,8,9,10,11]);
             $table->timestamps();
             $table->softDeletes();
         });

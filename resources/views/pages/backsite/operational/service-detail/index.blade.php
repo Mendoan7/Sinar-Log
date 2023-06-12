@@ -89,9 +89,10 @@
                                         <tbody>
                                             @forelse($service_detail as $key => $services_item)
                                                 <tr data-entry-id="{{ $services_item->id }}" data-condition="@if ($services_item->kondisi == 1) done @elseif ($services_item->kondisi == 2) notdone @elseif ($services_item->kondisi == 3) cancel @endif">
-                                                    @if ($services_item->service->status == 11)
+                                                    @if ($services_item->transaction?->warranty_history->status == 2)
                                                         <td class="text-body fw-bold">{{ $services_item->service->kode_servis ?? '' }}</td>
                                                         <td>{{ $services_item->transaction->warranty_history->updated_at->isoFormat('D MMM Y')}}</td>
+                                                        <input type="hidden" class="updated_at" value="{{ $services_item->transaction->warranty_history->updated_at }}">
                                                         <td class="text-body fw-bold">{{ $services_item->service->customer->name ?? '' }}</td>
                                                         <td>{{ $services_item->service->jenis ?? '' }} {{ $services_item->service->tipe ?? '' }}</td>
                                                         <td>{{ $services_item->transaction->warranty_history->keterangan ?? '' }}</td>
@@ -107,7 +108,8 @@
                                                         <td>{{ $services_item->transaction->warranty_history->tindakan ?? '' }}</td>
                                                     @else
                                                         <td class="text-body fw-bold">{{ $services_item->service->kode_servis ?? '' }}</td>
-                                                        <td>{{ ($services_item['updated_at'])->isoFormat('D MMM Y')}}</td>
+                                                        <td>{{ ($services_item['created_at'])->isoFormat('D MMM Y')}}</td>
+                                                        <input type="hidden" class="created_at" value="{{ $services_item->created_at }}">
                                                         <td class="text-body fw-bold">{{ $services_item->service->customer->name ?? '' }}</td>
                                                         <td>{{ $services_item->service->jenis ?? '' }} {{ $services_item->service->tipe ?? '' }}</td>
                                                         <td>{{ $services_item->service->kerusakan ?? '' }}</td>
@@ -125,7 +127,7 @@
                                                     <td>
                                                         @if($services_item->service->status == 8)
                                                             <span class="badge bg-primary">{{ 'Bisa Diambil' }}</span>
-                                                        @elseif($services_item->service->status == 11)
+                                                        @elseif($services_item->transaction->warranty_history->status == 2)
                                                             <span class="badge bg-warning">{{ 'Garansi Bisa Diambil' }}</span>
                                                         @else
                                                             <span>{{ 'N/A' }}</span>
@@ -148,7 +150,7 @@
                                                                                 <h5 class="modal-title" id="showServicesModalLabel">Detail Servis</h5>
                                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                             </div>
-                                                                            @if ($services_item->service->status == 11)
+                                                                            @if ($services_item->transaction?->warranty_history->status == 2)
                                                                                 {{-- start body garansi --}}
                                                                                 <div class="modal-body">
                                                                                     <table class="table table-striped mb-0 table-hover">
@@ -217,7 +219,7 @@
                                                                                                 <td>
                                                                                                     @if($services_item->service->status == 8)
                                                                                                         <span class="badge bg-primary">{{ 'Bisa Diambil' }}</span>
-                                                                                                    @elseif($services_item->service->status == 11)
+                                                                                                    @elseif($services_item->transaction->warranty_history->status == 2)
                                                                                                         <span class="badge bg-primary">{{ 'Garansi Bisa Diambil' }}</span>    
                                                                                                     @endif
                                                                                                     - [Teknisi : {{ $services_item->service->teknisi_detail->name }}]
@@ -228,6 +230,7 @@
                                                                                 </div>
                                                                                 {{-- end body garansi --}}
                                                                             @else
+                                                                                {{-- start body non-garansi --}}
                                                                                 <div class="modal-body">
                                                                                     <table class="table table-striped mb-0 table-hover">
                                                                                         <tbody>
@@ -266,7 +269,7 @@
                                                                                                 @elseif($services_item->kondisi == 3)
                                                                                                     <span class="badge bg-secondary">{{ 'Dibatalkan' }}</span>   
                                                                                                 @endif 
-                                                                                                - {{ \Carbon\Carbon::parse($services_item->service->updated_at)->isoFormat('dddd, D MMMM Y HH:mm')}} WIB</td>
+                                                                                                - {{ \Carbon\Carbon::parse($services_item->created_at)->isoFormat('dddd, D MMMM Y HH:mm')}} WIB</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Tindakan</th>
@@ -294,6 +297,7 @@
                                                                                         </tbody>
                                                                                     </table>
                                                                                 </div>
+                                                                                {{-- end body non-garansi --}}
                                                                             @endif
                                                                             <div class="modal-footer">
                                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -368,9 +372,10 @@
                                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                             </div>
 
-                                                                            <form class="form form-horizontal" action="{{ $services_item->service->status == 11 ? route('backsite.transaction.warranty') : route('backsite.transaction.store') }}" method="POST">
+                                                                            <form class="form form-horizontal" action="{{ $services_item->transaction?->warranty_history->status == 2 ? route('backsite.transaction.warranty') : route('backsite.transaction.store') }}" method="POST">
                                                                                 @csrf
-                                                                                @if ($services_item->service->status == 11)
+                                                                                @if ($services_item->transaction?->warranty_history->status == 2)
+                                                                                    {{-- start body garansi --}}
                                                                                     <div class="modal-body">
                                                                                         <input type="hidden" name="service_detail_id" value="{{ $services_item->id }}">
 
@@ -431,6 +436,7 @@
                                                                                         </div>
                                                                                         <!-- End Form Check -->
                                                                                     </div>
+                                                                                    {{-- end body garansi --}}
                                                                                 @else
                                                                                     {{-- start body non-garansi --}}
                                                                                     <div class="modal-body">
@@ -580,7 +586,7 @@
         $(document).ready(function() {
             // Panggil DataTables pada tabel
             $('#servicesTable').DataTable({
-                "order": [[ 2, "desc" ]], // Urutkan data berdasarkan tanggal (kolom 2) secara descending
+                "order": [[ 1, "desc" ]], // Urutkan data berdasarkan tanggal (kolom 2) secara descending
                 "language": {
                     "sEmptyTable":      "Tidak ada data yang tersedia pada tabel",
                     "sInfo":            "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",

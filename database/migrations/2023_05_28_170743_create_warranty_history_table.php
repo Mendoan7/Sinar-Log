@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('catatan')->nullable();
             $table->string('pengambil')->nullable();
             $table->string('penyerah')->nullable();
+            $table->enum('status', [1,2,3]);
             $table->timestamps();
             $table->softDeletes();
         });

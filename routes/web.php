@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 // frontsite
 use App\Http\Controllers\Frontsite\LandingController;
 use App\Http\Controllers\Frontsite\TrackingController;
+use App\Http\Controllers\Frontsite\ConfirmationController;
 
 // backsite
 use App\Http\Controllers\Backsite\DashboardController;
@@ -36,6 +37,9 @@ Route::resource('/', LandingController::class);
 Route::get('tracking', [TrackingController::class, 'index']);
 Route::post('tracking', [TrackingController::class, 'track']);
 Route::get('tracking/service/{id}', [TrackingController::class, 'show'])->name('tracking.show');
+
+Route::get('/confirm', [ConfirmationController::class, 'index'])->name('confirmation.index');
+
 
 
 // backsite
@@ -81,8 +85,6 @@ Route::group(['prefix' => 'backsite', 'as' => 'backsite.', 'middleware' => ['aut
     Route::resource('report-employees', ReportEmployeesController::class);
     Route::get('report-employees/{teknisiId}', [ReportEmployeesController::class, 'show'])->name('report-employees.show');
     Route::get('report-employees/teknisi/{teknisiId}/detail/{tanggal}', [ReportEmployeesController::class, 'detailReport'])->name('report-employees.detail');
-
-
 
     // notification
     Route::resource('notification', NotificationController::class);

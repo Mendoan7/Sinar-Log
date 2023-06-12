@@ -13,7 +13,7 @@
                 <div class="card">
                         <div class="card-body border-bottom">
                             <div class="d-flex align-items-center">
-                                <h5 class="fw-bolder mb-0 flex-grow-1">List Pelanggan</h5>
+                                <h5 class="mb-0 card-title flex-grow-1">List Pelanggan</h5>
                                 <div class="flex-shrink-0">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customerModal">
                                         Tambah Pelanggan

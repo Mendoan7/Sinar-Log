@@ -14,7 +14,7 @@
 
                 <div class="max-w-4xl mx-auto mb-8 text-center">
                     <span class="inline-block py-px px-2 mb-4 text-xs leading-5 text-blue-500 bg-blue-100 font-medium uppercase rounded-full shadow-sm">Pantau Servis</span>
-                    <h3 class="mb-4 text-3xl md:text-4xl leading-tight font-medium font-bold tracking-tighter">Detail Perbaikan</h3>
+                    <h3 class="mb-4 text-3xl md:text-4xl leading-tight font-bold tracking-tighter">Detail Perbaikan</h3>
                     <p class="text-lg md:text-xl text-coolGray-500 font-medium">Berikut perbaikan untuk kode servis {{ $service->kode_servis }}</p>
                 </div>
             
