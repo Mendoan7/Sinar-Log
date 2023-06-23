@@ -364,16 +364,16 @@
                                                                         data-bs-target="#sudahDiambil{{ $services_item->id }}"> 
                                                                         Sudah Diambil
                                                                 </button>
-                                                                <div class="modal fade bs-example-modal-center" id="sudahDiambil{{ $services_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="bisaDiambilModalLabel">
-                                                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h5 class="modal-title">Ubah data menjadi Sudah Diambil</h5>
-                                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                            </div>
-
-                                                                            <form class="form form-horizontal" action="{{ $services_item->transaction?->warranty_history->status == 2 ? route('backsite.transaction.warranty') : route('backsite.transaction.store') }}" method="POST">
-                                                                                @csrf
+                                                                {{-- Start Modal Status --}}
+                                                                <form class="form form-horizontal" action="{{ $services_item->transaction?->warranty_history->status == 2 ? route('backsite.transaction.warranty') : route('backsite.transaction.store') }}" method="POST">
+                                                                    @csrf
+                                                                    <div class="modal fade bs-example-modal-center" id="sudahDiambil{{ $services_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="bisaDiambilModalLabel">     
+                                                                        <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h5 class="modal-title">Ubah data menjadi Sudah Diambil</h5>
+                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                </div>
                                                                                 @if ($services_item->transaction?->warranty_history->status == 2)
                                                                                     {{-- start body garansi --}}
                                                                                     <div class="modal-body">
@@ -524,14 +524,15 @@
                                                                                     </div>
                                                                                     {{-- end body non-garansi --}}
                                                                                 @endif
-                                                                                    <div class="modal-footer">
-                                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                                                        <button type="submit" class="btn btn-primary">Bisa Diambil</button>
-                                                                                    </div>
-                                                                            </form>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                    <button type="submit" class="btn btn-primary">Bisa Diambil</button>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
+                                                                </form>
+                                                                {{-- End Modal Status --}}
                                                             </li>
                                                         </ul>
                                                         {{-- End Button Status --}}

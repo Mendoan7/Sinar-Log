@@ -38,8 +38,8 @@ Route::get('tracking', [TrackingController::class, 'index']);
 Route::post('tracking', [TrackingController::class, 'track']);
 Route::get('tracking/service/{id}', [TrackingController::class, 'show'])->name('tracking.show');
 
-Route::get('/confirm', [ConfirmationController::class, 'index'])->name('confirmation.index');
-
+Route::get('/service/confirmation/{token}', [ConfirmationController::class, 'confirmService'])->name('confirmation.service');
+Route::post('/service/confirmation/{token}', [ConfirmationController::class, 'confirmService'])->name('confirmation.service');
 
 
 // backsite
@@ -64,19 +64,18 @@ Route::group(['prefix' => 'backsite', 'as' => 'backsite.', 'middleware' => ['aut
     Route::resource('customer', CustomerController::class);
 
     // service
-    Route::post('service/confirmation/', [ServiceController::class, 'sendConfirmation']);
     Route::resource('service', ServiceController::class);
-
+    Route::post('service/confirmation/', [ServiceController::class, 'sendConfirmation']);
     Route::post('service/add-technician', [ServiceController::class, 'addTechnician'])->name('service.addTechnician');
 
     // service detail
-    Route::post('service-detail/notification/', [ServiceDetailController::class, 'sendNotification']);
     Route::resource('service-detail', ServiceDetailController::class);
+    Route::post('service-detail/notification/', [ServiceDetailController::class, 'sendNotification']);
     Route::post('service-detail/warranty/', [ServiceDetailController::class, 'warranty'])->name('service-detail.warranty');
 
     // transaction
-    Route::post('transaction/notification/', [TransactionController::class, 'sendNotification']);
     Route::resource('transaction', TransactionController::class);
+    Route::post('transaction/notification/', [TransactionController::class, 'sendNotification']);
     Route::post('transaction/warranty', [TransactionController::class, 'claimWarranty'])->name('transaction.claimWarranty');
     Route::post('transaction/warranty-done/', [TransactionController::class, 'warranty'])->name('transaction.warranty');
 
@@ -89,6 +88,8 @@ Route::group(['prefix' => 'backsite', 'as' => 'backsite.', 'middleware' => ['aut
     // notification
     Route::resource('notification', NotificationController::class);
     Route::get('notification/warranty/{id}', [NotificationController::class, 'warranty'])->name('notification.warranty');
+    Route::get('notification/confirmation/{id}', [NotificationController::class, 'confirmation'])->name('notification.confirmation');
+    Route::get('notification/confirmation/reject/{id}', [NotificationController::class, 'confirmReject'])->name('notification.confirmReject');
 
 });
 

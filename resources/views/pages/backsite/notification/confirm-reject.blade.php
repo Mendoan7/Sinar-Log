@@ -13,16 +13,16 @@
                     <div class="card">
                         <div class="card-body">
 
-                            <div class="card mb-4 mb-xl-10">          
-                                <div class="card-header bg-primary">
+                            <div class="card mb-2 mb-xl-10">          
+                                <div class="card-header bg-danger bg-opacity-25">
                                     <div class="card-title m-0">
-                                        <h5 class="fw-bolder text-white m-0">Pekerjaan Servis Baru</h5>
+                                        <h5 class="fw-bolder text-danger m-0">Konfirmasi Servis Konsumen</h5>
                                     </div>
                                 </div>
                                 
                                 <div class="card-body p-9">
                                     <p>Kepada <span class="fw-bold">{{ $service->teknisi_detail->name }}</span>,</p>
-                                    <p>Kami ingin memberitahumu bahwa ada pekerjaan servis baru yang perlu segera kamu tangani. Berikut informasi lengkap :</p>
+                                    <p>Kami ingin memberitahumu bahwa pelanggan telah melakukan konfirmasi, untuk servis berikut :</p>
                                     
                                     <dl class="row mb-0">
                                         <dt class="col-sm-4 fw-bold text-muted">Kode Servis</dt>
@@ -42,36 +42,28 @@
                                             <span class="fw-bold fs-6">{{ $service->jenis ?? '' }} {{ $service->tipe ?? '' }}</span>
                                         </dd>
                                     </dl>
-                                    <dl class="row mb-0">
+                                    <dl class="row mb-2">
                                         <dt class="col-sm-4 fw-bold text-muted">Kerusakan</dt>
                                         <dd class="col-sm-8">
                                             <span class="fw-bold fs-6">{{ $service->kerusakan }}</span>
                                         </dd>
                                     </dl>
-                                    <dl class="row mb-3">
-                                        <dt class="col-sm-4 fw-bold text-muted">Status</dt>
+                                    <dl class="row mb-0">
+                                        <dt class="col-sm-4 fw-bold text-muted">Tindakan</dt>
                                         <dd class="col-sm-8">
-                                            @if($service->status == 1)
-                                                <span class="badge bg-secondary">{{ 'Belum Cek' }}</span>
-                                            @elseif($service->status == 2)
-                                                <span class="badge bg-info">{{ 'Akan Dikerjakan' }}</span>
-                                            @elseif($service->status == 3)
-                                                <span class="badge bg-info">{{ 'Sedang Cek' }}</span>
-                                            @elseif($service->status == 4)
-                                                <span class="badge bg-success">{{ 'Sedang Dikerjakan' }}</span>
-                                            @elseif($service->status == 5)
-                                                <span class="badge bg-warning">{{ 'Sedang Tes' }}</span>
-                                            @elseif($service->status == 6)
-                                                <span class="badge bg-danger">{{ 'Menunggu Konfirmasi' }}</span>
-                                            @elseif($service->status == 7)
-                                                <span class="badge bg-primary">{{ 'Menunggu Sparepart' }}</span>    
-                                            @endif
+                                            <span class="fw-bold fs-6">{{ $service->estimasi_tindakan }}</span>
                                         </dd>
                                     </dl>
-                                    <p>Harap segera dilakukan pengecekan dan berikan tindakan yang terbaik. Terima kasih atas kerjasamanya.</p>
+                                    <dl class="row mb-2">
+                                        <dt class="col-sm-4 fw-bold text-muted">Estimasi Biaya</dt>
+                                        <dd class="col-sm-8">
+                                            <span class="fw-bold fs-6">{{ 'Rp. '.number_format($service->estimasi_biaya) ?? '' }}</span>
+                                        </dd>
+                                    </dl>
+                                    <p>Pelanggan <span class="fw-bold">Tidak Setuju</span> dengan tindakan dan biaya servis yang akan dilakukan. Dan membatalkan proses servis.</p>
+                                    <p>Silahkan segera melakukan servis sesuai dengan kesepakatan dengan pelanggan. Terima kasih atas kerjasamanya.</p>
                                 </div>
                             </div>
-
                             <div class="d-flex flex-wrap gap-2">
                                 <a href="{{ route('backsite.notification.index') }}" class="btn btn-secondary">Kembali</a>
                                 <a href="{{ route('backsite.service.index') }}" class="btn btn-primary">Daftar Servis</a>

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Backsite;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\Notification\ServiceOutEmailNotificationJob;
+use App\Jobs\Notification\ServiceOutWhatsappNotificationJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -152,6 +154,12 @@ class TransactionController extends Controller
         if ($service) {
             $service->status = 9;
             $service->save();
+
+            // Kirim Notif Whatsapp Queue
+            ServiceOutWhatsappNotificationJob::dispatch($service)->onQueue('notifications');
+
+            // Kirim Notif Email Queue
+            ServiceOutEmailNotificationJob::dispatch($service)->onQueue('notifications');
         }
 
         alert()->success('Success Message', 'Barang telah selesai diambil');
@@ -259,8 +267,10 @@ class TransactionController extends Controller
         }
         return back();
     }
-
-    public function sendNotification(Request $request) {
+    
+    // Send Whatsapp Customer
+    public function sendNotification(Request $request) 
+    {
 
         $transaction_item = Transaction::with('service_detail.service.customer')
                                 ->find($request->transaction_id);

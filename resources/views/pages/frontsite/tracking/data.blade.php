@@ -37,42 +37,72 @@
                                             @if($track_item->status == 1)
                                                 <li class="flex items-center space-x-2">
                                                     <span>Status :</span>
-                                                    <span class="text-xs inline-flex font-medium text-white bg-slate-600 rounded-full text-center px-2.5 py-1">{{ 'Belum Cek' }}</span>
+                                                    <span class="text-xs inline-flex font-medium text-white bg-gray-500 rounded-full text-center px-2.5 py-1">{{ 'Belum Cek' }}</span>
                                                 </li>
                                                 @elseif($track_item->status == 2)
                                                 <li class="flex items-center space-x-2">
                                                     <span>Status :</span>
-                                                    <span class="text-xs inline-flex font-medium text-white bg-sky-600 rounded-full text-center px-2.5 py-1">{{ 'Sedang Cek' }}</span>
+                                                    <span class="text-xs inline-flex font-medium text-white bg-yellow-500 rounded-full text-center px-2.5 py-1">{{ 'Akan Dikerjakan' }}</span>
                                                 </li>
                                                 @elseif($track_item->status == 3)
                                                 <li class="flex items-center space-x-2">
                                                     <span>Status :</span>
-                                                    <span class="text-xs inline-flex font-medium text-white bg-emerald-600 rounded-full text-center px-2.5 py-1">{{ 'Sedang Dikerjakan' }}</span>
+                                                    <span class="text-xs inline-flex font-medium text-white bg-blue-500 rounded-full text-center px-2.5 py-1">{{ 'Sedang Cek' }}</span>
                                                 </li>
                                                 @elseif($track_item->status == 4)
                                                 <li class="flex items-center space-x-2">
                                                     <span>Status :</span>
-                                                   <span class="text-xs inline-flex font-medium text-white bg-amber-600 rounded-full text-center px-2.5 py-1">{{ 'Sedang Tes' }}</span>
+                                                   <span class="text-xs inline-flex font-medium text-white bg-green-500 rounded-full text-center px-2.5 py-1">{{ 'Sedang Dikerjakan' }}</span>
                                                 </li>
                                                 @elseif($track_item->status == 5)
                                                 <li class="flex items-center space-x-2">
                                                     <span>Status :</span>
-                                                    <span class="text-xs inline-flex font-medium text-white bg-rose-600 rounded-full text-center px-2.5 py-1">{{ 'Menunggu Konfirmasi' }}</span>
+                                                    <span class="text-xs inline-flex font-medium text-white bg-gray-500 rounded-full text-center px-2.5 py-1">{{ 'Sedang Tes' }}</span>
                                                 </li>
                                                 @elseif($track_item->status == 6)
                                                 <li class="flex items-center space-x-2">
                                                     <span>Status :</span>
-                                                    <span class="text-xs inline-flex font-medium text-white bg-indigo-600 rounded-full text-center px-2.5 py-1">{{ 'Menunggu Sparepart' }}</span>
+                                                    <span class="text-xs inline-flex font-medium text-white bg-red-500 rounded-full text-center px-2.5 py-1">{{ 'Menunggu Konfirmasi' }}</span>
                                                 </li>
                                                 @elseif($track_item->status == 7)
                                                 <li class="flex items-center space-x-2">
                                                     <span>Status :</span>
-                                                    <span class="text-xs inline-flex font-medium text-white bg-blue-600 rounded-full text-center px-2.5 py-1">{{ 'Bisa Diambil' }}</span> 
+                                                    <span class="text-xs inline-flex font-medium text-white bg-indigo-500 rounded-full text-center px-2.5 py-1">{{ 'Menunggu Sparepart' }}</span> 
                                                 </li>
                                                 @elseif($track_item->status == 8)
                                                 <li class="flex items-center space-x-2">
                                                     <span>Status :</span>
-                                                    <span class="text-xs inline-flex font-medium text-white bg-emerald-500 rounded-full text-center px-2.5 py-1">{{ 'Sudah Diambil' }}</span>
+                                                    <span class="text-xs inline-flex font-medium text-white bg-blue-500 rounded-full text-center px-2.5 py-1">{{ 'Bisa Diambil' }}</span>
+                                                </li>
+                                                @elseif($track_item->status == 9)
+                                                <li class="flex items-center space-x-2">
+                                                    <span>Status :</span>
+                                                    <span class="text-xs inline-flex font-medium text-white bg-green-500 rounded-full text-center px-2.5 py-1">{{ 'Sudah Diambil' }}</span>
+                                                </li>
+                                                @elseif($track_item->status == 10)
+                                                <li class="flex items-center space-x-2">
+                                                    <span>Status :</span>
+                                                    <span class="text-xs inline-flex font-medium text-green-500 bg-green-100 rounded-full text-center px-2.5 py-1">{{ 'Terkonfirmasi Setuju' }}</span>
+                                                </li>
+                                                @elseif($track_item->status == 11)
+                                                <li class="flex items-center space-x-2">
+                                                    <span>Status :</span>
+                                                    <span class="text-xs inline-flex font-medium text-red-500 bg-red-100 rounded-full text-center px-2.5 py-1">{{ 'Terkonfirmasi Menolak' }}</span>
+                                                </li>
+                                                @elseif($track_item->service_detail->transaction->warranty_history->status == 1)
+                                                <li class="flex items-center space-x-2">
+                                                    <span>Status :</span>
+                                                    <span class="text-xs inline-flex font-medium text-white bg-yellow-500 rounded-full text-center px-2.5 py-1">{{ 'Proses Garansi' }}</span>
+                                                </li>
+                                                @elseif($track_item->service_detail->transaction->warranty_history->status == 2)
+                                                <li class="flex items-center space-x-2">
+                                                    <span>Status :</span>
+                                                    <span class="text-xs inline-flex font-medium text-white bg-blue-500 rounded-full text-center px-2.5 py-1">{{ 'Garansi Bisa Diambil' }}</span>
+                                                </li>
+                                                @elseif($track_item->service_detail->transaction->warranty_history->status == 3)
+                                                <li class="flex items-center space-x-2">
+                                                    <span>Status :</span>
+                                                    <span class="text-xs inline-flex font-medium text-white bg-green-500 rounded-full text-center px-2.5 py-1">{{ 'Garansi Sudah Diambil' }}</span>
                                                 </li>
                                                 @else
                                                     <a>{{ 'N/A' }}</a>

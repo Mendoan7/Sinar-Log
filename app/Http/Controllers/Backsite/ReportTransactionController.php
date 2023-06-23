@@ -46,6 +46,7 @@ class ReportTransactionController extends Controller
         $total_revenue = 0;
         $total_modal = 0;
         $total_profit = 0;
+        $report = [];
 
         // Ambil data berdasarkan created_at
         foreach ($dates as $date) {

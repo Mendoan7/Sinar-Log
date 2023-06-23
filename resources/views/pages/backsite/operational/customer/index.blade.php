@@ -40,6 +40,10 @@
                                                         <input type="text" class="form-control" id="contact" name="contact" placeholder="Nomer telepon pelanggan" value="{{old('contact')}}" required/>
                                                     </div>
                                                     <div class="mb-2">
+                                                        <label for="email" class="col-form-label">Email</label>
+                                                        <input type="text" class="form-control" id="email" name="email" placeholder="Email Pelanggan" value="{{old('email')}}"/>
+                                                    </div>
+                                                    <div class="mb-2">
                                                         <label for="address" class="col-form-label">Alamat</label>
                                                         <textarea class="form-control" id="address" name="address" placeholder="Alamat pelanggan" value="{{old('address')}}" required></textarea>
                                                     </div>
@@ -68,6 +72,7 @@
                                                 <th>Proses Servis</th>
                                                 <th>Bisa Diambil</th>
                                                 <th>Servis Selesai</th>
+                                                <th>Proses Garansi</th>
                                                 <th>Total Servis</th>
                                                 <th style="text-align:center; width:150px;">Action</th>
                                             </tr>
@@ -79,9 +84,10 @@
                                                 <td>{{ $customer_item->name ?? '' }}</td>
                                                 <td>{{ $customer_item->contact ?? '' }}</td>
                                                 <td>{{ $customer_item->address ?? '' }}</td>
-                                                <td>{{ $customer_item->service->where('status', '<=', 6)->count() }}</td>
-                                                <td>{{ $customer_item->service->where('status', 7)->count() }}</td>
+                                                <td>{{ $customer_item->service->where('status', '<=', 7)->count() }}</td>
                                                 <td>{{ $customer_item->service->where('status', 8)->count() }}</td>
+                                                <td>{{ $customer_item->service_selesai }}</td>
+                                                <td>{{ $customer_item->service->first()->service_detail?->transaction?->warranty_history?->where('status', [1, 2])->count() ?? 'N/A' }}</td>
                                                 <td>{{ $customer_item->service->count() }}</td>
                                                 <td class="text-center">
 

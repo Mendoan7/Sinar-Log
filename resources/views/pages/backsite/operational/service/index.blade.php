@@ -2,21 +2,6 @@
 
 @section('title', 'Servis')
 
-{{-- @push('after-style')
-    <style>
-        .table {
-            table-layout: fixed;
-            width: 100%;
-        }
-
-        .table td, .table th {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-    </style>
-@endpush --}}
-
 @section('content')
 
 <div class="main-content">
@@ -194,7 +179,11 @@
                                                             <span class="badge bg-danger">{{ 'Menunggu Konfirmasi' }}</span>
                                                         @elseif($service_item->status == 7)
                                                             <span class="badge bg-primary">{{ 'Menunggu Sparepart' }}</span>
-                                                        @elseif($service_item->service_detail->transaction->warranty_history && $service_item->service_detail->transaction->warranty_history->status == 1)
+                                                        @elseif($service_item->status == 10)
+                                                            <span class="badge bg-primary">{{ 'Terkonfirmasi' }}</span>
+                                                        @elseif($service_item->status == 11)
+                                                            <span class="badge bg-primary">{{ 'Dibatalkan' }}</span>
+                                                        @elseif($service_item->service_detail?->transaction?->warranty_history?->status == 1)
                                                             <span class="badge bg-warning">{{ 'Garansi' }}</span>          
                                                         @endif
                                                     </td>
@@ -308,45 +297,57 @@
                                                         <ul class="list-unstyled hstack gap-2 mb-0">
                                                             @can('service_confirmation')
                                                             {{-- Button Konfirmasi --}}
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Konfirmasi Biaya Servis">               
+                                                            @if ($service_item->teknisi)
+                                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Konfirmasi Biaya Servis">  
                                                                 <button class="btn btn-sm btn-soft-warning" 
-                                                                        data-bs-toggle="modal" 
-                                                                        data-bs-target="#cash{{ $service_item->id }}">
-                                                                        <i class="mdi mdi-near-me"></i>
+                                                                    data-bs-toggle="modal" 
+                                                                    data-bs-target="#cash{{ $service_item->id }}">
+                                                                    <i class="mdi mdi-near-me"></i>
                                                                 </button>
-                                                                <div class="modal fade bs-example-modal-center" id="cash{{ $service_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="cashServiceModalLabel" aria-expanded="false">
-                                                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h5 class="modal-title" id="cashServiceModalLabel">Konfirmasi Biaya Servis</h5>
-                                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                            </div>
-                                                                            <form class="form form-horizontal" action="service/confirmation" method="POST">
-                                                                                @csrf
-                                                                                    <div class="modal-body">
-                                                                                        <input type="hidden" name="service_id" value="{{ $service_item->id }}">
-
-                                                                                        <div class="mb-2">
-                                                                                            <label for="tindakan" class="form-label">Tindakan</label>
-                                                                                            <input type="text" class="form-control" name="tindakan" id="tindakan" placeholder="Tindakan Servis" required>
-                                                                                        </div>
-
-                                                                                        <div class="mb-2">
-                                                                                            <label for="biaya" class="form-label">Biaya</label>
-                                                                                            <input type="text" class="form-control input-mask text-start" name="biaya" id="biaya" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'Rp. ', 'placeholder': '0'" required>
-                                                                                        </div>
-
-                                                                                    </div>
-                                                                                    <div class="modal-footer">
-                                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                                                        <button type="submit" class="btn btn-primary">Konfirmasi</button>
-                                                                                    </div>
-                                                                            </form>        
+                                                                </li>
+                                                            @else
+                                                                <button class="btn btn-sm btn-soft-warning"
+                                                                    data-bs-toggle="popover"
+                                                                    data-bs-placement="top"  
+                                                                    data-bs-trigger="focus"
+                                                                    data-bs-content="Pilih teknisi terlebih dahulu.">
+                                                                    <i class="mdi mdi-near-me"></i>
+                                                                </button>
+                                                            @endif
+                                                            {{-- End Button Konfirmasi --}}
+                                                            {{-- Start Modal Konfirmasi --}}
+                                                            <div class="modal fade bs-example-modal-center" id="cash{{ $service_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="cashServiceModalLabel" aria-expanded="false">
+                                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="cashServiceModalLabel">Konfirmasi Biaya Servis</h5>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                         </div>
+                                                                        <form class="form form-horizontal" action="service/confirmation" method="POST">
+                                                                            @csrf
+                                                                                <div class="modal-body">
+                                                                                    <input type="hidden" name="service_id" value="{{ $service_item->id }}">
+
+                                                                                    <div class="mb-2">
+                                                                                        <label for="tindakan" class="form-label">Tindakan</label>
+                                                                                        <input type="text" class="form-control" name="tindakan" id="tindakan" placeholder="Tindakan Servis" required>
+                                                                                    </div>
+
+                                                                                    <div class="mb-2">
+                                                                                        <label for="biaya" class="form-label">Biaya</label>
+                                                                                        <input type="text" class="form-control input-mask text-start" name="biaya" id="biaya" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'Rp. ', 'placeholder': '0'" required>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                    <button type="submit" class="btn btn-primary">Konfirmasi</button>
+                                                                                </div>
+                                                                        </form>        
                                                                     </div>
                                                                 </div>
-                                                            </li>
-                                                            {{-- End Button Konfirmasi --}}
+                                                            </div>
+                                                            {{-- End Modal Konfirmasi --}}
                                                             @endcan
                                                             @can('service_show')
                                                             {{-- Button View --}}
@@ -668,136 +669,135 @@
                                                                         Bisa Diambil
                                                                     </button>
                                                                 @endif
-                                                                <div class="modal fade bs-example-modal-center" id="bisaDiambil{{ $service_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="bisaDiambilModalLabel">
-                                                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h5 class="modal-title">Ubah data menjadi Bisa Diambil</h5>
-                                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                <form class="form form-horizontal" action="{{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 ? route('backsite.service-detail.warranty') : route('backsite.service-detail.store') }}" method="POST">
+                                                                    @csrf
+                                                                    <div class="modal fade bs-example-modal-center" id="bisaDiambil{{ $service_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="bisaDiambilModalLabel">
+                                                                        <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h5 class="modal-title">Ubah data menjadi Bisa Diambil</h5>
+                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                </div>
+                                                                                @if ($service_item->service_detail?->transaction?->warranty_history?->status == 1)
+                                                                                    <div class="modal-body">
+                                                                                        <input type="hidden" name="service_id" value="{{ $service_item->id }}">
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="customer_id" class="form-label">Pemilik Barang</label>
+                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->customer->name ?? '' }} - No.Telp {{ $service_item->customer->contact ?? '' }}">    
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="jenis" class="form-label">Nama Barang</label>
+                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}">
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="kerusakan" class="form-label">Kerusakan Awal</label>
+                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->kerusakan ?? '' }}">
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="tindakans" class="form-label">Tindakan Sebelumnya</label>
+                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->service_detail->tindakan ?? '' }}">
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="biaya" class="form-label">Biaya Sebelumnya</label>
+                                                                                            <input type="text" class="form-control" disabled value="{{ 'RP. '.number_format($service_item->service_detail->biaya) ?? '' }}">
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="kondisi1" class="form-label">Kondisi</label>
+                                                                                            <select class="form-control select2" data-minimum-results-for-search="Infinity" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi" required>
+                                                                                                <option value="{{ '' }}" disabled selected>Pilih Kondisi Servis</option>
+                                                                                                    <option value="1">Sudah Jadi</option>
+                                                                                                    <option value="2">Tidak Bisa</option>
+                                                                                                    <option value="3">Dibatalkan</option>
+                                                                                            </select>
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="tindakan" class="form-label">Tindakan</label>
+                                                                                            <input type="text" class="form-control" name="tindakan" id="tindakan" placeholder="Tindakan Servis" required>
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="catatan" class="form-label">Catatan</label>
+                                                                                            <textarea type="text" id="catatan" name="catatan" placeholder="Keterangan claim garansi" value="{{old('catatan')}}" class="form-control"></textarea>
+                                                                                        </div>
+
+                                                                                        <!-- Form Check -->
+                                                                                        <div class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                                                            <input class="form-check-input" type="checkbox" value="" id="bisaDiambilCheckbox{{ $service_item->id }}" required>
+                                                                                            <label class="form-check-label" for="bisaDiambilCheckbox{{ $service_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju mengubah Status menjadi Bisa Diambil</label>
+                                                                                        </div>
+                                                                                        <!-- End Form Check -->
+                                                                                    </div>
+                                                                                    <div class="modal-footer">
+                                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                        <button type="submit" class="btn btn-primary">Bisa Diambil</button>
+                                                                                    </div>
+                                                                                @else
+                                                                                    <div class="modal-body">
+                                                                                        <input type="hidden" name="service_id" value="{{ $service_item->id }}">
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="customer_id" class="form-label">Pemilik Barang</label>
+                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->customer->name ?? '' }} - No.Telp {{ $service_item->customer->contact ?? '' }}">    
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="jenis" class="form-label">Nama Barang</label>
+                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}">
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="kerusakan" class="form-label">Kerusakan</label>
+                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->kerusakan ?? '' }}">
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="kondisi" class="form-label">Kondisi</label>
+                                                                                            <select class="form-control select2" data-minimum-results-for-search="Infinity" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi" required>
+                                                                                                <option value="{{ '' }}" disabled selected>Pilih Kondisi Servis</option>
+                                                                                                    <option value="1">Sudah Jadi</option>
+                                                                                                    <option value="2">Tidak Bisa</option>
+                                                                                                    <option value="3">Dibatalkan</option>
+                                                                                            </select>
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="tindakan" class="form-label">Tindakan</label>
+                                                                                            <input type="text" class="form-control" name="tindakan" id="tindakan" placeholder="Tindakan Servis" required>
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="modal" class="form-label">Modal</label>
+                                                                                            <input type="text" class="form-control input-mask text-start" name="modal" id="modal" placeholder="Modal Sparepart" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
+                                                                                        </div>
+
+                                                                                        <div class="mb-2">
+                                                                                            <label for="biaya" class="form-label">Biaya</label>
+                                                                                            <input type="text" class="form-control input-mask text-start" name="biaya" id="biaya" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
+                                                                                        </div>
+
+                                                                                        <!-- Form Check -->
+                                                                                        <div class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                                                            <input class="form-check-input" type="checkbox" value="" id="bisaDiambilCheckbox{{ $service_item->id }}" required>
+                                                                                            <label class="form-check-label" for="bisaDiambilCheckbox{{ $service_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju mengubah Status menjadi Bisa Diambil</label>
+                                                                                        </div>
+                                                                                        <!-- End Form Check -->
+                                                                                    </div>
+                                                                                    <div class="modal-footer">
+                                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                        <button type="submit" class="btn btn-primary">Bisa Diambil</button>
+                                                                                    </div>
+                                                                                @endif
                                                                             </div>
-
-                                                                            <form class="form form-horizontal" action="{{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 ? route('backsite.service-detail.warranty') : route('backsite.service-detail.store') }}" method="POST">
-                                                                                @csrf
-                                                                                    @if ($service_item->service_detail?->transaction?->warranty_history?->status == 1)
-                                                                                        <div class="modal-body">
-                                                                                            <input type="hidden" name="service_id" value="{{ $service_item->id }}">
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="customer_id" class="form-label">Pemilik Barang</label>
-                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->customer->name ?? '' }} - No.Telp {{ $service_item->customer->contact ?? '' }}">    
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="jenis" class="form-label">Nama Barang</label>
-                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}">
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="kerusakan" class="form-label">Kerusakan Awal</label>
-                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->kerusakan ?? '' }}">
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="tindakans" class="form-label">Tindakan Sebelumnya</label>
-                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->service_detail->tindakan ?? '' }}">
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="biaya" class="form-label">Biaya Sebelumnya</label>
-                                                                                                <input type="text" class="form-control" disabled value="{{ 'RP. '.number_format($service_item->service_detail->biaya) ?? '' }}">
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="kondisi" class="form-label">Kondisi</label>
-                                                                                                <select class="form-control select2-search-disable" data-minimum-results-for-search="Infinity" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi" required>
-                                                                                                    <option value="{{ '' }}" disabled selected>Pilih Kondisi Servis</option>
-                                                                                                        <option value="1">Sudah Jadi</option>
-                                                                                                        <option value="2">Tidak Bisa</option>
-                                                                                                        <option value="3">Dibatalkan</option>
-                                                                                                </select>
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="tindakan" class="form-label">Tindakan</label>
-                                                                                                <input type="text" class="form-control" name="tindakan" id="tindakan" placeholder="Tindakan Servis" required>
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="catatan" class="form-label">Catatan</label>
-                                                                                                <textarea type="text" id="catatan" name="catatan" placeholder="Keterangan claim garansi" value="{{old('catatan')}}" class="form-control"></textarea>
-                                                                                            </div>
-
-                                                                                            <!-- Form Check -->
-                                                                                            <div class="form-check d-flex justify-content-end gap-2 mt-4">
-                                                                                                <input class="form-check-input" type="checkbox" value="" id="bisaDiambilCheckbox{{ $service_item->id }}" required>
-                                                                                                <label class="form-check-label" for="bisaDiambilCheckbox{{ $service_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju mengubah Status menjadi Bisa Diambil</label>
-                                                                                            </div>
-                                                                                            <!-- End Form Check -->
-                                                                                        </div>
-                                                                                        <div class="modal-footer">
-                                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                                                            <button type="submit" class="btn btn-primary">Bisa Diambil</button>
-                                                                                        </div>
-                                                                                    @else
-                                                                                        <div class="modal-body">
-                                                                                            <input type="hidden" name="service_id" value="{{ $service_item->id }}">
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="customer_id" class="form-label">Pemilik Barang</label>
-                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->customer->name ?? '' }} - No.Telp {{ $service_item->customer->contact ?? '' }}">    
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="jenis" class="form-label">Nama Barang</label>
-                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}">
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="kerusakan" class="form-label">Kerusakan</label>
-                                                                                                <input type="text" class="form-control" disabled value="{{ $service_item->kerusakan ?? '' }}">
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="kondisi" class="form-label">Kondisi</label>
-                                                                                                <select class="form-control select2-search-disable" data-minimum-results-for-search="Infinity" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi" required>
-                                                                                                    <option value="{{ '' }}" disabled selected>Pilih Kondisi Servis</option>
-                                                                                                        <option value="1">Sudah Jadi</option>
-                                                                                                        <option value="2">Tidak Bisa</option>
-                                                                                                        <option value="3">Dibatalkan</option>
-                                                                                                </select>
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="tindakan" class="form-label">Tindakan</label>
-                                                                                                <input type="text" class="form-control" name="tindakan" id="tindakan" placeholder="Tindakan Servis" required>
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="modal" class="form-label">Modal</label>
-                                                                                                <input type="text" class="form-control input-mask text-start" name="modal" id="modal" placeholder="Modal Sparepart" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
-                                                                                            </div>
-
-                                                                                            <div class="mb-2">
-                                                                                                <label for="biaya" class="form-label">Biaya</label>
-                                                                                                <input type="text" class="form-control input-mask text-start" name="biaya" id="biaya" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
-                                                                                            </div>
-
-                                                                                            <!-- Form Check -->
-                                                                                            <div class="form-check d-flex justify-content-end gap-2 mt-4">
-                                                                                                <input class="form-check-input" type="checkbox" value="" id="bisaDiambilCheckbox{{ $service_item->id }}" required>
-                                                                                                <label class="form-check-label" for="bisaDiambilCheckbox{{ $service_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju mengubah Status menjadi Bisa Diambil</label>
-                                                                                            </div>
-                                                                                            <!-- End Form Check -->
-                                                                                        </div>
-                                                                                        <div class="modal-footer">
-                                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                                                            <button type="submit" class="btn btn-primary">Bisa Diambil</button>
-                                                                                        </div>
-                                                                                    @endif
-                                                                            </form>
                                                                         </div>
                                                                     </div>
-                                                                </div>
+                                                                </form>
                                                             </li>
                                                             {{-- End Button Bisa Diambil --}}
                                                             @endcan

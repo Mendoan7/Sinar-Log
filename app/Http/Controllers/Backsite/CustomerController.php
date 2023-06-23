@@ -39,7 +39,21 @@ class CustomerController extends Controller
     public function index()
     {
         // for table grid
-        $customer = Customer::with('service')->orderBy('created_at', 'desc')->get();
+        $customer = Customer::with(['service.service_detail.transaction.warranty_history'])
+        ->orderBy('created_at', 'desc')
+        ->get();
+        
+        // menghitung servis selesai
+        $customer->each(function ($customer_item) {
+            $service_selesai = $customer_item->service->filter(function ($service) {
+                return $service->status === 9 && (
+                    $service->service_detail->transaction->warranty_history->isEmpty() ||
+                    $service->service_detail->transaction->warranty_history->where('status', 3)->isNotEmpty()
+                );
+            })->count();
+    
+            $customer_item->service_selesai = $service_selesai;
+        });
 
         return view('pages.backsite.operational.customer.index', compact('customer'));
     }

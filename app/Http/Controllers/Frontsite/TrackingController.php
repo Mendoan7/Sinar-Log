@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Frontsite;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+use Carbon\Carbon;
 
 use App\Models\Operational\Customer;
 use App\Models\Operational\Service;
 use App\Models\Operational\ServiceDetail;
 use App\Models\Tracking;
-use Illuminate\Http\Request;
-
 
 class TrackingController extends Controller
 {
@@ -58,18 +59,33 @@ class TrackingController extends Controller
     {
         $service = Service::findOrFail($id);
         
-        if ($service->status <= 6) {
+        if ($service->status <= 7) {
             $service_detail = null;
             $transaction = null;
-        } elseif ($service->status == 7) {
+        } elseif ($service->status == 8) {
             $service_detail = $service->service_detail;
             $transaction = null;
         } else {
             $service_detail = $service->service_detail;
-            $transaction = $service_detail->transaction;
+            $transaction = $service_detail?->transaction;
         }
 
-        return view('pages.frontsite.tracking.show', compact('service', 'service_detail', 'transaction'));
+        $warrantyInfo = [];
+
+        if ($transaction) {
+            $warranty = $transaction->garansi;
+            $end_warranty = $transaction->created_at->addDays($warranty);
+            $remainingTime = now()->diff($end_warranty);
+            $sisa_warranty = $remainingTime->format('%d Hari %h Jam');
+
+            $warrantyInfo[$transaction->id] = [
+                'warranty' => $warranty,
+                'end_warranty' => $end_warranty,
+                'sisa_warranty' => $sisa_warranty,
+            ];
+        }
+        
+        return view('pages.frontsite.tracking.show', compact('service', 'service_detail', 'transaction', 'warrantyInfo'));
     }
 
     /**

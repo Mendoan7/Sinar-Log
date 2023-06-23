@@ -102,4 +102,24 @@ class NotificationController extends Controller
         // Tampilkan tampilan detail tugas servis
         return view('pages.backsite.notification.warranty', compact('service'));
     }
+
+    public function confirmation($id)
+    {
+        auth()->user()->unreadNotifications->where('id', request('id'))->first()?->markAsRead();
+        // Ambil data tugas servis berdasarkan ID
+        $service = Service::findOrFail($id);
+
+        // Tampilkan tampilan detail tugas servis
+        return view('pages.backsite.notification.confirm-approve', compact('service'));
+    }
+
+    public function confirmReject($id)
+    {
+        auth()->user()->unreadNotifications->where('id', request('id'))->first()?->markAsRead();
+        // Ambil data tugas servis berdasarkan ID
+        $service = Service::findOrFail($id);
+
+        // Tampilkan tampilan detail tugas servis
+        return view('pages.backsite.notification.confirm-reject', compact('service'));
+    }
 }

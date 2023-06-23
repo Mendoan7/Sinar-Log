@@ -36,7 +36,7 @@
 <!-- Datatable init js -->
 <script src="{{ asset('/assets/backsite/js/pages/datatables.init.js') }}"></script>
 {{-- <script src="{{ asset('/assets/backsite/js/pages/table-responsive.init.js') }}"></script> --}}
-{{-- <script src="{{ asset('/assets/backsite/js/pages/form-advanced.init.js') }}"></script> --}}
+<script src="{{ asset('/assets/backsite/js/pages/form-advanced.init.js') }}"></script>
 <script src="{{ asset('/assets/backsite/js/pages/form-mask.init.js') }}"></script>
 <script src="{{ asset('/assets/backsite/js/pages/modal.init.js') }}"></script>
 

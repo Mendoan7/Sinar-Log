@@ -9,8 +9,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Support\Facades\Notification;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ServiceCreatedMail;
 
 use Carbon\Carbon;
+use Ramsey\Uuid\Uuid;
 
 // request
 use App\Http\Requests\Service\StoreServiceRequest;
@@ -23,6 +27,9 @@ use App\Models\TypeUser;
 use App\Models\DetailUser;
 use App\Models\Operational\Customer;
 use App\Models\Operational\Service;
+
+use App\Jobs\Notification\NewServiceEmailNotificationJob;
+use App\Jobs\Notification\NewServiceWhatsappNotificationJob;
 
 class ServiceController extends Controller
 {
@@ -40,7 +47,7 @@ class ServiceController extends Controller
     {
         $service = Service::with('service_detail.transaction', 'teknisi_detail')
             ->where(function ($query) {
-                $query->whereIn('status', [1, 2, 3, 4, 5, 6, 7])
+                $query->whereIn('status', [1, 2, 3, 4, 5, 6, 7, 10, 11])
                       ->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
                           $query->where('status', 1);
                       });
@@ -67,7 +74,7 @@ class ServiceController extends Controller
                 $service_item->duration = $created_at->diffInDays($now) . " Hari";
             }
     
-            if ($service_item->status == 10) {
+            if ($service_item->service_detail?->transaction?->warranty_info?->status == 1) {
                 $warranty_history = $service_item->service_detail->transaction->warranty_history;
                 if ($warranty_history) {
                     $created_at = Carbon::parse($warranty_history->created_at);
@@ -202,6 +209,12 @@ class ServiceController extends Controller
         $service->status = 1; // set to belum cek
         $service->save();
 
+        // Kirim Notif Whatsapp Queue
+        NewServiceWhatsAppNotificationJob::dispatch($service)->onQueue('notifications');
+
+        // Kirim Notif Email Queue
+        NewServiceEmailNotificationJob::dispatch($service)->onQueue('notifications');
+
         alert()->success('Berhasil', 'Sukses menambahkan data servis baru');
         return redirect()->route('backsite.service.index');
     }
@@ -314,7 +327,6 @@ class ServiceController extends Controller
 
     public function sendConfirmation(Request $request) 
     {
-
         $service_item = Service::find($request->service_id);
         $contacts = $service_item->customer->contact;
         $jenis = $service_item->jenis;
@@ -340,10 +352,27 @@ class ServiceController extends Controller
         $biaya = $request->input('biaya');
         $message = "*Konfirmasi Servis | SINAR CELL*\n\n$selamat, pelanggan yang terhormat.\nKami ingin melakukan konfirmasi untuk mengatasi kerusakan pada barang servis $jenis $tipe dengan No. Servis $kode akan dilakukan tindakan *$tindakan* dengan biaya *$biaya*.\nMohon segera konfirmasi kembali untuk melanjutkan tidaknya servis. Terima Kasih.";
     
+        // Link konfirmasi
+        $confirmationToken = Uuid::uuid4()->toString();
+        $expiredTime = Carbon::now()->addDay(); // Tambahkan 1 hari dari waktu sekarang
+
+        $biaya = str_replace(',', '', $biaya);
+        $biaya = str_replace('Rp. ', '', $biaya);
+        $service_item->estimasi_tindakan = $tindakan;
+        $service_item->estimasi_biaya = $biaya;
+        $service_item->confirmation_token = $confirmationToken;
+        $service_item->expired_time = $expiredTime;
+        $service_item->save();
+
+        $confirmationLink = route('confirmation.service', ['token' => $confirmationToken]);
+
+        $message .= "\n\nLink untuk melakukan konfirmasi : $confirmationLink";
+
         // Link whatsapp
         $waLink = "https://wa.me/$contacts?text=".urlencode($message);
     
         // Redirect ke halaman whatsapp
         return redirect($waLink);
     }
+
 }

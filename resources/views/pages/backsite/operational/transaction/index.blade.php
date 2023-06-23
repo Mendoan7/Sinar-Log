@@ -475,98 +475,99 @@
                                                                         Garansi
                                                                     </button>
                                                                 @endif
-                                                                <div class="modal fade bs-example-modal-center" id="garansi{{ $transaction_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="garansiModalLabel">
-                                                                    <form class="form form-horizontal" action="{{ route('backsite.transaction.claimWarranty') }}" method="POST">
-                                                                        @csrf
-                                                                    <div class="modal-dialog modal-dialog-scrollable" role="document">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h5 class="modal-title" id="garansiModalLabel">Konfirmasi Terima Garansi</h5>
-                                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                <input type="hidden" name="transaction_id" value="{{ $transaction_item->id }}">
-                                                                                <p>Pastikan kerusakan pada saat menerima garansi, sama dengan kerusakan awal servis.</p>
-                                                                                <table class="table table-striped">
-                                                                                    <tbody>
-                                                                                        <tr>
-                                                                                            <th scope="col">No. Servis</th>
-                                                                                            <td scope="col" class="fw-bold">{{ isset($transaction_item->service_detail->service->kode_servis) ? $transaction_item->service_detail->service->kode_servis : 'N/A' }}</td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Barang Servis</th>
-                                                                                            <td>{{ isset($transaction_item->service_detail->service->jenis) ? $transaction_item->service_detail->service->jenis : 'N/A' }}
-                                                                                                {{ isset($transaction_item->service_detail->service->tipe) ? $transaction_item->service_detail->service->tipe : 'N/A' }}</td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Teknisi</th>
-                                                                                            <td>{{ isset($transaction_item->service_detail->service->teknisi_detail->name) ? $transaction_item->service_detail->service->teknisi_detail->name : 'N/A' }}</td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Tgl. Ambil</th>
-                                                                                            <td>
-                                                                                                {{ $transaction_item['updated_at']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
-                                                                                                [{{ isset($transaction_item->penyerah) ? $transaction_item->penyerah : 'N/A' }}]
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Pengambil</th>
-                                                                                            <td>{{ isset($transaction_item->pengambil) ? $transaction_item->pengambil : 'N/A' }}</td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Kerusakan Awal</th>
-                                                                                            <td>{{ isset($transaction_item->service_detail->service->kerusakan) ? $transaction_item->service_detail->service->kerusakan : 'N/A' }}</td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Tindakan</th>
-                                                                                            <td>{{ isset($transaction_item->service_detail->tindakan) ? $transaction_item->service_detail->tindakan : 'N/A' }}</td>
-                                                                                        </tr>                                                                                      
-                                                                                        <tr>
-                                                                                            <th scope="row">Garansi</th>
-                                                                                            @if ($transaction_item->garansi == 0)
-                                                                                                <td class="fw-bold">Tidak Ada</td>
-                                                                                            @else
-                                                                                                <td class="fw-bold">{{ $transaction_item->garansi }} Hari</td>
-                                                                                            @endif
-                                                                                        </tr>
-                                                                                        @if ($transaction_item->garansi > 0)
+                                                                {{-- Start Modal Status --}}
+                                                                <form class="form form-horizontal" action="{{ route('backsite.transaction.claimWarranty') }}" method="POST">
+                                                                    @csrf
+                                                                    <div class="modal fade bs-example-modal-center" id="garansi{{ $transaction_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="garansiModalLabel">  
+                                                                        <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h5 class="modal-title" id="garansiModalLabel">Konfirmasi Terima Garansi</h5>
+                                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <input type="hidden" name="transaction_id" value="{{ $transaction_item->id }}">
+                                                                                    <p>Pastikan kerusakan pada saat menerima garansi, sama dengan kerusakan awal servis.</p>
+                                                                                    <table class="table table-striped">
+                                                                                        <tbody>
                                                                                             <tr>
-                                                                                                <th scope="row">Garansi Berakhir</th>
-                                                                                                <td>{{ $warrantyInfo[$transaction_item->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }}</td>
+                                                                                                <th scope="col">No. Servis</th>
+                                                                                                <td scope="col" class="fw-bold">{{ isset($transaction_item->service_detail->service->kode_servis) ? $transaction_item->service_detail->service->kode_servis : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
-                                                                                                <th scope="row">Status Garansi</th>
-                                                                                                @if ($warrantyInfo[$transaction_item->id]['end_warranty'] < now())
-                                                                                                    <td><span class="badge bg-danger">Hangus</span></td>
+                                                                                                <th scope="row">Barang Servis</th>
+                                                                                                <td>{{ isset($transaction_item->service_detail->service->jenis) ? $transaction_item->service_detail->service->jenis : 'N/A' }}
+                                                                                                    {{ isset($transaction_item->service_detail->service->tipe) ? $transaction_item->service_detail->service->tipe : 'N/A' }}</td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <th scope="row">Teknisi</th>
+                                                                                                <td>{{ isset($transaction_item->service_detail->service->teknisi_detail->name) ? $transaction_item->service_detail->service->teknisi_detail->name : 'N/A' }}</td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <th scope="row">Tgl. Ambil</th>
+                                                                                                <td>
+                                                                                                    {{ $transaction_item['updated_at']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
+                                                                                                    [{{ isset($transaction_item->penyerah) ? $transaction_item->penyerah : 'N/A' }}]
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <th scope="row">Pengambil</th>
+                                                                                                <td>{{ isset($transaction_item->pengambil) ? $transaction_item->pengambil : 'N/A' }}</td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <th scope="row">Kerusakan Awal</th>
+                                                                                                <td>{{ isset($transaction_item->service_detail->service->kerusakan) ? $transaction_item->service_detail->service->kerusakan : 'N/A' }}</td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <th scope="row">Tindakan</th>
+                                                                                                <td>{{ isset($transaction_item->service_detail->tindakan) ? $transaction_item->service_detail->tindakan : 'N/A' }}</td>
+                                                                                            </tr>                                                                                      
+                                                                                            <tr>
+                                                                                                <th scope="row">Garansi</th>
+                                                                                                @if ($transaction_item->garansi == 0)
+                                                                                                    <td class="fw-bold">Tidak Ada</td>
                                                                                                 @else
-                                                                                                    <td>Tersisa {{ $warrantyInfo[$transaction_item->id]['sisa_warranty'] }}</td>
+                                                                                                    <td class="fw-bold">{{ $transaction_item->garansi }} Hari</td>
                                                                                                 @endif
                                                                                             </tr>
-                                                                                        @endif
-                                                                                        <tr>
-                                                                                            <th scope="row">Keterangan</th>
-                                                                                            <td>
-                                                                                                <textarea type="text" id="keterangan" name="keterangan" placeholder="Keterangan claim garansi" value="{{old('keterangan')}}" class="form-control"></textarea>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    </tbody>
-                                                                                </table>
-
-                                                                                <!-- Form Check -->
-                                                                                <div class="form-check d-flex justify-content-end gap-2 mt-4">
-                                                                                    <input class="form-check-input" type="checkbox" value="" id="garansiCheckbox{{ $transaction_item->id }}" required>
-                                                                                    <label class="form-check-label" for="garansiCheckbox{{ $transaction_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju menerima Garansi Servis</label>
+                                                                                            @if ($transaction_item->garansi > 0)
+                                                                                                <tr>
+                                                                                                    <th scope="row">Garansi Berakhir</th>
+                                                                                                    <td>{{ $warrantyInfo[$transaction_item->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }}</td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                    <th scope="row">Status Garansi</th>
+                                                                                                    @if ($warrantyInfo[$transaction_item->id]['end_warranty'] < now())
+                                                                                                        <td><span class="badge bg-danger">Hangus</span></td>
+                                                                                                    @else
+                                                                                                        <td>Tersisa {{ $warrantyInfo[$transaction_item->id]['sisa_warranty'] }}</td>
+                                                                                                    @endif
+                                                                                                </tr>
+                                                                                            @endif
+                                                                                            <tr>
+                                                                                                <th scope="row">Keterangan</th>
+                                                                                                <td>
+                                                                                                    <textarea type="text" id="keterangan" name="keterangan" placeholder="Keterangan claim garansi" value="{{old('keterangan')}}" class="form-control"></textarea>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                    <!-- Form Check -->
+                                                                                    <div class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                                                        <input class="form-check-input" type="checkbox" value="" id="garansiCheckbox{{ $transaction_item->id }}" required>
+                                                                                        <label class="form-check-label" for="garansiCheckbox{{ $transaction_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju menerima Garansi Servis</label>
+                                                                                    </div>
+                                                                                    <!-- End Form Check -->
                                                                                 </div>
-                                                                                <!-- End Form Check -->
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                    <button type="submit" class="btn btn-primary">Terima Garansi</button>
+                                                                                </div>
                                                                             </div>
-                                                                            <div class="modal-footer">
-                                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                                                <button type="submit" class="btn btn-primary">Terima Garansi</button>
-                                                                            </div>
-                                                                        </div>
+                                                                        </div>                                                                   
                                                                     </div>
-                                                                    </form>
-                                                                </div>
+                                                                </form>
+                                                                {{-- End Modal Status --}}
                                                             </li>
                                                         </ul>
                                                         {{-- End Button Status --}}

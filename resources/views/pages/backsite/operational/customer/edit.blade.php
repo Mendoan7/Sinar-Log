@@ -43,6 +43,12 @@
                                         </div>
                                     </div>
                                     <div class="row mb-4">
+                                        <label for="email" class="col-form-label col-lg-2">Email</label>
+                                        <div class="col-lg-10">
+                                            <input id="email" email="email" type="text" class="form-control" placeholder="example admin or users" value="{{ old('email', isset($customer) ? $customer->email : '') }}" autocomplete="off" required>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-4">
                                         <label for="address" class="col-form-label col-lg-2">Alamat</label>
                                         <div class="col-lg-10">
                                             <input id="address" address="address" type="text" class="form-control" placeholder="example admin or users" value="{{ old('address', isset($customer) ? $customer->address : '') }}" autocomplete="off" required>

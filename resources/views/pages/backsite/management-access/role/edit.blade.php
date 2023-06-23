@@ -33,7 +33,7 @@
                                     <div class="row mb-4">
                                         <label for="title" class="col-form-label col-lg-2">Role</label>
                                         <div class="col-lg-10">
-                                            <input id="title" name="title" type="text" class="form-control" placeholder="example admin or users" value="{{ old('title', isset($role) ? $role->title : '') }}" autocomplete="off" required>
+                                            <input id="title" name="title" type="text" class="form-control" placeholder="Contoh seperti Admin / User" value="{{ old('title', isset($role) ? $role->title : '') }}" autocomplete="off" required>
                                         </div>
                                     </div>
                                     <div class="row mb-4">

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Backsite;
 
 use App\Http\Controllers\Controller;
-
+use App\Jobs\Notification\ServiceDoneEmailNotificationJob;
+use App\Jobs\Notification\ServiceDoneWhatsappNotificationJob;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Auth\AuthManager;
+
 
 // use model here
 use App\Models\User;
@@ -127,6 +129,12 @@ class ServiceDetailController extends Controller
         $service_detail->save();
         $service->status = 8;
         $service->save();
+
+        // Kirim Notif Whatsapp Queue
+        ServiceDoneWhatsAppNotificationJob::dispatch($service)->onQueue('notifications');
+
+        // Kirim Notif Email Queue
+        ServiceDoneEmailNotificationJob::dispatch($service)->onQueue('notifications');
 
         alert()->success('Success Message', 'Berhasil, barang siap diambil');
         return redirect()->route('backsite.service.index');

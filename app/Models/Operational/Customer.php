@@ -27,6 +27,7 @@ class Customer extends Model
         'name',
         'address',
         'contact',
+        'email',
         'created_at',
         'updated_at',
         'deleted_at',
