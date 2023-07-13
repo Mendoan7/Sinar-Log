@@ -6,15 +6,18 @@
 
 <section class="relative pt-32 pb-24 bg-white overflow-hidden">
     <div class="relative z-10 container px-4 mx-auto">
-      <div class="text-center max-w-2xl mx-auto">
+      <div class="max-w-2xl mx-auto">
 
-        <div class="max-w-4xl mx-auto mb-12 text-center">
+        <div class="mb-4">
+            <a class="text-blue-600 hover:text-blue-700 font-medium" href="/tracking"><span class="tracking-normal">&lt;-</span>Kembali</a>
+        </div>
+
+        <div class="max-w-4xl mx-auto mb-8 text-center">
             <span class="inline-block py-px px-2 mb-4 text-xs leading-5 text-blue-500 bg-blue-100 font-medium uppercase rounded-full shadow-sm">Pantau Servis</span>
             <h3 class="mb-4 text-3xl md:text-4xl leading-tight font-bold tracking-tighter">Ketahui Status Perbaikan</h3>
             <p class="text-lg md:text-xl text-coolGray-500 font-medium">Berikut ini semua data perbaikan kamu di Sinar Cell</p>
         </div>
         
-            <!-- Job list -->
             <div class="pb-8 md:pb-16">
                 <!-- List container -->
                 <div class="flex flex-col">

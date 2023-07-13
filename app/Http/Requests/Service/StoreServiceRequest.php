@@ -25,7 +25,7 @@ class StoreServiceRequest extends FormRequest
     {
         return [
             'customer_id' => [
-                'required', 'integer',
+                'required', 'string',
             ],
             'jenis' => [
                 'required','string', 'max:255',
@@ -39,6 +39,17 @@ class StoreServiceRequest extends FormRequest
             'kerusakan' => [
                 'required','string', 'max:255',
             ],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'customer_id.required' => 'Harus memilih customer',
+            'jenis.required' => 'Jenis harus diisi',
+            'tipe.required' => 'Tipe harus diisi',
+            'kelengkapan.required' => 'Kelengkapan harus diisi',
+            'kerusakan.required' => 'Kerusakan harus diisi'
         ];
     }
 }

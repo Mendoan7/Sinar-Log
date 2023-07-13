@@ -1,41 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
 
-        @include('includes.backsite.meta')
+<head>
 
-        <title>@yield('title') | Sinar Cell Backoffice</title>
+    @include('includes.backsite.meta')
 
-        <link rel="shortcut icon" href="{{ asset('/assets/backsite/images/favicon.ico')}}">
-        
-        @stack('before-style')
-            @include('includes.backsite.style')
-        @stack('after-style')
+    <title>@yield('title') | Sinar Cell Backoffice</title>
 
-    </head>
-    
-    <body data-sidebar="dark" data-layout-mode="light">
+    <link rel="shortcut icon" href="{{ asset('/assets/backsite/images/favicon.ico') }}">
 
-        <!-- Page wrapper -->
-        <div id="layout-wrapper">
+    @stack('before-style')
+    @include('includes.backsite.style')
+    @stack('after-style')
 
-            @include('sweetalert::alert')
-            
-            @include('components.backsite.header')
-            @include('components.backsite.menu')
-            
-                @yield('content')
+</head>
 
-            @include('components.backsite.footer')
+<body data-sidebar="dark" data-layout-mode="light">
 
-        </div>
+    <!-- Page wrapper -->
+    <div id="layout-wrapper">
 
-        @stack('before-script')
-            @include('includes.backsite.script')
-        @stack('after-script')
+        @include('sweetalert::alert')
 
-        {{-- modals --}}
-        {{-- if you have a modal, create here --}}
+        @include('components.backsite.header')
+        @include('components.backsite.menu')
 
-    </body>
+        @yield('content')
+
+        @include('components.backsite.footer')
+
+    </div>
+
+    @stack('before-script')
+    @include('includes.backsite.script')
+    @stack('after-script')
+
+</body>
+
 </html>

@@ -4,296 +4,476 @@
 
 @section('content')
 
-{{-- Hero --}}
-  <section class="pt-32 pb-12 md:pt-40 md:pb-20">
-    <div class="flex flex-col items-center justify-center mx-auto sm:p-6 xl:p-8 lg:flex-row lg:max-w-6xl lg:p-0">
-        <div class="container relative z-20 flex flex-col w-full px-5 pb-1 pr-12 mb-16 text-2xl text-gray-700 lg:w-1/2 sm:pr-0 md:pr-6 md:pl-0 lg:pl-5 xl:pr-10 sm:items-center lg:items-start lg:mb-0">
-            <h1 class="relative z-20 text-5xl font-extrabold leading-none text-blue-600 xl:text-5xl sm:text-center lg:text-left">
-                Temukan Solusi<br>
-                <span class="mt-1 text-gray-800 lg:mt-0">Untuk Masalah Device Kamu</span>
-            </h1>
-            <p class="relative z-20 block mt-6 text-base text-gray-500 xl:text-xl sm:text-center lg:text-left">Bersama Teknisi Kami Yang Berpengalaman dan Berkompeten.</p>
-            <div class="relative flex mt-4">
-                <a href="#_" class="flex items-center self-start justify-center px-5 py-2 mt-5 text-base font-medium leading-tight text-white transition duration-150 ease-in-out bg-blue-600 border border-transparent rounded-full shadow lg:py-4 hover:bg-blue-700 focus:outline-none focus:border-blue-700 focus:shadow-outline-purple md:text-lg xl:text-xl md:px-5 xl:px-10" data-rounded="rounded-full">Konsultasi Gratis</a>
+  {{-- Hero --}}
+  <section class="relative">
+
+    <!-- Bg -->
+    <div class="absolute inset-0 rounded-bl-[100px] bg-gray-50 pointer-events-none -z-10" aria-hidden="true"></div>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="pt-32 pb-12 md:pt-40 md:pb-20">
+
+            <!-- Hero content -->
+            <div class="relative max-w-xl mx-auto md:max-w-none text-center md:text-left flex flex-col md:flex-row">
+
+                <!-- Content -->
+                <div class="md:w-[640px]">
+                    <!-- Copy -->
+                    <h1 class="h1 mb-6" data-aos="fade-right" data-aos-delay="100">Solusi untuk masalah device kamu <span class="relative inline-flex text-blue-600">
+                        <svg class="absolute left-0 top-full -mt-4 max-w-full -z-10" width="220" height="24" viewBox="0 0 220 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M134.66 13.107c-10.334-.37-20.721-.5-31.12-.291l-2.6.06c-4.116.04-8.193.602-12.3.749-14.502.43-29.029 1.196-43.514 2.465-6.414.63-12.808 1.629-19.04 2.866-7.93 1.579-16.113 3.71-23.367 5.003-2.211.374-3.397-1.832-2.31-4.906.5-1.467 1.838-3.456 3.418-4.813a16.047 16.047 0 0 1 6.107-3.365c16.88-4.266 33.763-6.67 51.009-7.389C71.25 3.187 81.81 1.6 92.309.966c11.53-.65 23.097-.938 34.66-.96 7.117-.054 14.25.254 21.36.318l16.194.803 4.62.39c3.85.32 7.693.618 11.53.813 8.346.883 16.673.802 25.144 2.159 1.864.276 3.714.338 5.566.873l.717.225c6.162 1.977 7.92 3.64 7.9 7.197l-.003.203c-.017.875.05 1.772-.112 2.593-.581 2.762-4.066 4.12-8.637 3.63-13.696-1.06-27.935-3.332-42.97-4.168-11.055-.83-22.314-1.459-33.596-1.603l-.022-.332Z" fill="#D1D5DB" fill-rule="evenodd" />
+                        </svg>
+                        Sinar Cell
+                    </span>.</h1>
+                    <p class="text-xl text-gray-500 mb-10" data-aos="fade-right" data-aos-delay="200">Bersama Teknisi Kami Yang Berpengalaman dan Berkompeten.</p>
+                    <!-- Buttons -->
+                    <div class="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center md:justify-start space-y-4 sm:space-y-0 sm:space-x-4 mb-12 md:mb-20" data-aos="fade-right" data-aos-delay="300">
+                        <div>
+                            <a class="btn text-white bg-blue-600 hover:bg-blue-700 w-full shadow-sm" href="signup.html">Konsultasi Gratis</a>
+                        </div>
+                        <div>
+                            <a class="btn text-blue-600 bg-white hover:bg-blue-100 hover:text-blue-600 w-full shadow-sm" href="{{ url('/') }}#pantau-servis">Pantau Servis</a>
+                        </div>
+                    </div>
+                    <!-- Stats -->
+                    {{-- <div class="inline-flex items-center space-x-4 md:space-x-6" data-aos="fade-right" data-aos-delay="400">
+                        <div>
+                            <div class="font-cabinet-grotesk text-2xl font-extrabold">27M</div>
+                            <div class="text-gray-500">Inspiration</div>
+                        </div>
+                        <svg class="fill-gray-300" width="14" height="10" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2.039 0c.099.006 1.237.621 1.649.787.391.17.735.41 1.067.667.682.515 1.387.995 2.089 1.48.102.071.196.153.284.245l.497-.172 1.76-.342.13-.097a.402.402 0 0 1 .206-.09l.107-.012c.218-.035.677-.132 1.143-.122l1.11-.062c.16-.001 1.67.295 1.691.339a.639.639 0 0 1 .026.129c.018.125-.035.29.09.352.045.022.167.292.084.41l-.137.203a.726.726 0 0 1-.147.164 5.18 5.18 0 0 1-.658.404l-.182.089a.534.534 0 0 0-.257.327c-.046.133-.134.134-.204.189-.376.26-.736.581-1.102.868L11 5.965l.219.284.55.784c.093.129.187.255.286.375.052.073.137.1.147.242.022.324.182.399.314.529.184.179.363.368.528.581.081.107.123.285.179.437.049.138-.138.362-.186.37-.137.023-.128.197-.178.312a.618.618 0 0 1-.058.116c-.03.034-1.375-.105-1.67-.162l-.09-.028-1.004-.368c-.552-.157-1.05-.462-1.167-.498-.117-.043-.19-.173-.275-.278l-1.604-.847c-.138-.113-.294-.199-.433-.311l-.162.083-.174.068c-.8.26-1.602.514-2.39.808-.385.15-.778.278-1.198.327-.439.038-1.692.294-1.788.271a3.114 3.114 0 0 1-.505-.227c-.09-.049-.306-.58-.324-.78-.056-.628.013-1.007.285-.96.11.02.29-.51.395-.536.06-.016.165-.088.287-.182l.334-.266c.157-.126.297-.234.363-.252.697-.205 1.325-.62 2.004-.878l.063-.035.07-.057-.01-.013a.425.425 0 0 0-.094-.115c-.586-.448-1.082-1.031-1.7-1.434-.058-.036-.165-.181-.284-.349L1.55 2.72c-.12-.168-.233-.316-.3-.356-.095-.056-.131-.619-.24-.632C.734 1.696.765 1.31.982.725 1.05.537 1.396.09 1.495.07c.192-.037.38-.07.544-.07Z" fill-rule="evenodd" />
+                        </svg>
+                        <div>
+                            <div class="font-cabinet-grotesk text-2xl font-extrabold">44K</div>
+                            <div class="text-gray-500">Collections</div>
+                        </div>
+                        <svg class="fill-gray-300" width="14" height="10" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2.039 0c.099.006 1.237.621 1.649.787.391.17.735.41 1.067.667.682.515 1.387.995 2.089 1.48.102.071.196.153.284.245l.497-.172 1.76-.342.13-.097a.402.402 0 0 1 .206-.09l.107-.012c.218-.035.677-.132 1.143-.122l1.11-.062c.16-.001 1.67.295 1.691.339a.639.639 0 0 1 .026.129c.018.125-.035.29.09.352.045.022.167.292.084.41l-.137.203a.726.726 0 0 1-.147.164 5.18 5.18 0 0 1-.658.404l-.182.089a.534.534 0 0 0-.257.327c-.046.133-.134.134-.204.189-.376.26-.736.581-1.102.868L11 5.965l.219.284.55.784c.093.129.187.255.286.375.052.073.137.1.147.242.022.324.182.399.314.529.184.179.363.368.528.581.081.107.123.285.179.437.049.138-.138.362-.186.37-.137.023-.128.197-.178.312a.618.618 0 0 1-.058.116c-.03.034-1.375-.105-1.67-.162l-.09-.028-1.004-.368c-.552-.157-1.05-.462-1.167-.498-.117-.043-.19-.173-.275-.278l-1.604-.847c-.138-.113-.294-.199-.433-.311l-.162.083-.174.068c-.8.26-1.602.514-2.39.808-.385.15-.778.278-1.198.327-.439.038-1.692.294-1.788.271a3.114 3.114 0 0 1-.505-.227c-.09-.049-.306-.58-.324-.78-.056-.628.013-1.007.285-.96.11.02.29-.51.395-.536.06-.016.165-.088.287-.182l.334-.266c.157-.126.297-.234.363-.252.697-.205 1.325-.62 2.004-.878l.063-.035.07-.057-.01-.013a.425.425 0 0 0-.094-.115c-.586-.448-1.082-1.031-1.7-1.434-.058-.036-.165-.181-.284-.349L1.55 2.72c-.12-.168-.233-.316-.3-.356-.095-.056-.131-.619-.24-.632C.734 1.696.765 1.31.982.725 1.05.537 1.396.09 1.495.07c.192-.037.38-.07.544-.07Z" fill-rule="evenodd" />
+                        </svg>
+                        <div>
+                            <div class="font-cabinet-grotesk text-2xl font-extrabold">2M+</div>
+                            <div class="text-gray-500">Creatives</div>
+                        </div>
+                    </div> --}}
+                </div>
+
+                <!-- Image -->
+                <div class="max-w-sm mx-auto md:max-w-none md:absolute md:left-[25rem] md:ml-16 lg:ml-32 xl:ml-52 mt-12 md:-mt-12" data-aos="fade-left" data-aos-duration="1100">
+                  <img src="{{ asset('/assets/frontsite/images/hero-image.png') }}" class="md:max-w-none" width="554" height="629" alt="Hero Illustration" />
+                </div>
+
             </div>
-        </div>
-        <div class="relative w-full px-5 rounded-lg cursor-pointer lg:w-1/2 group xl:px-0">
-            <div class="absolute top-0 left-0 w-11/12 -mt-20 opacity-50">
-                <svg class="w-full h-full ml-4 text-blue-100" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M45,-78C58.3,-70.3,69,-58.2,75.2,-44.4C81.3,-30.7,82.9,-15.3,83.5,0.4C84.2,16,83.8,32.1,76.5,43.9C69.2,55.7,55.1,63.3,41.2,69.4C27.3,75.4,13.6,80,-0.7,81.2C-15.1,82.5,-30.1,80.3,-41.2,72.6C-52.2,64.9,-59.2,51.6,-67.1,38.5C-75.1,25.5,-83.9,12.8,-83.8,0C-83.8,-12.7,-74.9,-25.4,-65.8,-36.4C-56.7,-47.4,-47.4,-56.7,-36.4,-65.7C-25.4,-74.7,-12.7,-83.5,1.6,-86.2C15.9,-89,31.8,-85.7,45,-78Z" transform="translate(100 100)"></path></svg>
-            </div>
-            <div class="relative overflow-hidden rounded-md shadow-2xl cursor-pointer group" data-rounded="rounded-md" data-rounded-max="rounded-full">
-                <img src="{{ asset('/assets/frontsite/images/hero-image.png') }}" class="z-10 object-cover w-full h-full">
-            </div>
+
         </div>
     </div>
   </section>
-{{-- End Hero --}}
+  {{-- End Hero --}}
 
-{{-- Feature --}}
-<section class="py-20 bg-white tails-selected-element">
-  <div class="container max-w-6xl mx-auto">
-      <h2 class="text-4xl font-bold tracking-tight text-center text-gray-800">Mengapa Memilih Kami?</h2>
-      <p class="mt-2 text-lg text-center text-gray-600">Check out our list of awesome features below.</p>
-      <div class="grid grid-cols-4 gap-8 mt-10 sm:grid-cols-8 lg:grid-cols-12 sm:px-8 xl:px-0">
+  <section>
+    <div class="max-w-6xl py-20 mx-auto px-4 sm:px-6">
+        <div class="pt-10 pb-10 md:pt-16 md:pb-18">
 
-          <div class="relative flex flex-col items-center justify-between col-span-4 px-8 py-12 space-y-4 overflow-hidden bg-gray-100 sm:rounded-xl" data-rounded="rounded-xl" data-rounded-max="rounded-full">
-              <div class="p-3 text-white bg-blue-500 rounded-full" data-primary="blue-500" data-rounded="rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 " viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M5 8v-3a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-5"></path><circle cx="6" cy="14" r="3"></circle><path d="M4.5 17l-1.5 5l3 -1.5l3 1.5l-1.5 -5"></path></svg>
-              </div>
-              <h4 class="text-xl font-medium text-gray-700">Pengecekan dan Konsultasi</h4>
-              <p class="text-base text-center text-gray-500">Gratis biaya pengecekan dan konsultasi</p>
-          </div>
+            <!-- Section header -->
+            <div class="max-w-3xl mx-auto text-center pb-12 md:pb-20">
+                <h2 class="h2 mb-4 text-gray-800" data-aos="fade-up">Mengapa percaya kami?</h2>
+                <p class="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="200">Kami adalah pilihan yang tepat untuk kebutuhan perbaikan device Anda.</p>
+            </div>
 
-          <div class="flex flex-col items-center justify-between col-span-4 px-8 py-12 space-y-4 bg-gray-100 sm:rounded-xl" data-rounded="rounded-xl" data-rounded-max="rounded-full">
-              <div class="p-3 text-white bg-blue-500 rounded-full" data-primary="blue-500" data-rounded="rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 " viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M18 8a3 3 0 0 1 0 6"></path><path d="M10 8v11a1 1 0 0 1 -1 1h-1a1 1 0 0 1 -1 -1v-5"></path><path d="M12 8h0l4.524 -3.77a0.9 .9 0 0 1 1.476 .692v12.156a0.9 .9 0 0 1 -1.476 .692l-4.524 -3.77h-8a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h8"></path></svg>
-              </div>
-              <h4 class="text-xl font-medium text-gray-700">Murah dan Jujur</h4>
-              <p class="text-base text-center text-gray-500">Kami menjanjikan harga yang ditawarkan dapat bersaing dan tetap mengutamakan kualitas.</p>
-          </div>
+            <!-- Items -->
+            <div class="max-w-sm mx-auto grid gap-8 md:grid-cols-3 lg:gap-16 items-start md:max-w-none">
 
-          <div class="flex flex-col items-center justify-between col-span-4 px-8 py-12 space-y-4 bg-gray-100 sm:rounded-xl" data-rounded="rounded-xl" data-rounded-max="rounded-full">
-              <div class="p-3 text-white bg-blue-500 rounded-full" data-primary="blue-500" data-rounded="rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 " viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline><line x1="12" y1="12" x2="20" y2="7.5"></line><line x1="12" y1="12" x2="12" y2="21"></line><line x1="12" y1="12" x2="4" y2="7.5"></line><line x1="16" y1="5.25" x2="8" y2="9.75"></line></svg>
-              </div>
-              <h4 class="text-xl font-medium text-gray-700">Bergaransi</h4>
-              <p class="text-base text-center text-gray-500">Garansi servis selama 14 hari. *untuk semua jenis kerusakan</p>
-          </div>
-      </div>
-  </div>
-</section>
-
-{{-- Review --}}
-  <section class="bg-white">
-    <div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-      <h2 class="text-center text-4xl font-bold tracking-tight sm:text-4xl text-gray-800">
-        Kata Mereka Tentang Kami
-      </h2>
-
-      <div class="swiper-container mt-12 !overflow-hidden">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <blockquote class="rounded-lg bg-gray-100 p-8">
-              <div class="flex items-center">
-                <img
-                  alt="Man"
-                  src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80"
-                  class="h-16 w-16 rounded-full object-cover"
-                />
-
-                <div class="ml-4">
-                  <div class="flex justify-center gap-0.5 text-green-500">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                  </div>
-
-                  <p class="mt-1 text-lg font-medium text-gray-700">Anwar Karbit</p>
+                <!-- 1st item -->
+                <div class="relative flex flex-col items-center" data-aos="fade-up">
+                    <div class="w-16 h-16 mb-4 bg-blue-600 rounded-full flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+                        <path class="stroke-current text-white" stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0" />
+                      </svg>
+                    </div>
+                    <h4 class="h4 mb-2">Berpengalaman</h4>
+                    <p class="text-lg text-gray-600 text-center">Teknisi yang berpengalaman seusai dengan bidang spesialis pengerjaan masing-masing.</p>
                 </div>
-              </div>
 
-              <p class="mt-4 text-gray-500">
-                Pelayanan Sangat Baik, Pengerjaan Cepat.
-              </p>
-            </blockquote>
-          </div>
-
-          <div class="swiper-slide">
-            <blockquote class="rounded-lg bg-gray-100 p-8">
-              <div class="flex items-center">
-                <img
-                  alt="Man"
-                  src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80"
-                  class="h-16 w-16 rounded-full object-cover"
-                />
-
-                <div class="ml-4">
-                  <div class="flex justify-center gap-0.5 text-green-500">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                  </div>
-
-                  <p class="mt-1 text-lg font-medium text-gray-700">Ahmad Toha</p>
+                <!-- 2nd item -->
+                <div class="relative flex flex-col items-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 mb-4 bg-blue-600 rounded-full flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+                        <path class="stroke-current text-white" stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h4 class="h4 mb-2">Murah dan Jujur</h4>
+                    <p class="text-lg text-gray-600 text-center">Kami menjanjikan harga yang ditawarkan dapat bersaing dan tetap mengutamakan kualitas.</p>
                 </div>
-              </div>
 
-              <p class="mt-4 text-gray-500">
-                Pelayanan sangat baik, Harga terbilang murah.
-              </p>
-            </blockquote>
-          </div>
-
-          <div class="swiper-slide">
-            <blockquote class="rounded-lg bg-gray-100 p-8">
-              <div class="flex items-center">
-                <img
-                  alt="Man"
-                  src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1180&q=80"
-                  class="h-16 w-16 rounded-full object-cover"
-                />
-
-                <div class="ml-4">
-                  <div class="flex justify-center gap-0.5 text-green-500">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                  </div>
-
-                  <p class="mt-1 text-lg font-medium text-gray-700">Nanda Pradana</p>
+                <!-- 3rd item -->
+                <div class="relative flex flex-col items-center" data-aos="fade-up" data-aos-delay="400">
+                    <div class="w-16 h-16 mb-4 bg-blue-600 rounded-full flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+                        <path class="stroke-current text-white" stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                      </svg>
+                    </div>
+                    <h4 class="h4 mb-2">Berkualitas & Bergaransi</h4>
+                    <p class="text-lg text-gray-600 text-center">Kami memberikan pelayanan service profesional dengan menyediakan sparepart berkualitas dan bergaransi.</p>
                 </div>
-              </div>
 
-              <p class="mt-4 text-gray-500">
-                2x servis disini, tidak pernah mengecewakan.
-              </p>
-            </blockquote>
-          </div>
+            </div>
+
         </div>
-      </div>
     </div>
   </section>
-{{-- End Review --}}
+
+  <section>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="py-12 md:py-20 border-t border-gray-200">
+
+            <!-- Section header -->
+            <div class="max-w-3xl mx-auto text-center pb-12 md:pb-20">
+                <h2 class="h2 mb-4 text-gray-800">Now Open</h2>
+                <p class="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="200">Datang langsung ke tempat?</p>
+            </div>
+
+            <!-- Items -->
+            <div class="max-w-sm mx-auto grid gap-8 md:grid-cols-3 lg:gap-16 items-start md:max-w-none">
+
+                <!-- 1st item -->
+                <a class="flex flex-col p-5 group text-white bg-gradient-to-tr from-blue-600 to-blue-500 shadow-2xl" href="{{ url('https://maps.app.goo.gl/N6x1LwXyhq2tHprW9') }}" target="_blank" data-aos="fade-down" data-aos-anchor="[data-aos-id-featbl]">
+                    <div class="text-xl font-bold mb-1">Kediri</div>
+                    <div class="grow opacity-80 mb-4">Jl. Joyoboyo No.22, Karangrejo, Kec. Ngasem, Kabupaten Kediri, Jawa Timur 64182</div>
+                    <svg class="w-6 h-6 self-end transform -translate-x-2 group-hover:translate-x-0 transition duration-150 ease-in-out" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path class="fill-current" d="M13 11V5.057L22.72 12 13 18.943V13H2v-2h11zm2 4.057L19.28 12 15 8.943v6.114z" />
+                    </svg>
+                </a>
+
+                <!-- 2nd item -->
+                <a class="flex flex-col p-5 group text-white bg-gradient-to-tr from-blue-600 to-blue-500 shadow-2xl" href="{{ url('https://maps.app.goo.gl/5HnCHZx66EftZonq5') }}" target="_blank" data-aos="fade-down" data-aos-anchor="[data-aos-id-featbl]" data-aos-delay="100">
+                    <div class="text-xl font-bold mb-1">Kediri</div>
+                    <div class="grow opacity-80 mb-4">Jl. Tunggul Wulung, Karangrejo, Kec. Ngasem, Kabupaten Kediri, Jawa Timur 64182</div>
+                    <svg class="w-6 h-6 self-end transform -translate-x-2 group-hover:translate-x-0 transition duration-150 ease-in-out" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path class="fill-current" d="M13 11V5.057L22.72 12 13 18.943V13H2v-2h11zm2 4.057L19.28 12 15 8.943v6.114z" />
+                    </svg>
+                </a>
+
+                <!-- 3rd item -->
+                <a class="flex flex-col p-5 group text-white bg-gradient-to-tr from-blue-600 to-blue-500 shadow-2xl" href="{{ url('https://goo.gl/maps/VgGUDwmvdbbHrF73A') }}" target="_blank" data-aos="fade-down" data-aos-anchor="[data-aos-id-featbl]" data-aos-delay="200">
+                    <div class="text-xl font-bold mb-1">Pare</div>
+                    <div class="grow opacity-80 mb-4">Bendo Lor, Bendo, Kec. Pare, Kabupaten Kediri, Jawa Timur 64225</div>
+                    <svg class="w-6 h-6 self-end transform -translate-x-2 group-hover:translate-x-0 transition duration-150 ease-in-out" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path class="fill-current" d="M13 11V5.057L22.72 12 13 18.943V13H2v-2h11zm2 4.057L19.28 12 15 8.943v6.114z" />
+                    </svg>
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+  </section>
+
+  <section class="bg-gray-50" id="pantau-servis">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+        <!-- CTA box -->
+        <div class="relative py-10 px-8 md:py-16 md:px-12" data-aos="fade-up">
+
+            <div class="relative flex flex-col lg:flex-row justify-between items-center">
+
+                <!-- CTA content -->
+                <div class="mb-6 lg:mr-16 lg:mb-0 text-center lg:text-left lg:w-1/2">
+                    <h3 class="h3 text-gray-800 mb-2">Pantau Perbaikan Anda</h3>
+                    <p class="text-gray-500 text-lg">Setelah servis telah kami terima, Anda dapat memantau perbaikan dengan memasukan nomer HP yang telah Anda berikan pada saat pendataan servis.</p>
+                </div>
+
+                <!-- CTA form --> 
+                <form action="{{ route('tracking.track') }}" method="POST" class="w-full lg:w-1/2">
+                  @csrf
+                    <div class="flex flex-col sm:flex-row justify-center max-w-xs mx-auto sm:max-w-md lg:max-w-none">
+                      <input class="text-gray-500 border-blue-500 focus:border-blue-300 w-full mb-2 sm:mb-0 sm:mr-2 rounded-sm" type="tel" id="contact" type="text" name="contact" placeholder="Masukan Nomer Hp Anda Diawali 62" required>
+                      <button class="btn text-white bg-blue-600 hover:bg-blue-700 shadow" type="submit">Pantau</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+  </section>
+
+  <!-- Features zigzag -->
+  <section>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="py-12 md:py-20">
+
+            <!-- Section header -->
+            <div class="max-w-3xl mx-auto text-center pb-12 md:pb-16">
+                <h2 class="h2 mb-4 text-gray-800">Cara Kerja</h2>
+                <p class="text-xl text-gray-600">Servis handphone Anda
+                  di rumah atau kantor Anda dengan 3 cara mudah ini.</p>
+            </div>
+
+            <!-- Items -->
+            <div class="grid gap-20">
+
+                <!-- 1st item -->
+                <div class="md:grid md:grid-cols-12 md:gap-6 items-center">
+                    <!-- Image -->
+                    <div class="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-5 lg:col-span-6 mb-8 md:mb-0 md:order-1" data-aos="fade-up">
+                        <img class="max-w-full mx-auto md:max-w-none h-auto" src="{{ asset('/assets/frontsite/images/step1.png') }}" width="520" height="385" alt="Features 01" />
+                    </div>
+                    <!-- Content -->
+                    <div class="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-7 lg:col-span-6" data-aos="fade-right">
+                        <div class="md:pr-4 lg:pr-12 xl:pr-16">
+                            <h3 class="h3 mb-3 text-gray-800">1. Konsultasi</h3>
+                            <p class="text-xl text-gray-600 mb-4">Konsultasikan masalah handphone Anda melalui whatsapp Kami.</p>
+                            <ul class="text-lg text-gray-600 -mb-2">
+                                <li class="flex items-center mb-2">
+                                    <svg class="w-3 h-3 fill-current text-green-500 mr-2 shrink-0" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.28 2.28L3.989 8.575 1.695 6.28A1 1 0 00.28 7.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 2.28z" />
+                                    </svg>
+                                    <span>Kami akan melakukan diagnosa tahap awal.</span>
+                                </li>
+                                <li class="flex items-center mb-2">
+                                    <svg class="w-3 h-3 fill-current text-green-500 mr-2 shrink-0" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.28 2.28L3.989 8.575 1.695 6.28A1 1 0 00.28 7.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 2.28z" />
+                                    </svg>
+                                    <span>Kami akan memberikan kemungkinan perbaikan yang dibutuhkan.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2nd item -->
+                <div class="md:grid md:grid-cols-12 md:gap-6 items-center">
+                    <!-- Image -->
+                    <div class="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-5 lg:col-span-6 mb-8 md:mb-0 rtl" data-aos="fade-up">
+                        <img class="max-w-full mx-auto md:max-w-none h-auto" src="{{ asset('/assets/frontsite/images/step2.png') }}" width="540" height="405" alt="Features 02" />
+                    </div>
+                    <!-- Content -->
+                    <div class="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-7 lg:col-span-6" data-aos="fade-left">
+                        <div class="md:pl-4 lg:pl-12 xl:pl-16">
+                            <h3 class="h3 mb-3 text-gray-800">2. Jadwalkan Servis</h3>
+                            <p class="text-xl text-gray-600 mb-4">Berikan lokasi dan waktu sesuai keinginan Anda.</p>
+                            <ul class="text-lg text-gray-600 -mb-2">
+                                <li class="flex items-center mb-2">
+                                    <svg class="w-3 h-3 fill-current text-green-500 mr-2 shrink-0" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.28 2.28L3.989 8.575 1.695 6.28A1 1 0 00.28 7.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 2.28z" />
+                                    </svg>
+                                    <span> Kami akan mempersiapkan kebutuhan perbaikan Anda.</span>
+                                </li>
+                                <li class="flex items-center mb-2">
+                                    <svg class="w-3 h-3 fill-current text-green-500 mr-2 shrink-0" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.28 2.28L3.989 8.575 1.695 6.28A1 1 0 00.28 7.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 2.28z" />
+                                    </svg>
+                                    <span> Kami akan membuat jadwal kunjungan ke tempat Anda.</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="w-3 h-3 fill-current text-green-500 mr-2 shrink-0" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.28 2.28L3.989 8.575 1.695 6.28A1 1 0 00.28 7.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 2.28z" />
+                                    </svg>
+                                    <span> Memberikan estimasi biaya & kesepakatan untuk perbaikan Anda.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3rd item -->
+                <div class="md:grid md:grid-cols-12 md:gap-6 items-center">
+                    <!-- Image -->
+                    <div class="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-5 lg:col-span-6 mb-8 md:mb-0 md:order-1" data-aos="fade-up">
+                        <img class="max-w-full mx-auto md:max-w-none h-auto" src="{{ asset('/assets/frontsite/images/step3.png') }}" width="520" height="485" alt="Features 03" />
+                    </div>
+                    <!-- Content -->
+                    <div class="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-7 lg:col-span-6" data-aos="fade-right">
+                        <div class="md:pr-4 lg:pr-12 xl:pr-16">
+                            <h3 class="h3 mb-3 text-gray-800">3. Device Anda di Servis</h3>
+                            <p class="text-xl text-gray-600 mb-4">Teknisi kami akan datang dan menservis device Anda.</p>
+                            <ul class="text-lg text-gray-600 -mb-2">
+                                <li class="flex items-center mb-2">
+                                    <svg class="w-3 h-3 fill-current text-green-500 mr-2 shrink-0" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.28 2.28L3.989 8.575 1.695 6.28A1 1 0 00.28 7.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 2.28z" />
+                                    </svg>
+                                    <span> Kami melakukan diagnosa tahap lanjut langsung.</span>
+                                </li>
+                                <li class="flex items-center mb-2">
+                                    <svg class="w-3 h-3 fill-current text-green-500 mr-2 shrink-0" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.28 2.28L3.989 8.575 1.695 6.28A1 1 0 00.28 7.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 2.28z" />
+                                    </svg>
+                                    <span> Melakukan perbaikan sesuai kerusakan yang terjadi.</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="w-3 h-3 fill-current text-green-500 mr-2 shrink-0" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.28 2.28L3.989 8.575 1.695 6.28A1 1 0 00.28 7.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28 2.28z" />
+                                    </svg>
+                                    <span> Kami memastikan perbaikan & device Anda normal kembali.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="py-12 md:py-20 border-t border-gray-200">
+
+            <!-- Section content -->
+            <div class="relative max-w-xl mx-auto md:max-w-none text-center md:text-left flex flex-col md:flex-row items-center">
+
+                <!-- Content -->
+                <div class="w-[512px] max-w-full shrink-0">
+
+                    <!-- Copy -->
+                    <h2 class="h2 mb-4 text-gray-800" data-aos="fade-up" data-aos-anchor="[data-aos-id-4]" data-aos-delay="100">Kerusakan device yang sering kami tangani</h2>
+                    <p class="text-lg text-gray-800 mb-6" data-aos="fade-up" data-aos-anchor="[data-aos-id-4]" data-aos-delay="200">Mungkin sekarang kamu sedang mengalaminya! </p>
+
+                    <!-- Lists -->
+                    <div class="sm:columns-2 mb-8 space-y-8 sm:space-y-0" data-aos="fade-up" data-aos-anchor="[data-aos-id-4]" data-aos-delay="300">
+                        <!-- Column #1 -->
+                        <div>
+                            <h5 class="font-bold mb-5">Kerusakan Hardware</h5>
+                            <ul class="inline-flex flex-col text-gray-800 space-y-2.5">
+                                <li class="flex items-center">
+                                    <svg class="shrink-0 mr-3" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="fill-blue-100" cx="10" cy="10" r="10" />
+                                        <path class="fill-blue-600" d="M15.335 7.933 14.87 7c-4.025 1.167-6.067 3.733-6.067 3.733l-1.867-1.4-.933.934L8.802 14c2.158-4.025 6.533-6.067 6.533-6.067Z" />
+                                    </svg>
+                                    <span>Layar pecah</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="shrink-0 mr-3" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="fill-blue-100" cx="10" cy="10" r="10" />
+                                        <path class="fill-blue-600" d="M15.335 7.933 14.87 7c-4.025 1.167-6.067 3.733-6.067 3.733l-1.867-1.4-.933.934L8.802 14c2.158-4.025 6.533-6.067 6.533-6.067Z" />
+                                    </svg>
+                                    <span>Sentuh tidak fungsi</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="shrink-0 mr-3" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="fill-blue-100" cx="10" cy="10" r="10" />
+                                        <path class="fill-blue-600" d="M15.335 7.933 14.87 7c-4.025 1.167-6.067 3.733-6.067 3.733l-1.867-1.4-.933.934L8.802 14c2.158-4.025 6.533-6.067 6.533-6.067Z" />
+                                    </svg>
+                                    <span>Baterai boros/mengembung</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="shrink-0 mr-3" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="fill-blue-100" cx="10" cy="10" r="10" />
+                                        <path class="fill-blue-600" d="M15.335 7.933 14.87 7c-4.025 1.167-6.067 3.733-6.067 3.733l-1.867-1.4-.933.934L8.802 14c2.158-4.025 6.533-6.067 6.533-6.067Z" />
+                                    </svg>
+                                    <span>Tidak bisa charger</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="shrink-0 mr-3" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="fill-blue-100" cx="10" cy="10" r="10" />
+                                        <path class="fill-blue-600" d="M15.335 7.933 14.87 7c-4.025 1.167-6.067 3.733-6.067 3.733l-1.867-1.4-.933.934L8.802 14c2.158-4.025 6.533-6.067 6.533-6.067Z" />
+                                    </svg>
+                                    <span>Tombol tidak berfungsi</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="shrink-0 mr-3" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="fill-blue-100" cx="10" cy="10" r="10" />
+                                        <path class="fill-blue-600" d="M15.335 7.933 14.87 7c-4.025 1.167-6.067 3.733-6.067 3.733l-1.867-1.4-.933.934L8.802 14c2.158-4.025 6.533-6.067 6.533-6.067Z" />
+                                    </svg>
+                                    <span>Kamera buram/blank</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="shrink-0 mr-3" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="fill-blue-100" cx="10" cy="10" r="10" />
+                                        <path class="fill-blue-600" d="M15.335 7.933 14.87 7c-4.025 1.167-6.067 3.733-6.067 3.733l-1.867-1.4-.933.934L8.802 14c2.158-4.025 6.533-6.067 6.533-6.067Z" />
+                                    </svg>
+                                    <span>IC Rusak (Ganti EMMC, Power, dll)</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- Column #2 -->
+                        <div>
+                            <h5 class="font-bold mb-5">Kerusakan Software</h5>
+                            <ul class="inline-flex flex-col text-gray-800 space-y-2.5">
+                                <li class="flex items-center">
+                                    <svg class="shrink-0 mr-3" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="fill-blue-100" cx="10" cy="10" r="10" />
+                                        <path class="fill-blue-600" d="M15.335 7.933 14.87 7c-4.025 1.167-6.067 3.733-6.067 3.733l-1.867-1.4-.933.934L8.802 14c2.158-4.025 6.533-6.067 6.533-6.067Z" />
+                                    </svg>
+                                    <span>Flash semua tipe</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="shrink-0 mr-3" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="fill-blue-100" cx="10" cy="10" r="10" />
+                                        <path class="fill-blue-600" d="M15.335 7.933 14.87 7c-4.025 1.167-6.067 3.733-6.067 3.733l-1.867-1.4-.933.934L8.802 14c2.158-4.025 6.533-6.067 6.533-6.067Z" />
+                                    </svg>
+                                    <span>Bootloop/Stuck logo</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="shrink-0 mr-3" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="fill-blue-100" cx="10" cy="10" r="10" />
+                                        <path class="fill-blue-600" d="M15.335 7.933 14.87 7c-4.025 1.167-6.067 3.733-6.067 3.733l-1.867-1.4-.933.934L8.802 14c2.158-4.025 6.533-6.067 6.533-6.067Z" />
+                                    </svg>
+                                    <span>Stuck recovery</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="shrink-0 mr-3" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="fill-blue-100" cx="10" cy="10" r="10" />
+                                        <path class="fill-blue-600" d="M15.335 7.933 14.87 7c-4.025 1.167-6.067 3.733-6.067 3.733l-1.867-1.4-.933.934L8.802 14c2.158-4.025 6.533-6.067 6.533-6.067Z" />
+                                    </svg>
+                                    <span>Imei Null</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="shrink-0 mr-3" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="fill-blue-100" cx="10" cy="10" r="10" />
+                                        <path class="fill-blue-600" d="M15.335 7.933 14.87 7c-4.025 1.167-6.067 3.733-6.067 3.733l-1.867-1.4-.933.934L8.802 14c2.158-4.025 6.533-6.067 6.533-6.067Z" />
+                                    </svg>
+                                    <span>Brick/Unbrick</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Image -->
+                <div class="w-full max-w-sm md:max-w-none md:ml-8 mt-8 md:mt-0">
+                    <div class="relative -mx-8 md:mx-0">
+                        <img src="{{ asset('/assets/frontsite/images/kerusakan.jpg') }}" class="md:max-w-none ml-auto" width="496" height="496" alt="Features 04" data-aos="fade-up" data-aos-anchor="[data-aos-id-4]" />
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+  </section>
+
+  <!-- Cta -->
+  <section>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="pb-12 md:pb-20">
+
+            <!-- CTA box -->
+            <div class="bg-blue-600 rounded py-10 px-8 md:py-16 md:px-12 shadow-2xl" data-aos="zoom-y-out">
+    
+                <div class="flex flex-col lg:flex-row justify-between items-center">
+    
+                    <!-- CTA content -->
+                    <div class="mb-6 lg:mr-16 lg:mb-0 text-center lg:text-left">
+                        <h3 class="h3 text-white mb-2">Tunggu apa lagi?</h3>
+                        <p class="text-white text-lg opacity-75">Konsultasikan kepada kami segala keluhan device kamu.</p>
+                    </div>
+    
+                    <!-- CTA button -->
+                    <div>
+                        <a class="btn text-blue-600 bg-gradient-to-r from-blue-100 to-white" href="#0">Konsultasi Gratis</a>
+                    </div>
+    
+                </div>
+    
+            </div>
+
+        </div>
+    </div>
+  </section>
 
 @endsection

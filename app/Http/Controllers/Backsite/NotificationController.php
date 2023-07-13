@@ -93,6 +93,16 @@ class NotificationController extends Controller
     }
 
     // custom
+    public function serviceDone($id)
+    {
+        auth()->user()->unreadNotifications->where('id', request('id'))->first()?->markAsRead();
+        // Ambil data tugas servis berdasarkan ID
+        $service = Service::findOrFail($id);
+
+        // Tampilkan tampilan detail tugas servis
+        return view('pages.backsite.notification.service-done', compact('service'));
+    }
+
     public function warranty($id)
     {
         auth()->user()->unreadNotifications->where('id', request('id'))->first()?->markAsRead();

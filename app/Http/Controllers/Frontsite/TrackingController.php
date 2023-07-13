@@ -58,6 +58,15 @@ class TrackingController extends Controller
     public function show($id)
     {
         $service = Service::findOrFail($id);
+        $customers = Service::where('customer_id', $service->customer_id)->get();
+        $count = $customers->count();
+
+        if ($count > 1) {
+            $remainingCount = $count - 1;
+            $buttonSisa = "Cek {$remainingCount} Servis Lainnya";
+        } else {
+            $buttonSisa = "";
+        }
         
         if ($service->status <= 7) {
             $service_detail = null;
@@ -85,7 +94,7 @@ class TrackingController extends Controller
             ];
         }
         
-        return view('pages.frontsite.tracking.show', compact('service', 'service_detail', 'transaction', 'warrantyInfo'));
+        return view('pages.frontsite.tracking.show', compact('service', 'service_detail', 'transaction', 'warrantyInfo', 'buttonSisa'));
     }
 
     /**

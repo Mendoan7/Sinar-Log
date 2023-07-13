@@ -35,7 +35,7 @@ use App\Http\Controllers\Backsite\NotificationController;
 Route::resource('/', LandingController::class);
 
 Route::get('tracking', [TrackingController::class, 'index']);
-Route::post('tracking', [TrackingController::class, 'track']);
+Route::post('tracking', [TrackingController::class, 'track'])->name('tracking.track');
 Route::get('tracking/service/{id}', [TrackingController::class, 'show'])->name('tracking.show');
 
 Route::get('/service/confirmation/{token}', [ConfirmationController::class, 'confirmService'])->name('confirmation.service');
@@ -87,6 +87,7 @@ Route::group(['prefix' => 'backsite', 'as' => 'backsite.', 'middleware' => ['aut
 
     // notification
     Route::resource('notification', NotificationController::class);
+    Route::get('notification/service-done/{id}', [NotificationController::class, 'serviceDone'])->name('notification.serviceDone');
     Route::get('notification/warranty/{id}', [NotificationController::class, 'warranty'])->name('notification.warranty');
     Route::get('notification/confirmation/{id}', [NotificationController::class, 'confirmation'])->name('notification.confirmation');
     Route::get('notification/confirmation/reject/{id}', [NotificationController::class, 'confirmReject'])->name('notification.confirmReject');

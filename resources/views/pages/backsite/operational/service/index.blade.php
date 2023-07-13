@@ -28,99 +28,93 @@
                                 @endcan
                                 
                                 {{-- Add Service Modal --}}
-                                <div class="modal fade bs-example-modal-center" id="addServiceModal" tabindex="-1" aria-hidden="true" aria-labelledby="addServiceModalLabel">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="addServiceModalLabel">Tambah Data Servis Baru</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <form class="form form-horizontal" action="{{ route('backsite.service.store') }}" method="POST">
+                                    @csrf
+                                    <div class="modal fade bs-example-modal-center" id="addServiceModal" tabindex="-1" aria-hidden="true" aria-labelledby="addServiceModalLabel">
+                                        <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Tambah Data Servis Baru</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    @if ($errors->any())
+                                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                            <div>
+                                                                @foreach ($errors->all() as $error)
+                                                                    <li>{{ $error }}</li>
+                                                                @endforeach
+                                                            </div>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                        </div>
+                                                    @endif
+                                                    <div class="mb-2">
+                                                        <label for="customer_id" class="form-label">Pemilik Barang</label>
+                                                        <select class="form-control select2" 
+                                                            data-placeholder="Pilih Pemilik Barang" 
+                                                            title="customer_id" 
+                                                            name="customer_id" 
+                                                            id="customer_id" required>
+                                                            <option value="{{ '' }}" disabled selected>Pilih Pemilik Barang</option>
+                                                                @foreach($customer as $key => $customer_item)
+                                                                    <option value="{{ $customer_item->id }}">{{ $customer_item->name }} - No.Telepon {{ $customer_item->contact }}</option>
+                                                                @endforeach
+                                                        </select>  
+                                                    </div>
+
+                                                    <div class="mb-2">
+                                                        <label for="jenis" class="form-label">Jenis Barang</label>
+                                                        <input type="text" class="form-control @error('jenis') is-invalid @enderror" list="jenisOption" name="jenis" id="jenis" placeholder="Jenis barang">
+                                                            <datalist id="jenisOption">
+                                                                <option value="HP">
+                                                                <option value="Tablet">
+                                                                <option value="Notebook">
+                                                                <option value="Laptop">
+                                                                <option value="Powerbank">
+                                                            </datalist>
+                                                    </div>
+
+                                                    <div class="mb-2">
+                                                        <label for="tipe" class="form-label">Tipe/Merek</label>
+                                                        <input type="text" class="form-control @error('tipe') is-invalid @enderror" name="tipe" id="tipe" placeholder="Tipe barang yang di servis" required>
+                                                    </div>
+
+                                                    <div class="mb-2">
+                                                        <label for="kelengkapan" class="form-label">Kelengkapan</label>
+                                                        <input type="text" class="form-control @error('kelengkapan') is-invalid @enderror" list="kelengkapanOption" name="kelengkapan" id="kelengkapan" placeholder="Isi kelengkapan barang yang diterima" required>
+                                                            <datalist id="kelengkapanOption">
+                                                                <option value="Unit Only">
+                                                                <option value="Unit, Simcard, dan MicroSD">
+                                                                <option value="Unit dan Simcard">
+                                                            </datalist>
+                                                    </div>
+
+                                                    <div class="mb-2">
+                                                        <label for="kerusakan" class="form-label">Kerusakan</label>
+                                                        <input type="text" class="form-control @error('kerusakan') is-invalid @enderror" name="kerusakan" id="kerusakan" placeholder="Silahkan isi kerusakan barang" required>
+                                                    </div>
+
+                                                    <div class="mb-2">
+                                                        <label for="penerima" class="form-label">Penerima</label>
+                                                        <input type="text" class="form-control" name="penerima" id="penerima" placeholder="Penerima Servis" value="{{ Auth::user()->name }}" disabled>
+                                                    </div>
+
+                                                    <!-- Form Check -->
+                                                    <div class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                        <input class="form-check-input" type="checkbox" value="" id="marketingEmailsCheckbox" required>
+                                                        <label class="form-check-label" for="marketingEmailsCheckbox">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju untuk menerima servis.</label>
+                                                    </div>
+                                                    <!-- End Form Check -->
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <a href="{{ route('backsite.customer.index') }}" class="btn btn-secondary">Buat Data Pelanggan Baru</a>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                    <button type="submit" class="btn btn-primary">Tambah Data</button>
+                                                </div>
                                             </div>
-
-                                            <form class="form form-horizontal" action="{{ route('backsite.service.store') }}" method="POST">
-                                                @csrf
-                                                    <div class="modal-body">
-                                                        <div class="form-group mb-2">
-                                                            <label for="customer_id" class="form-label">Pemilik Barang</label>
-                                                            <select class="form-control select2 @error('customer_id') is-invalid @enderror" 
-                                                                data-placeholder="Pilih Pemilik Barang" 
-                                                                title="customer_id" 
-                                                                name="customer_id" 
-                                                                id="customer_id" required>
-                                                                <option value="{{ '' }}" disabled selected>Pilih Pemilik Barang</option>
-                                                                    @foreach($customer as $key => $customer_item)
-                                                                        <option value="{{ $customer_item->id }}">{{ $customer_item->name }} - No.Telepon {{ $customer_item->contact }}</option>
-                                                                    @endforeach
-                                                            </select>
-                                                            @error('customer_id')
-                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                            @enderror    
-                                                        </div>
-
-                                                        <div class="mb-2">
-                                                            <label for="jenis" class="form-label">Jenis Barang</label>
-                                                            <input type="text" class="form-control @error('jenis') is-invalid @enderror" list="jenisOption" name="jenis" id="jenis" placeholder="Jenis barang">
-                                                                <datalist id="jenisOption">
-                                                                    <option value="HP">
-                                                                    <option value="Tablet">
-                                                                    <option value="Notebook">
-                                                                    <option value="Laptop">
-                                                                    <option value="Powerbank">
-                                                                </datalist>
-                                                            @error('jenis')
-                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                            @enderror 
-                                                        </div>
-
-                                                        <div class="mb-2">
-                                                            <label for="tipe" class="form-label">Tipe/Merek</label>
-                                                            <input type="text" class="form-control @error('tipe') is-invalid @enderror" name="tipe" id="tipe" placeholder="Tipe barang yang di servis" required>
-                                                            @error('tipe')
-                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                            @enderror 
-                                                        </div>
-
-                                                        <div class="mb-2">
-                                                            <label for="kelengkapan" class="form-label">Kelengkapan</label>
-                                                            <input type="text" class="form-control @error('kelengkapan') is-invalid @enderror" list="kelengkapanOption" name="kelengkapan" id="kelengkapan" placeholder="Isi kelengkapan barang yang diterima" required>
-                                                                <datalist id="kelengkapanOption">
-                                                                    <option value="Unit Only">
-                                                                    <option value="Unit, Simcard, dan MicroSD">
-                                                                    <option value="Unit dan Simcard">
-                                                                </datalist>
-                                                            @error('kelengkapan')
-                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                            @enderror 
-                                                        </div>
-
-                                                        <div class="mb-2">
-                                                            <label for="kerusakan" class="form-label">Kerusakan</label>
-                                                            <input type="text" class="form-control @error('kerusakan') is-invalid @enderror" name="kerusakan" id="kerusakan" placeholder="Silahkan isi kerusakan barang" required>
-                                                            @error('kerusakan')
-                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                            @enderror 
-                                                        </div>
-
-                                                        <div class="mb-2">
-                                                            <label for="penerima" class="form-label">Penerima</label>
-                                                            <input type="text" class="form-control" name="penerima" id="penerima" placeholder="Penerima Servis" value="{{ Auth::user()->name }}" required disabled>
-                                                        </div>
-
-                                                        <!-- Form Check -->
-                                                        <div class="form-check d-flex justify-content-end gap-2 mt-4">
-                                                            <input class="form-check-input" type="checkbox" value="" id="marketingEmailsCheckbox" required>
-                                                            <label class="form-check-label" for="marketingEmailsCheckbox">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju untuk menerima servis.</label>
-                                                        </div>
-                                                        <!-- End Form Check -->
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <a href="{{ route('backsite.customer.index') }}" class="btn btn-secondary">Buat Data Pelanggan Baru</a>
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                        <button type="submit" class="btn btn-primary">Tambah Data</button>
-                                                    </div>
-                                            </form>
                                         </div>
                                     </div>
-                                </div>
+                                </form>
                                 {{-- End Add Service Modal --}}
                             </div>
                         </div>
@@ -140,7 +134,9 @@
                                                 <th scope="col">Kerusakan</th>
                                                 <th scope="col">Lama</th>
                                                 <th scope="col">Status</th>
+                                                @can('add_technician')
                                                 <th scope="col">Teknisi</th>
+                                                @endcan
                                                 <th scope="col">Aksi</th>
                                                 <th scope="col">Ubah Status</th>
                                             </tr>
@@ -149,13 +145,12 @@
                                             @forelse($service as $key => $service_item)
                                                 <tr data-entry-id="{{ $service_item->id }}">
                                                     <th scope="row" class="text-body fw-bold">{{ $service_item->kode_servis ?? '' }}</th>
-                                                    <td>
+                                                    <td data-order="{{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 
+                                                        ? $service_item->service_detail->transaction->warranty_history->created_at : $service_item->created_at ?? '' }}">
                                                         {{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 
                                                             ? $service_item->service_detail->transaction->warranty_history->created_at->isoFormat('D MMM Y') 
                                                             : $service_item->created_at->isoFormat('D MMM Y') ?? '' }}
                                                     </td>
-                                                    <input type="hidden" class="created_at" value="{{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 
-                                                        ? $service_item->service_detail->transaction->warranty_history->created_at : $service_item->created_at ?? '' }}">
                                                     <td class="text-body fw-bold">{{ $service_item->customer->name ?? '' }}</td>
                                                     <td data-toggle="tooltip" data-placement="top" title="{{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}">
                                                         {{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}</td>
@@ -188,14 +183,19 @@
                                                         @endif
                                                     </td>
 
+                                                    @can('add_technician')
                                                     <td>
                                                         <ul class="list-unstyled hstack gap-1 mb-0">
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Pilih Teknisi">
-                                                                <button class="btn btn-sm {{ $service_item->teknisi ? 'btn-soft-primary' : 'btn-primary' }}" 
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#teknisiModal{{ $service_item->id }}">
-                                                                    Teknisi
-                                                                </button>
+                                                                @if ($service_item->teknisi)
+                                                                    <button class="btn btn-sm btn-soft-primary fw-bold" data-bs-toggle="modal" data-bs-target="#teknisiModal{{ $service_item->id }}">
+                                                                        {{ explode(' ', $service_item->teknisi_detail->name)[0] }}
+                                                                    </button>
+                                                                @else
+                                                                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#teknisiModal{{ $service_item->id }}">
+                                                                        Teknisi
+                                                                    </button>
+                                                                @endif
                                                                 <div class="modal fade bs-example-modal-center" id="teknisiModal{{ $service_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="teknisiModalLabel">
                                                                     <div class="modal-dialog modal-dialog-centered" role="document">
                                                                         <div class="modal-content">
@@ -292,6 +292,7 @@
                                                             </li>
                                                         </ul>
                                                     </td>
+                                                    @endcan
 
                                                     <td>
                                                         <ul class="list-unstyled hstack gap-2 mb-0">
@@ -680,6 +681,16 @@
                                                                                 </div>
                                                                                 @if ($service_item->service_detail?->transaction?->warranty_history?->status == 1)
                                                                                     <div class="modal-body">
+                                                                                        @if ($errors->any())
+                                                                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                                                                <ul>
+                                                                                                    @foreach ($errors->all() as $error)
+                                                                                                        <li>{{ $error }}</li>
+                                                                                                    @endforeach
+                                                                                                </ul>
+                                                                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                                                            </div>
+                                                                                        @endif
                                                                                         <input type="hidden" name="service_id" value="{{ $service_item->id }}">
 
                                                                                         <div class="mb-2">
@@ -709,7 +720,7 @@
 
                                                                                         <div class="mb-2">
                                                                                             <label for="kondisi1" class="form-label">Kondisi</label>
-                                                                                            <select class="form-control select2" data-minimum-results-for-search="Infinity" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi" required>
+                                                                                            <select class="form-control select2" data-minimum-results-for-search="Infinity" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi">
                                                                                                 <option value="{{ '' }}" disabled selected>Pilih Kondisi Servis</option>
                                                                                                     <option value="1">Sudah Jadi</option>
                                                                                                     <option value="2">Tidak Bisa</option>
@@ -740,6 +751,16 @@
                                                                                     </div>
                                                                                 @else
                                                                                     <div class="modal-body">
+                                                                                        @if ($errors->any())
+                                                                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                                                                <ul>
+                                                                                                    @foreach ($errors->all() as $error)
+                                                                                                        <li>{{ $error }}</li>
+                                                                                                    @endforeach
+                                                                                                </ul>
+                                                                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                                                            </div>
+                                                                                        @endif
                                                                                         <input type="hidden" name="service_id" value="{{ $service_item->id }}">
 
                                                                                         <div class="mb-2">
@@ -759,7 +780,7 @@
 
                                                                                         <div class="mb-2">
                                                                                             <label for="kondisi" class="form-label">Kondisi</label>
-                                                                                            <select class="form-control select2" data-minimum-results-for-search="Infinity" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi" required>
+                                                                                            <select class="form-control select2" data-minimum-results-for-search="Infinity" data-placeholder="Pilih kondisi" title="kondisi" name="kondisi" >
                                                                                                 <option value="{{ '' }}" disabled selected>Pilih Kondisi Servis</option>
                                                                                                     <option value="1">Sudah Jadi</option>
                                                                                                     <option value="2">Tidak Bisa</option>
@@ -833,6 +854,16 @@
 @endsection
 
 @push('after-script')
+    <script>
+        @if ($errors->any())
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal Tersimpan',
+                text: 'Harap cek dan isi form dengan benar',
+            });
+        @endif
+    </script>
+
     <script>
         $('#addServiceModal').on('shown.bs.modal', function () {
             $("#customer_id").select2({

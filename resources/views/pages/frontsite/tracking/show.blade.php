@@ -8,9 +8,11 @@
         <div class="relative z-10 container px-4 mx-auto">
             <div class="max-w-2xl mx-auto">
 
-                <div class="mb-4">
-                    <a class="text-blue-600 hover:text-blue-700 font-medium" href="/tracking"><span class="tracking-normal">&lt;-</span>Kembali</a>
-                </div>
+                <form action="{{ route('tracking.track') }}" method="post" class="inline-block">
+                    @csrf
+                    <input type="hidden" name="contact" value="{{ $service->customer->contact }}">
+                    <button type="submit" class="text-blue-600 hover:text-blue-700 font-medium"><span class="tracking-normal">&lt;-</span>Kembali</button>
+                </form>
 
                 <div class="max-w-4xl mx-auto mb-8 text-center">
                     <span class="inline-block py-px px-2 mb-4 text-xs leading-5 text-blue-500 bg-blue-100 font-medium uppercase rounded-full shadow-sm">Pantau Servis</span>
@@ -354,7 +356,13 @@
                     </table>
                 </div>
 
-                <a class="inline-block py-3 px-7 w-full text-base text-white font-medium text-center leading-6 bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 rounded-md shadow-sm" href="#">Tracking</a>
+                @if ($buttonSisa)
+                    <form action="{{ route('tracking.track') }}" method="post">
+                        @csrf
+                        <input type="hidden" name="contact" value="{{ $service->customer->contact }}">
+                        <button type="submit" class="inline-block py-3 px-7 w-full text-base text-white font-medium text-center leading-6 bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 rounded-md shadow-sm">{{ $buttonSisa }}</button>
+                    </form>
+                @endif
 
             </div>
         </div>

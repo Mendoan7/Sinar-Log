@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('service_detail', function (Blueprint $table) {
-            $table->foreignId('service_id', 'fk_service_detail_to_service')->references('id')->on('service')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreignUuid('service_id', 'fk_service_detail_to_service')->references('id')->on('service')->onUpdate('CASCADE')->onDelete('CASCADE');
         });
     }
 

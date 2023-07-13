@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Operational\Service;
+use Carbon\Carbon;
 
 class ServiceOutWhatsappNotificationJob implements ShouldQueue
 {
@@ -40,28 +41,15 @@ class ServiceOutWhatsappNotificationJob implements ShouldQueue
         $tipe = $this->service->tipe;
         $status = $this->service->status;
         $kondisi = $this->service->service_detail->kondisi;
-        $tanggal = $this->service->service_detail->transaction->updated_at;
+        $tanggal = Carbon::parse($this->service->service_detail->transaction->created_at)->isoFormat('D MMMM Y HH:mm');
         $pengambil = $this->service->service_detail->transaction->pengambil;
         $pembayaran = $this->service->service_detail->transaction->pembayaran;
         $garansi = $this->service->service_detail->transaction->garansi;
+        $trackLink = route('tracking.show', ['id' => $this->service->id]);
 
         //Merubah Format Biaya
         $biaya = number_format($this->service->service_detail->biaya, 0, ',', '.');
         $biaya = "Rp. " . $biaya;
-
-        // Menentukan ucapan selamat
-        $time = date("H");
-        $selamat = "";
-        
-        if ($time >= 5 && $time <= 11) {
-            $selamat = "Selamat Pagi";
-        } elseif ($time >= 12 && $time <= 14) {
-            $selamat = "Selamat Siang";
-        } elseif ($time >= 15 && $time <= 17) {
-            $selamat = "Selamat Sore";
-        } else {
-            $selamat = "Selamat Malam";
-        }
 
         // Status
         $statusnya = "";
@@ -83,7 +71,8 @@ class ServiceOutWhatsappNotificationJob implements ShouldQueue
             $kondisinya = "Dibatalkan";
         }
 
-        $message = "*Notifikasi | SINAR CELL*\n\nBarang servis $jenis $tipe dengan No. Servis $kode Sudah Diambil dalam kondisi *$kondisinya* pada tanggal $tanggal oleh *$pengambil* dengan pembayaran *$pembayaran*. Garansi *$garansi*. Terima Kasih atas kepercayaan Anda telah melakukan Servis di *SINAR CELL*";
+        $message = "*Notifikasi | SINAR CELL*\n\nBarang servis $jenis $tipe dengan No. Servis $kode, *$statusnya* dalam kondisi *$kondisinya* pada tanggal $tanggal oleh *$pengambil* dengan pembayaran *$pembayaran*. Garansi *$garansi*. Terima Kasih atas kepercayaan Anda telah melakukan Servis di *SINAR CELL*";
+        $message .= "\nUntuk mengecek masa garansi Anda, dapat buka link dibawah ini.\n\n$trackLink";
         $countryCode = '62'; // optional
 
         $client = new Client();

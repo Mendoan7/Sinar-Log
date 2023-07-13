@@ -78,8 +78,10 @@ class ServiceDoneWhatsappNotificationJob implements ShouldQueue
         } elseif ($kondisi == 3) {
             $kondisinya = "Dibatalkan";
         }
-
-        $message = "*Notifikasi | SINAR CELL*\n\n$selamat, pelanggan yang terhormat. Barang servis $jenis $tipe dengan No. Servis $kode kondisinya *$kondisinya* dan *$statusnya* dengan biaya *$biaya*.\nTerima Kasih.";
+        
+        $trackLink = route('tracking.show', ['id' => $this->service->id]);
+        $message = "*Notifikasi | SINAR CELL*\n\n$selamat, pelanggan yang terhormat. Barang servis $jenis $tipe dengan No. Servis $kode kondisinya *$kondisinya* dan *$statusnya* dengan biaya *$biaya*. Terima Kasih.";
+        $message .= "\nUntuk memantau barang servis Anda, silahkan buka link dibawah ini.\n\n$trackLink"; 
         $countryCode = '62'; // optional
 
         $client = new Client();

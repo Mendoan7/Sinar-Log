@@ -14,12 +14,17 @@
                         <div class="card-body border-bottom">
                             <div class="d-flex align-items-center">
                                 <h5 class="mb-0 card-title flex-grow-1">List Pelanggan</h5>
+                                @can('customer_create')
+                                {{-- Start Button Add Customer --}}
                                 <div class="flex-shrink-0">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customerModal">
                                         Tambah Pelanggan
                                     </button>
                                 </div>
+                                {{-- End Button Add Customer --}}
+                                @endcan
 
+                                {{-- Add Customer Modal --}}
                                 <div class="modal fade bs-example-modal-center" id="customerModal" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
@@ -56,25 +61,27 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                {{-- Add Customer Modal --}}
                             </div>
                         </div>
-                        
+
+                        @can('customer_table')
+                        {{-- Start Table Customer --}}
                         <div class="card-body">
                             <div class="table-rep-plugin">
                                 <div class="table-responsive">
                                     <table id="datatable" class="table table-hover mb-0">
                                         <thead class="table-dark">
                                             <tr>
-                                                <th>Nama</th>
-                                                <th>Nomer Telepon</th>
-                                                <th>Alamat</th>
-                                                <th>Proses Servis</th>
-                                                <th>Bisa Diambil</th>
-                                                <th>Servis Selesai</th>
-                                                <th>Proses Garansi</th>
-                                                <th>Total Servis</th>
-                                                <th style="text-align:center; width:150px;">Action</th>
+                                                <th scope="col">Nama</th>
+                                                <th scope="col">Nomer Telepon</th>
+                                                <th scope="col">Alamat</th>
+                                                <th scope="col">Proses Servis</th>
+                                                <th scope="col">Servis Selesai</th>
+                                                <th scope="col">Servis Keluar</th>
+                                                <th scope="col">Proses Garansi</th>
+                                                <th scope="col">Total Servis</th>
+                                                <th scope="col" style="text-align:center; width:150px;">Action</th>
                                             </tr>
                                         </thead>
 
@@ -82,36 +89,62 @@
                                         @forelse($customer as $key => $customer_item)
                                             <tr data-entry-id="{{ $customer_item->id }}">
                                                 <td>{{ $customer_item->name ?? '' }}</td>
-                                                <td>{{ $customer_item->contact ?? '' }}</td>
+                                                @if ($user_type === 3)
+                                                    @php
+                                                        $contact = $customer_item->contact;
+                                                        $length = strlen($contact);
+                                                        $visible = 5;
+                                                        $hidden = $length - ($visible * 2);
+                                                        $masked_contact = substr($contact, 0, $visible) . str_repeat('*', $hidden) . substr($contact, -$visible);   
+                                                    @endphp
+                                                <td>{{ $masked_contact }}</td>
+                                                @else
+                                                    <td>{{ $customer_item->contact ?? '' }}</td>
+                                                @endif
                                                 <td>{{ $customer_item->address ?? '' }}</td>
-                                                <td>{{ $customer_item->service->where('status', '<=', 7)->count() }}</td>
-                                                <td>{{ $customer_item->service->where('status', 8)->count() }}</td>
-                                                <td>{{ $customer_item->service_selesai }}</td>
-                                                <td>{{ $customer_item->service->first()->service_detail?->transaction?->warranty_history?->where('status', [1, 2])->count() ?? 'N/A' }}</td>
-                                                <td>{{ $customer_item->service->count() }}</td>
+                                                <td>{{ $customer_item->proses_servis ?? 0 }}</td>
+                                                <td>{{ $customer_item->bisa_diambil ?? 0 }}</td>
+                                                <td>{{ $customer_item->servis_selesai ?? 0 }}</td>
+                                                <td>{{ $customer_item->proses_garansi ?? 0 }}</td>
+                                                <td>{{ $customer_item->total_service ?? 0 }}</td>
                                                 <td class="text-center">
-
-                                                    <div class="btn-group mr-1 mb-1">
-                                                        <div class="dropdown">
+                                                    <div class="dropdown">
+                                                        @if ($user_type === 3)
+                                                        <button class="btn btn-sm btn-soft-primary waves-effect"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Pilihan ini hanya berlaku akun Admin">
+                                                            Tidak Ada Pilihan
+                                                        </button>
+                                                        @else
                                                             <a href="#" class="dropdown-toggle card-drop" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            <i class="mdi mdi-dots-horizontal font-size-18"></i>
+                                                                <i class="mdi mdi-dots-horizontal font-size-18"></i>
                                                             </a>
-                                                            <div class="dropdown-menu dropdown-menu-end">
+                                                        @endif
+
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            @can('customer_edit')
+                                                            {{-- Start Button Edit --}}
+                                                            <li>
                                                                 <a class="dropdown-item" href="{{ route('backsite.customer.edit', $customer_item->id) }}">
                                                                     Edit
                                                                 </a>
-                                                            
+                                                            </li>
+                                                            {{-- End Button Edit --}}
+                                                            @endcan
+
+                                                            @can('customer_delete')
+                                                            {{-- Start Button Delete --}}
+                                                            <li>
                                                                 <form onsubmit="return confirm('Apakah kamu yakin ingin menghapus data pelanggan ?');"
                                                                     action="{{ route('backsite.customer.destroy', $customer_item->id) }}" method="POST">
                                                                     <input type="hidden" name="_method" value="DELETE">
                                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                                     <input type="submit" class="dropdown-item" value="Delete">
                                                                 </form>
-                                                            
-                                                            </div>
-                                                        </div>
+                                                            </li>
+                                                            {{-- End Button Delete --}}
+                                                            @endcan
+                                                        </ul>
                                                     </div>
-
                                                 </td>
                                             </tr>
                                             @empty
@@ -122,6 +155,8 @@
                                 </div>
                             </div> 
                         </div>
+                        {{-- End Table Customer --}}
+                        @endcan
                     </div>
                 </div>
             </div>

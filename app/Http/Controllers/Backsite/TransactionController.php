@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Backsite;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Transaction\ClaimWarrantyRequest;
+use App\Http\Requests\Transaction\StoreTransactionRequest;
+use App\Http\Requests\Transaction\WarrantyTransactionRequest;
 use App\Jobs\Notification\ServiceOutEmailNotificationJob;
 use App\Jobs\Notification\ServiceOutWhatsappNotificationJob;
 use Illuminate\Http\Request;
@@ -33,73 +36,62 @@ class TransactionController extends Controller
 
     public function index(Request $request)
     {
-        // filter data berdasarkan parameter di URL
-        $status = $request->query('status');
+        $status = $request->query('status'); // filter data berdasarkan parameter di URL
+        $user = Auth::user(); //Cek user login
 
-        $all_count = Transaction::whereHas('service_detail.service', function($query) {
-            $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
-        })->orWhereHas('service_detail.transaction.warranty_history', function($query) {
-            $query->where('status', 3);
-        })->count();
-    
-        $done_count = Transaction::whereHas('service_detail', function($query) {
-            $query->where('kondisi', 1);
-        })->whereHas('service_detail.service', function($query) {
-            $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
-        })->orWhereHas('service_detail.transaction.warranty_history', function($query) {
-            $query->where('status', 3)->where('kondisi', 1);
-        })->count();
-    
-        $notdone_count = Transaction::whereHas('service_detail', function($query) {
-            $query->where('kondisi', 2);
-        })->whereHas('service_detail.service', function($query) {
-            $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
-        })->orWhereHas('service_detail.transaction.warranty_history', function($query) {
-            $query->where('status', 3)->where('kondisi', 2);
-        })->count();
-    
-        $cancel_count = Transaction::whereHas('service_detail', function($query) {
-            $query->where('kondisi', 3);
-        })->whereHas('service_detail.service', function($query) {
-            $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
-        })->orWhereHas('service_detail.transaction.warranty_history', function($query) {
-            $query->where('status', 3)->where('kondisi', 3);
-        })->count();
-        
-        $transactions = Transaction::with('service_detail.service', 'warranty_history')
+        $transactionsQuery = Transaction::with('service_detail.service', 'warranty_history')
             ->whereHas('service_detail.service', function ($query) {
-            $query->whereIn('status', [9])->whereDoesntHave('service_detail.transaction.warranty_history')->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
-                $query->where('status', 3);
+                $query->whereIn('status', [9])->whereDoesntHave('service_detail.transaction.warranty_history')
+                ->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+                    $query->where('status', 3);
+                });
             });
-        });
+            
+        // Login sebagai teknisi
+        if ($user->detail_user->type_user_id == 3) {
+            $transactionsQuery->whereHas('service_detail.service', function ($query) use ($user) {
+                $query->where('teknisi', $user->id);
+            });
+        }
 
-            if ($status == 'done') {
-                $transactions->whereHas('service_detail', function ($query) {
-                    $query->where('kondisi', 1);
-                })->whereHas('service_detail.service', function ($query) {
-                    $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
-                })->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
-                    $query->where('status', 3)->where('kondisi', 1);
-                });
-            } elseif ($status == 'notdone') {
-                $transactions->whereHas('service_detail', function ($query) {
-                    $query->where('kondisi', 2);
-                })->whereHas('service_detail.service', function ($query) {
-                    $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
-                })->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
-                    $query->where('status', 3)->where('kondisi', 2);
-                });
-            } elseif ($status == 'cancel') {
-                $transactions->whereHas('service_detail', function ($query) {
-                    $query->where('kondisi', 3);
-                })->whereHas('service_detail.service', function ($query) {
-                    $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
-                })->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
-                    $query->where('status', 3)->where('kondisi', 3);
-                });
-            }
+        if ($status == 'done') {
+            $transactionsQuery->whereHas('service_detail', function ($query) {
+                $query->where('kondisi', 1);
+            })->whereHas('service_detail.service', function ($query) {
+                $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
+            })->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+                $query->where('status', 3)->where('kondisi', 1);
+            });
+        } elseif ($status == 'notdone') {
+            $transactionsQuery->whereHas('service_detail', function ($query) {
+                $query->where('kondisi', 2);
+            })->whereHas('service_detail.service', function ($query) {
+                $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
+            })->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+                $query->where('status', 3)->where('kondisi', 2);
+            });
+        } elseif ($status == 'cancel') {
+            $transactionsQuery->whereHas('service_detail', function ($query) {
+                $query->where('kondisi', 3);
+            })->whereHas('service_detail.service', function ($query) {
+                $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
+            })->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+                $query->where('status', 3)->where('kondisi', 3);
+            });
+        }
 
-        $transactions = $transactions->orderBy('created_at', 'desc')->get();
+        $transactions = $transactionsQuery->orderBy('created_at', 'desc')->get();
+
+        $all_count = $transactionsQuery->count();
+        $done_count = $transactionsQuery->whereHas('service_detail', function ($query) {
+            $query->where('kondisi', 1);
+        })->count();
+        $notdone_count = $transactionsQuery->whereHas('service_detail', function ($query) {
+            $query->where('kondisi', 2);
+        })->count();
+        $cancel_count = $transactionsQuery->whereHas('service_detail', function ($query) {
+            $query->where('kondisi', 3);
+        })->count();
 
         $warrantyInfo = [];
 
@@ -119,6 +111,7 @@ class TransactionController extends Controller
         return view('pages.backsite.operational.transaction.index', compact('transactions', 'all_count', 'done_count', 'notdone_count', 'cancel_count', 'warrantyInfo'));
     }
 
+
     /**
      * Show the form for creating a new resource.
      *
@@ -135,7 +128,7 @@ class TransactionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreTransactionRequest $request)
     {
         $data = $request->all();
 
@@ -215,7 +208,7 @@ class TransactionController extends Controller
     }
 
     // Custom
-    public function warranty(Request $request)
+    public function warranty(WarrantyTransactionRequest $request)
     {
         $data = $request->only(['pengambil', 'penyerah']);
 
@@ -240,7 +233,7 @@ class TransactionController extends Controller
         return redirect()->route('backsite.transaction.index');
     }
 
-    public function claimWarranty(Request $request)
+    public function claimWarranty(ClaimWarrantyRequest $request)
     {
         $data = $request->all();
         
@@ -281,28 +274,15 @@ class TransactionController extends Controller
         $tipe = $transaction_item->service_detail->service->tipe;
         $status = $transaction_item->service_detail->service->status;
         $kondisi = $transaction_item->service_detail->kondisi;
-        $tanggal = $transaction_item->updated_at;
+        $tanggal = Carbon::parse($transaction_item->created_at)->isoFormat('D MMMM Y HH:mm');
         $pengambil = $transaction_item->pengambil;
         $pembayaran = $transaction_item->pembayaran;
         $garansi = $transaction_item->garansi;
+        $trackLink = route('tracking.show', ['id' => $transaction_item->service_detail->service->id]);
         
         //Merubah Format Biaya
         $biaya = number_format($transaction_item->service_detail->biaya, 0, ',', '.');
         $biaya = "Rp. " . $biaya;
-        
-        // Menentukan ucapan selamat
-        $time = date("H");
-        $selamat = "";
-        
-        if ($time >= 5 && $time <= 11) {
-            $selamat = "Selamat Pagi";
-        } elseif ($time >= 12 && $time <= 14) {
-            $selamat = "Selamat Siang";
-        } elseif ($time >= 15 && $time <= 17) {
-            $selamat = "Selamat Sore";
-        } else {
-            $selamat = "Selamat Malam";
-        }
 
         // Status
         $statusnya = "";
@@ -323,10 +303,17 @@ class TransactionController extends Controller
         } elseif ($kondisi == 3) {
             $kondisinya = "Dibatalkan";
         }
+
+        if ($transaction_item->garansi == 0) {
+            $garansi = "Tidak Ada";
+        } else {
+            $garansi = $transaction_item->garansi . " Hari";
+        }
     
         // Teks pesan yang akan dikirim
-        $message = "*Notifikasi | SINAR CELL*\n\nBarang servis $jenis $tipe dengan No. Servis $kode Sudah Diambil dalam kondisi *$kondisinya* pada tanggal $tanggal oleh *$pengambil* dengan pembayaran *$pembayaran*. Garansi *$garansi*. Terima Kasih atas kepercayaan Anda telah melakukan Servis di *SINAR CELL*";
-    
+        $message = "*Notifikasi | SINAR CELL*\n\nBarang servis $jenis $tipe dengan No. Servis $kode, *$statusnya* dalam kondisi *$kondisinya* pada tanggal $tanggal oleh *$pengambil* dengan pembayaran *$pembayaran*. Garansi *$garansi*. Terima Kasih atas kepercayaan Anda telah melakukan Servis di *SINAR CELL*.";
+        $message .= "\nUntuk mengecek masa garansi Anda, dapat buka link dibawah ini.\n\n$trackLink";
+        
         // Link whatsapp
         $waLink = "https://wa.me/$contacts?text=".urlencode($message);
     

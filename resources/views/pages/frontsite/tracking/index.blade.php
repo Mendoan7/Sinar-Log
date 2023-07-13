@@ -14,7 +14,7 @@
           <p class="text-lg md:text-xl text-coolGray-500 font-medium">Pelacakan status perbaikan, silahkan isi nomer telepon kamu.</p>
       </div>
 
-      <form action="/tracking" method="POST" class="mb-11 md:max-w-md mx-auto">
+      <form action="{{ route('tracking.track') }}" method="POST" class="mb-11 md:max-w-md mx-auto">
         @csrf
         <div class="mb-5">
           <input class="px-4 py-4 w-full text-gray-500 font-medium text-center placeholder-gray-500 outline-none border border-gray-300 rounded-lg focus:ring focus:ring-blue-300" type="tel" id="contact" type="text" name="contact" placeholder="Masukan Nomer Hp Kamu" required>

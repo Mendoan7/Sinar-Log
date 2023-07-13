@@ -3,12 +3,18 @@
 namespace App\Http\Controllers\Backsite;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ServiceDetail\StoreServiceDetailRequest;
+use App\Http\Requests\ServiceDetail\WarrantyServiceDetailRequest;
 use App\Jobs\Notification\ServiceDoneEmailNotificationJob;
 use App\Jobs\Notification\ServiceDoneWhatsappNotificationJob;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Support\Facades\Notification;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ServiceCreatedMail;
 
 
 // use model here
@@ -18,6 +24,7 @@ use App\Models\Operational\Service;
 use App\Models\Operational\ServiceDetail;
 use App\Models\Operational\Transaction;
 use App\Models\Operational\WarrantyHistory;
+use App\Notifications\TechnicianServiceDoneNotification;
 
 class ServiceDetailController extends Controller
 {
@@ -33,62 +40,50 @@ class ServiceDetailController extends Controller
 
     public function index(Request $request)
     {
-        // filter data berdasarkan parameter di URL
-        $status = $request->query('status');
+        $status = $request->query('status'); // filter data berdasarkan parameter di URL
+        $user = Auth::user(); //Cek user login
 
-        $service_detail = ServiceDetail::with('service')->whereHas('service', function ($query) {
+        $service_detailQuery = ServiceDetail::with('service')->whereHas('service', function ($query) {
             $query->whereIn('status', [8])->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
                 $query->where('status', 2);
             });
         });
 
-        $all_count = ServiceDetail::with('service')->whereHas('service', function ($query) {
-            $query->whereIn('status', [8])->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
-                $query->where('status', 2);
+        // Login sebagai teknisi
+        if ($user->detail_user->type_user_id == 3) {
+            $service_detailQuery->whereHas('service', function ($query) use ($user) {
+                $query->where('teknisi', $user->id);
             });
-        })->count();
-    
-        $done_count = ServiceDetail::with('service')->whereHas('service', function ($query) {
-            $query->whereIn('status', [8])->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
-                $query->where('status', 2);
-            });
-        })->where('kondisi', 1)->count();
-    
-        $notdone_count = ServiceDetail::with('service')->whereHas('service', function ($query) {
-            $query->whereIn('status', [8])->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
-                $query->where('status', 2);
-            });
-        })->where('kondisi', 2)->count();
-    
-        $cancel_count = ServiceDetail::with('service')->whereHas('service', function ($query) {
-            $query->whereIn('status', [8])->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
-                $query->where('status', 2);
-            });
-        })->where('kondisi', 3)->count();
+        }
 
         if ($status == 'done') {
-            $service_detail->where('kondisi', 1)->whereHas('service', function ($query) {
+            $service_detailQuery->where('kondisi', 1)->whereHas('service', function ($query) {
                 $query->whereIn('status', [8])->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
                     $query->where('status', 2)->where('kondisi', 1);
                 });
             });
         } elseif ($status == 'notdone') {
-            $service_detail->where('kondisi', 2)->whereHas('service', function ($query) {
+            $service_detailQuery->where('kondisi', 2)->whereHas('service', function ($query) {
                 $query->whereIn('status', [8])->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
                     $query->where('status', 2)->where('kondisi', 2);
                 });
             });
         } elseif ($status == 'cancel') {
-            $service_detail->where('kondisi', 3)->whereHas('service', function ($query) {
+            $service_detailQuery->where('kondisi', 3)->whereHas('service', function ($query) {
                 $query->whereIn('status', [8])->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
                     $query->where('status', 2)->where('kondisi', 3);
                 });
             });
         }
 
-        $service_detail = $service_detail->orderBy('created_at', 'desc')->get();    
-        
-        return view('pages.backsite.operational.service-detail.index', compact('service_detail', 'all_count', 'done_count', 'notdone_count', 'cancel_count' ));
+        $service_detail = $service_detailQuery->orderBy('created_at', 'desc')->get();
+
+        $all_count = $service_detailQuery->count();
+        $done_count = $service_detailQuery->where('kondisi', 1)->count();
+        $notdone_count = $service_detailQuery->where('kondisi', 2)->count();
+        $cancel_count = $service_detailQuery->where('kondisi', 3)->count();
+
+        return view('pages.backsite.operational.service-detail.index', compact('service_detail', 'all_count', 'done_count', 'notdone_count', 'cancel_count'));
     }
 
 
@@ -108,7 +103,7 @@ class ServiceDetailController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreServiceDetailRequest $request)
     {
         $data = $request->all();
     
@@ -129,6 +124,14 @@ class ServiceDetailController extends Controller
         $service_detail->save();
         $service->status = 8;
         $service->save();
+
+        $admins = User::whereHas('detail_user.type_user', function ($query) {
+            $query->where('type_user_id', 1); // Mengambil pengguna dengan tipe 1 (admin)
+        })->get();
+        
+        foreach ($admins as $admin) {
+            $admin->notify(new TechnicianServiceDoneNotification($service_detail));
+        }
 
         // Kirim Notif Whatsapp Queue
         ServiceDoneWhatsAppNotificationJob::dispatch($service)->onQueue('notifications');
@@ -189,7 +192,7 @@ class ServiceDetailController extends Controller
     }
 
     // Custom
-    public function warranty(Request $request)
+    public function warranty(WarrantyServiceDetailRequest $request)
     {
         $data = $request->only(['kondisi', 'tindakan', 'catatan']);
 
@@ -263,9 +266,12 @@ class ServiceDetailController extends Controller
         } elseif ($kondisi == 3) {
             $kondisinya = "Dibatalkan";
         }
+
+        $trackLink = route('tracking.show', ['id' => $services_item->service->id]);
     
         // Teks pesan yang akan dikirim
-        $message = "*Notifikasi | SINAR CELL*\n\n$selamat, pelanggan yang terhormat. Barang servis $jenis $tipe dengan No. Servis $kode kondisinya *$kondisinya* dan *$statusnya* dengan biaya *$biaya*.\nTerima Kasih.";
+        $message = "*Notifikasi | SINAR CELL*\n\n$selamat, pelanggan yang terhormat. Barang servis $jenis $tipe dengan No. Servis $kode kondisinya *$kondisinya* dan *$statusnya* dengan biaya *$biaya*. Terima Kasih.";
+        $message .= "\nUntuk memantau servis barang anda, silahkan buka link dibawah ini.\n\n$trackLink";
     
         // Link whatsapp
         $waLink = "https://wa.me/$contacts?text=".urlencode($message);

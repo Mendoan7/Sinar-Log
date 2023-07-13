@@ -2,26 +2,26 @@
 
 namespace App\Notifications;
 
+use App\Models\Operational\ServiceDetail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-use App\Models\Operational\Transaction;
-
-class TaskWarrantyNotification extends Notification
+class TechnicianServiceDoneNotification extends Notification
 {
     use Queueable;
 
-    private $transaction;
+    private $service_detail;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Transaction $transaction)
+    public function __construct(ServiceDetail $service_detail)
     {
-        $this->transaction = $transaction;
+        $this->service_detail = $service_detail;
     }
 
     /**
@@ -58,10 +58,10 @@ class TaskWarrantyNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'title' => 'Ulangan Servis',
-            'message' => 'Pekerjaan ulangan servis ' . $this->transaction->service_detail->service->kode_servis,
-            'service_id' => $this->transaction->service_detail->service->id,
-            'url' => route('backsite.notification.warranty', $this->transaction->service_detail->service->id),
+            'title' => 'Servis Telah Selesai',
+            'message' => 'Servis telah selesai dilakukan ' . $this->service_detail->service->kode_servis,
+            'service_id' => $this->service_detail->service->id,
+            'url' => route('backsite.notification.serviceDone', $this->service_detail->service->id),
         ];
     }
 }

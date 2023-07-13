@@ -37,10 +37,20 @@ class ReportEmployeesController extends Controller
         $start_date = $request->input('start_date') ? Carbon::createFromFormat('Y-m-d', $request->input('start_date')) : Carbon::now()->startOfMonth();
         $end_date = $request->input('end_date') ? Carbon::createFromFormat('Y-m-d', $request->input('end_date')) : Carbon::now();
 
+        // $start_date = $request->query('start_date') ? Carbon::createFromFormat('Y-m-d', $request->query('start_date')) : Carbon::now()->startOfMonth();
+        // $end_date = $request->query('end_date') ? Carbon::createFromFormat('Y-m-d', $request->query('end_date')) : Carbon::now();
+
+
         // Ambil data teknisi
-        $teknisi = User::whereHas('detail_user', function ($query) {
-            $query->where('type_user_id', 3);
-        })->get();
+        $teknisi = User::query();
+        if (Auth::user()->detail_user->type_user_id == 3) {
+            $teknisi->where('id', Auth::user()->id); // Jika tipe pengguna adalah 3 (teknisi), menampilkan hanya teknisi itu sendiri
+        } else {
+            $teknisi->whereHas('detail_user', function ($query) {
+                $query->where('type_user_id', 3);
+            }); // Jika tipe pengguna bukan 3, tampilkan semua teknisi
+        }
+        $teknisi = $teknisi->get();
 
         // Inisialisasi variabel total
         $total_service = [];
@@ -56,121 +66,41 @@ class ReportEmployeesController extends Controller
             $total_profit_service[$teknisi_id] = 0;
         }
 
-        // Filter service berdasarkan rentang tanggal dan status selesai
-        $services = Service::with('service_detail', 'service_detail.transaction')
+        $services = Service::with(['service_detail.transaction'])
             ->whereHas('service_detail', function ($query) use ($start_date, $end_date) {
-                $query->whereHas('transaction');
+                $query->whereHas('transaction', function ($query) use ($start_date, $end_date) {
+                    $query->whereBetween('created_at', [$start_date, $end_date]);
+                });
             })
             ->where('status', 9)
-            ->whereBetween('created_at', [$start_date, $end_date])
             ->get();
 
         // Hitung total service, biaya, modal, dan profit per teknisi
         foreach ($services as $service) {
             $teknisi_id = $service->teknisi;
-            $total_service[$teknisi_id]++;
-            $total_biaya_service[$teknisi_id] += $service->service_detail->biaya;
-            $total_modal_service[$teknisi_id] += $service->service_detail->modal;
-            $total_profit_service[$teknisi_id] += ($service->service_detail->biaya - $service->service_detail->modal);
+            if (isset($total_service[$teknisi_id])) {
+                $total_service[$teknisi_id]++;
+                $total_biaya_service[$teknisi_id] += $service->service_detail->biaya;
+                $total_modal_service[$teknisi_id] += $service->service_detail->modal;
+                $total_profit_service[$teknisi_id] += ($service->service_detail->biaya - $service->service_detail->modal);
+            }
         }
+        // foreach ($services as $service) {
+        //     $teknisi_id = $service->teknisi;
+        //     $total_service[$teknisi_id]++;
+        //     $total_biaya_service[$teknisi_id] += $service->service_detail->biaya;
+        //     $total_modal_service[$teknisi_id] += $service->service_detail->modal;
+        //     $total_profit_service[$teknisi_id] += ($service->service_detail->biaya - $service->service_detail->modal);
+        // }
 
-        return view('pages.backsite.report.report-employees.index', compact('teknisi', 'total_service', 'total_biaya_service', 'total_modal_service', 'total_profit_service', 'start_date', 'end_date'));
+        // Menghitung total keseluruhan
+        $total_servis_selesai = array_sum($total_service);
+        $total_pemasukan = array_sum($total_biaya_service);
+        $total_modal = array_sum($total_modal_service);
+        $total_profit = array_sum($total_profit_service);
+
+        return view('pages.backsite.report.report-employees.index', compact('teknisi', 'total_service', 'total_biaya_service', 'total_modal_service', 'total_profit_service', 'start_date', 'end_date', 'total_servis_selesai', 'total_pemasukan', 'total_modal', 'total_profit'));
     }
-
-    // public function index(Request $request)
-    // {
-    //     // Ambil tanggal
-    //     $start_date = $request->input('start_date') ? Carbon::createFromFormat('Y-m-d', $request->input('start_date')) : Carbon::now()->startOfMonth();
-    //     $end_date = $request->input('end_date') ? Carbon::createFromFormat('Y-m-d', $request->input('end_date')) : Carbon::now();
-
-    //     //Ambil data teknisi
-    //     $all_teknisi = User::whereHas('detail_user', function ($query) {
-    //         $query->where('type_user_id', 3);
-    //     })->pluck('name');
-
-    //     // Ambil semua tanggal pada rentang waktu yang diinputkan
-    //     $dates = [];
-    //     $current_date = $start_date->copy();
-    //     while ($current_date->lte($end_date)) {
-    //         $dates[] = $current_date->copy();
-    //         $current_date->addDay();
-    //     }
-
-    //     // Inisialisasi variabel total
-    //     $total_biaya_service = [];
-    //     $total_modal_service = [];
-    //     $total_profit_service = [];
-    //     $total_all_service = [];
-    //     $total_all_biaya_service = [];
-    //     $total_all_modal_service = [];
-    //     $total_all_profit_service = [];
-    //     foreach ($all_teknisi as $teknisi) {
-    //         $total_biaya_service[$teknisi] = 0;
-    //         $total_modal_service[$teknisi] = 0;
-    //         $total_profit_service[$teknisi] = 0;
-    //         $total_all_service[$teknisi] = 0;
-    //         $total_all_biaya_service[$teknisi] = 0;
-    //         $total_all_modal_service[$teknisi] = 0;
-    //         $total_all_profit_service[$teknisi] = 0;
-    //     }
-
-    //     // Hitung total servis per teknisi pada tiap tanggal
-    //     $total_service = [];
-    //     foreach ($dates as $date) {
-    //         // Filter service berdasarkan teknisi dan status pada tanggal tertentu
-    //         $services = Service::with('teknisi_detail', 'service_detail.transaction')
-    //             ->whereHas('service_detail', function ($query) use ($request, $date) {
-    //                 if ($request->has('teknisi') && $request->input('teknisi') != '') {
-    //                     $query->where('teknisi', $request->input('teknisi'));
-    //                 }
-    //                 $query->whereHas('transaction', function ($query) use ($date) {
-    //                     $query->whereDate('created_at', $date->format('Y-m-d'));
-    //                 });
-    //                 $query->where('kondisi', 1);
-    //             })
-    //             ->where('status', 9)
-    //             ->get();
-
-    //         // Hitung total servis per teknisi pada tanggal tertentu
-    //         $total_service[$date->format('Y-m-d')] = [];
-    //         foreach ($all_teknisi as $teknisi) {
-    //             $total_service_teknisi = $services->where('teknisi_detail.name', $teknisi)->count();
-    //             if ($total_service_teknisi > 0) {
-    //                 $total_service[$date->format('Y-m-d')][$teknisi] = $total_service_teknisi;
-    //             }
-    //             // Tambahkan ke total all service per teknisi
-    //             $total_all_service[$teknisi] += $total_service_teknisi;
-    //         }
-
-    //         // Hitung total biaya servis per teknisi pada tanggal tertentu
-    //         foreach ($services as $service) {
-    //             $teknisi = $service->teknisi_detail->name;
-    //             $biaya_service = $service->service_detail->biaya;
-    //             $modal_service = $service->service_detail->modal;
-    //             $profit_service = $biaya_service - $modal_service;
-    //             if (!isset($total_biaya_service[$teknisi])) {
-    //                 $total_biaya_service[$teknisi] = 0;
-    //             }
-    //             $total_biaya_service[$teknisi] += $biaya_service;
-    
-    //             if (!isset($total_modal_service[$teknisi])) {
-    //                 $total_modal_service[$teknisi] = 0;
-    //             }
-    //             $total_modal_service[$teknisi] += $modal_service;
-    
-    //             if (!isset($total_profit_service[$teknisi])) {
-    //                 $total_profit_service[$teknisi] = 0;
-    //             }
-    //             $total_profit_service[$teknisi] += $profit_service;
-    
-    //             $total_all_biaya_service[$teknisi] += $biaya_service;
-    //             $total_all_modal_service[$teknisi] += $modal_service;
-    //             $total_all_profit_service[$teknisi] += $profit_service;
-    //         }
-    //     }
-
-    //     return view('pages.backsite.report.report-employees.index', compact('all_teknisi', 'total_service', 'total_biaya_service', 'total_modal_service', 'total_profit_service', 'total_all_service', 'total_all_biaya_service', 'total_all_modal_service', 'total_all_profit_service', 'start_date', 'end_date', 'dates'));
-    // }
 
     /**
      * Show the form for creating a new resource.
@@ -202,21 +132,22 @@ class ReportEmployeesController extends Controller
 
     public function show(Request $request, $teknisiId)
     {
-        // Ambil tanggal
-        $start_date = $request->input('start_date') ? Carbon::createFromFormat('Y-m-d', $request->input('start_date'))->startOfDay() : Carbon::now()->startOfMonth();
-        $end_date = $request->input('end_date') ? Carbon::createFromFormat('Y-m-d', $request->input('end_date'))->endOfDay() : Carbon::now()->endOfDay();
-
+        $start_date = $request->query('start_date') ? Carbon::createFromFormat('Y-m-d', $request->input('start_date')) : Carbon::now()->startOfMonth();
+        $end_date = $request->query('end_date') ? Carbon::createFromFormat('Y-m-d', $request->input('end_date')) : Carbon::now();
+        
         // Ambil data teknisi
         $teknisi = User::findOrFail($teknisiId);
 
         // Ambil laporan teknisi
-        $laporanTeknisi = Service::with('service_detail')
+        $laporanTeknisi = Service::with(['service_detail.transaction'])
             ->where('teknisi', $teknisiId)
-            ->whereHas('service_detail', function ($query) {
-                $query->whereHas('transaction');
+            ->whereHas('service_detail', function ($query) use ($start_date, $end_date) {
+                $query->whereHas('transaction', function ($query) use ($start_date, $end_date) {
+                    $query->whereBetween('created_at', [$start_date, $end_date]);
+                });
             })
             ->where('status', 9)
-            ->whereBetween('created_at', [$start_date, $end_date])
+            ->orderBy('created_at', 'asc')
             ->get()
             ->groupBy(function ($item) {
                 return $item->service_detail->transaction->created_at->format('Y-m-d');
@@ -249,49 +180,6 @@ class ReportEmployeesController extends Controller
 
         return view('pages.backsite.report.report-employees.show', compact('teknisi', 'laporanTeknisi', 'start_date', 'end_date', 'totalService', 'totalBiaya', 'totalModal', 'totalProfit'));
     }
-
-    // public function show(Request $request, $teknisiId)
-    // {
-    //     // Ambil tanggal
-    //     $start_date = $request->input('start_date') ? Carbon::createFromFormat('Y-m-d', $request->input('start_date')) : Carbon::now()->startOfMonth();
-    //     $end_date = $request->input('end_date') ? Carbon::createFromFormat('Y-m-d', $request->input('end_date')) : Carbon::now();
-    
-    //     // Ambil data teknisi berdasarkan ID
-    //     $teknisi = User::findOrFail($teknisiId);
-
-    //      // Inisialisasi variabel total
-    //     $report = [];
-
-    //     // Ambil laporan teknisi berdasarkan rentang tanggal
-    //     $services = Service::with('service_detail', 'service_detail.transaction')
-    //         ->where('teknisi', $teknisiId)
-    //         ->whereHas('service_detail', function ($query) {
-    //             $query->whereHas('transaction')
-    //                 ->where('kondisi', 1);
-    //         })
-    //         ->where('status', 9)
-    //         ->whereBetween('created_at', [$start_date, $end_date])
-    //         ->get();
-        
-    //     // Hitung total service, biaya, modal, dan profit per tanggal
-    //     foreach ($services as $service) {
-    //         $tanggal = $service->created_at->format('Y-m-d');
-    //         if (!isset($report[$tanggal])) {
-    //             $report[$tanggal] = [
-    //                 'totalService' => 0,
-    //                 'totalBiaya' => 0,
-    //                 'totalModal' => 0,
-    //                 'totalProfit' => 0
-    //             ];
-    //         }
-    //         $report[$tanggal]['totalService']++;
-    //         $report[$tanggal]['totalBiaya'] += $service->service_detail->biaya;
-    //         $report[$tanggal]['totalModal'] += $service->service_detail->modal;
-    //         $report[$tanggal]['totalProfit'] += ($service->service_detail->biaya - $service->service_detail->modal);
-    //     }
-
-    //     return view('pages.backsite.report.report-employees.show', compact('teknisi', 'report', 'start_date', 'end_date'));
-    // }
 
     /**
      * Show the form for editing the specified resource.

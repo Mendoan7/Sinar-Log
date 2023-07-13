@@ -24,6 +24,8 @@
                                 <h4 class="mb-0 card-title flex-grow-1">List Permission</h4>
                             </div>
                         </div>
+                        @can('permission_table')
+                        {{-- Tabel Permission --}}
                         <div class="card-body">
                             <div class="table-rep-plugin">
                                 <div class="table-responsive">
@@ -47,6 +49,8 @@
                                 </div>
                             </div>
                         </div>
+                        {{-- End Tabel Permission --}}
+                        @endcan
                     </div>
                 </div>
             </div>

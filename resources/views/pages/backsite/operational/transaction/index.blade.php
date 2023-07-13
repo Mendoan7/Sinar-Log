@@ -67,6 +67,8 @@
                             <!-- End nav tabs -->
                         </div>
 
+                        @can('transaction_table')
+                        {{-- Tabel Transaction --}}
                         <div class="card-body">
                             <div class="table-rep-plugin">
                                 <div class="table-responsive">
@@ -90,8 +92,9 @@
                                                 <tr data-entry-id="{{ $transaction_item->id }}">
                                                     @if ($transaction_item->warranty_history?->status == 3)
                                                         <th scope="row" class="text-body fw-bold">{{ $transaction_item->service_detail->service->kode_servis ?? '' }}</th>
-                                                        <td>{{ $transaction_item->warranty_history->updated_at->isoFormat('D MMM Y') }}</td>
-                                                        <input type="hidden" class="updated_at" value="{{ $transaction_item->warranty_history->updated_at }}">
+                                                        <td data-order="{{ $transaction_item->warranty_history->updated_at }}">
+                                                            {{ $transaction_item->warranty_history->updated_at->isoFormat('D MMM Y') }}
+                                                        </td>
                                                         <td class="text-body fw-bold">{{ $transaction_item->service_detail->service->customer->name ?? '' }}</td>
                                                         <td>{{ $transaction_item->service_detail->service->jenis ?? '' }} {{ $transaction_item->service_detail->service->tipe ?? '' }}</td>
                                                         <td>{{ $transaction_item->warranty_history->keterangan ?? '' }}</td>
@@ -116,8 +119,9 @@
                                                         </td>
                                                     @else
                                                         <th scope="row" class="text-body fw-bold">{{ $transaction_item->service_detail->service->kode_servis ?? '' }}</th>
-                                                        <td>{{ ($transaction_item['created_at'])->isoFormat('D MMM Y') }}</td>
-                                                        <input type="hidden" class="created_at" value="{{ $transaction_item->created_at }}">
+                                                        <td data-order="{{ $transaction_item->created_at }}">
+                                                            {{ ($transaction_item['created_at'])->isoFormat('D MMM Y') }}
+                                                        </td>
                                                         <td class="text-body fw-bold">{{ $transaction_item->service_detail->service->customer->name ?? '' }}</td>
                                                         <td>{{ $transaction_item->service_detail->service->jenis ?? '' }} {{ $transaction_item->service_detail->service->tipe ?? '' }}</td>
                                                         <td>{{ $transaction_item->service_detail->service->kerusakan ?? '' }}</td>
@@ -143,6 +147,7 @@
                                                     @endif
                                                     <td>
                                                         <ul class="list-unstyled hstack gap-1 mb-0">
+                                                            @can('transaction_show')
                                                             {{-- Start Button View --}}
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat Detail Servis">
                                                                 <button class="btn btn-sm btn-soft-primary" 
@@ -412,7 +417,9 @@
                                                                 </div>
                                                             </li>
                                                             {{-- End Button View  --}}
+                                                            @endcan
 
+                                                            @can('transaction_confirmation')
                                                             {{-- Start Button Confirm --}}
                                                             <form action="transaction/notification" method="POST">
                                                                 @csrf
@@ -424,7 +431,9 @@
                                                                 </li>
                                                             </form>
                                                             {{-- End Button Confirm --}}
+                                                            @endcan
 
+                                                            @can('transaction_delete')
                                                             {{-- Start Button Delete --}}
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus Data Transaksi">
                                                                 <a  data-bs-toggle="modal"
@@ -457,6 +466,7 @@
                                                                 </div>
                                                             </li>
                                                             {{-- End Button Delete --}}
+                                                            @endcan
                                                         </ul>
                                                     </td>
 
@@ -486,6 +496,16 @@
                                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                                 </div>
                                                                                 <div class="modal-body">
+                                                                                    @if ($errors->any())
+                                                                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                                                            <ul>
+                                                                                                @foreach ($errors->all() as $error)
+                                                                                                    <li>{{ $error }}</li>
+                                                                                                @endforeach
+                                                                                            </ul>
+                                                                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                                                        </div>
+                                                                                    @endif
                                                                                     <input type="hidden" name="transaction_id" value="{{ $transaction_item->id }}">
                                                                                     <p>Pastikan kerusakan pada saat menerima garansi, sama dengan kerusakan awal servis.</p>
                                                                                     <table class="table table-striped">
@@ -547,7 +567,7 @@
                                                                                             <tr>
                                                                                                 <th scope="row">Keterangan</th>
                                                                                                 <td>
-                                                                                                    <textarea type="text" id="keterangan" name="keterangan" placeholder="Keterangan claim garansi" value="{{old('keterangan')}}" class="form-control"></textarea>
+                                                                                                    <textarea type="text" id="keterangan" name="keterangan" placeholder="Keterangan claim garansi" value="{{old('keterangan')}}" class="form-control @error('keterangan') is-invalid @enderror"></textarea>
                                                                                                 </td>
                                                                                             </tr>
                                                                                         </tbody>
@@ -581,6 +601,9 @@
                                 </div>
                             </div>
                         </div>
+                        {{-- End Tabel Transaction --}}
+                        @endcan
+                        
                     </div>
                     <!--end card-->
                 </div>
@@ -598,6 +621,17 @@
 @endsection
 
 @push('after-script')
+
+    <script>
+        @if ($errors->any())
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal Klaim Garansi',
+                text: 'Harap cek kembali form garansi',
+            });
+        @endif
+    </script>
+
     <script>
         $(document).ready(function() {
             // Panggil DataTables pada tabel

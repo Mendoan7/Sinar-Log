@@ -4,887 +4,503 @@
 
 @section('content')
 
-<div class="main-content">
-    <div class="page-content">
-        <div class="container-fluid">
+    <div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-4">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0 me-3">
-                                            <img src="assets/images/users/avatar-1.jpg" alt="" class="avatar-md rounded-circle img-thumbnail">
-                                        </div>
-                                        <div class="flex-grow-1 align-self-center">
-                                            <div class="text-muted">
-                                                <p class="mb-2">Welcome Back Sinar Cell Dashboard</p>
-                                                <h5 class="mb-1">{{ Auth::user()->name }}</h5>
-                                                <p class="mb-0">{{ Auth::user()->detail_user->type_user->name }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-    
-                                <div class="col-lg-4 align-self-center">
-                                    <div class="text-lg-center mt-4 mt-lg-0">
-                                        <div class="row">
-                                            <div class="col-4">
-                                                <div>
-                                                    <p class="text-muted text-truncate mb-2">Total Projects</p>
-                                                    <h5 class="mb-0">48</h5>
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div>
-                                                    <p class="text-muted text-truncate mb-2">Projects</p>
-                                                    <h5 class="mb-0">40</h5>
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div>
-                                                    <p class="text-muted text-truncate mb-2">Clients</p>
-                                                    <h5 class="mb-0">18</h5>
-                                                    
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-    
-                                <div class="col-lg-4 d-none d-lg-block">
-                                    <div class="clearfix mt-4 mt-lg-0">
-                                        <div class="dropdown float-end">
-                                            <button class="btn btn-primary" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="bx bxs-cog align-middle me-1"></i> Setting
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" href="#">Action</a>
-                                                <a class="dropdown-item" href="#">Another action</a>
-                                                <a class="dropdown-item" href="#">Something else</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- end row -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- end row -->
-
-            <div class="row">
-                <div class="col-xl-4">
-                    <div class="card bg-primary bg-soft">
-                        <div>
-                            <div class="row">
-                                <div class="col-7">
-                                    <div class="text-primary p-3">
-                                        <h5 class="text-primary">Welcome Back !</h5>
-                                        <p>Skote Saas Dashboard</p>
-
-                                        <ul class="ps-3 mb-0">
-                                            <li class="py-1">7 + Layouts</li>
-                                            <li class="py-1">Multiple apps</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="col-5 align-self-end">
-                                    <img src="assets/images/profile-img.png" alt="" class="img-fluid">
+                <form id="dateForm" action="{{ route('backsite.dashboard.index') }}" method="GET">
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-12 col-lg-auto mb-4 mb-lg-0 me-auto">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <p class="mb-2">Welcome Back, Sinar Cell Dashboard! &#127881</p>
+                                    <h5 class="mb-2 card-title">{{ Auth::user()->name }}</h5>
+                                    <p class="text-muted mb-0">{{ Auth::user()->detail_user->type_user->name }}</p>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-12 col-lg-auto">
+                            <div class="d-inline-flex align-items-center me-2 mb-2">
+                                <div class="input-daterange input-group" id="dateContainer" data-date-format="yyyy-mm-dd"
+                                    data-date-autoclose="true" data-provide="datepicker">
+                                    <input type="text" class="form-control" id="start_date" name="start_date"
+                                        placeholder="Tanggal Mulai"
+                                        value="{{ \Carbon\Carbon::parse($startDate)->format('Y-m-d') }}" />
+                                    <input type="text" class="form-control" id="end_date" name="end_date"
+                                        placeholder="Tanggal Akhir"
+                                        value="{{ \Carbon\Carbon::parse($endDate)->format('Y-m-d') }}" />
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-soft-success"><i
+                                    class="mdi mdi-filter-outline align-middle"></i>
+                                Filter
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="col-xl-8">
+                </form>
+
+                {{-- Admin --}}
+                @can('dashboard_report_admin')
                     <div class="row">
-                        <div class="col-sm-4">
-                            <div class="card">
+                        {{-- Servis Masuk --}}
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+                            <div class="card card-statistics">
                                 <div class="card-body">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="avatar-xs me-3">
-                                            <span class="avatar-title rounded-circle bg-primary bg-soft text-primary font-size-18">
-                                                <i class="bx bx-copy-alt"></i>
-                                            </span>
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1">
+                                            <p class="mb-0 text-right">Servis Masuk</p>
+                                            <div class="fluid-container">
+                                                <h3 class="font-weight-medium text-right mb-0">{{ $total_service }}</h3>
+                                            </div>
                                         </div>
-                                        <h5 class="font-size-14 mb-0">Orders</h5>
-                                    </div>
-                                    <div class="text-muted mt-4">
-                                        <h4>1,452 <i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
-                                        <div class="d-flex">
-                                            <span class="badge badge-soft-success font-size-12"> + 0.2% </span> <span class="ms-2 text-truncate">From previous period</span>
+                                        <div class="flex-shrink-0 align-self-center">
+                                            <i class="bx bxs-log-in text-warning fa-2x"></i>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="card-body border-top py-3">
+                                    <p class="text-muted mb-0 text-center">
+                                        <i class="mdi mdi-information" aria-hidden="true"></i>
+                                        Total dari servis masuk
+                                    </p>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="col-sm-4">
-                            <div class="card">
+                        {{-- End Servis Masuk --}}
+                        {{-- Servis Selesai --}}
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+                            <div class="card card-statistics">
                                 <div class="card-body">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="avatar-xs me-3">
-                                            <span class="avatar-title rounded-circle bg-primary bg-soft text-primary font-size-18">
-                                                <i class="bx bx-archive-in"></i>
-                                            </span>
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1">
+                                            <p class="mb-0 text-right">Bisa Diambil</p>
+                                            <div class="fluid-container">
+                                                <h3 class="font-weight-medium text-right mb-0">{{ $total_success }}</h3>
+                                            </div>
                                         </div>
-                                        <h5 class="font-size-14 mb-0">Revenue</h5>
-                                    </div>
-                                    <div class="text-muted mt-4">
-                                        <h4>$ 28,452 <i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
-                                        <div class="d-flex">
-                                            <span class="badge badge-soft-success font-size-12"> + 0.2% </span> <span class="ms-2 text-truncate">From previous period</span>
+                                        <div class="flex-shrink-0 align-self-center">
+                                            <i class="bx bxs-check-square text-primary fa-2x"></i>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="card-body border-top py-3">
+                                    <p class="text-muted mb-0 text-center">
+                                        <i class="mdi mdi-information" aria-hidden="true"></i>
+                                        Servis yang bisa diambil
+                                    </p>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="col-sm-4">
-                            <div class="card">
+                        {{-- End Servis Selesai --}}
+                        {{-- Servis Keluar --}}
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+                            <div class="card card-statistics">
                                 <div class="card-body">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="avatar-xs me-3">
-                                            <span class="avatar-title rounded-circle bg-primary bg-soft text-primary font-size-18">
-                                                <i class="bx bx-purchase-tag-alt"></i>
-                                            </span>
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1">
+                                            <p class="mb-0 text-right">Servis Keluar</p>
+                                            <div class="fluid-container">
+                                                <h3 class="font-weight-medium text-right mb-0">{{ $total_out }}</h3>
+                                            </div>
                                         </div>
-                                        <h5 class="font-size-14 mb-0">Average Price</h5>
-                                    </div>
-                                    <div class="text-muted mt-4">
-                                        <h4>$ 16.2 <i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
-                                        
-                                        <div class="d-flex">
-                                            <span class="badge badge-soft-warning font-size-12"> 0% </span> <span class="ms-2 text-truncate">From previous period</span>
+                                        <div class="flex-shrink-0 align-self-center">
+                                            <i class="bx bxs-log-out text-success fa-2x"></i>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end row -->
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xl-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="clearfix">
-                                <div class="float-end">
-                                    <div class="input-group input-group-sm">
-                                        <select class="form-select form-select-sm">
-                                            <option value="JA" selected>Jan</option>
-                                            <option value="DE">Dec</option>
-                                            <option value="NO">Nov</option>
-                                            <option value="OC">Oct</option>
-                                        </select>
-                                        <label class="input-group-text">Month</label>
-                                    </div>
-                                </div>
-                                <h4 class="card-title mb-4">Top Selling product</h4>
-                            </div>
-
-                            <div class="text-muted text-center">
-                                <p class="mb-2">Product A</p>
-                                <h4>$ 6385</h4>
-                                <p class="mt-4 mb-0"><span class="badge badge-soft-success font-size-11 me-2"> 0.6% <i class="mdi mdi-arrow-up"></i> </span> From previous period</p>
-                            </div>
-
-                            <div class="table-responsive mt-4">
-                                <table class="table align-middle mb-0">
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <h5 class="font-size-14 mb-1">Product A</h5>
-                                                <p class="text-muted mb-0">Neque quis est</p>
-                                            </td>
-
-                                            <td>
-                                                <div id="radialchart-1" data-colors='["--bs-primary"]' class="apex-charts"></div>
-                                            </td>
-                                            <td>
-                                                <p class="text-muted mb-1">Sales</p>
-                                                <h5 class="mb-0">37 %</h5>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <h5 class="font-size-14 mb-1">Product B</h5>
-                                                <p class="text-muted mb-0">Quis autem iure</p>
-                                            </td>
-
-                                            <td>
-                                                <div id="radialchart-2" data-colors='["--bs-success"]' class="apex-charts"></div>
-                                            </td>
-                                            <td>
-                                                <p class="text-muted mb-1">Sales</p>
-                                                <h5 class="mb-0">72 %</h5>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <h5 class="font-size-14 mb-1">Product C</h5>
-                                                <p class="text-muted mb-0">Sed aliquam mauris.</p>
-                                            </td>
-
-                                            <td>
-                                                <div id="radialchart-3" data-colors='["--bs-danger"]' class="apex-charts"></div>
-                                            </td>
-                                            <td>
-                                                <p class="text-muted mb-1">Sales</p>
-                                                <h5 class="mb-0">54 %</h5>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title mb-4">Tasks</h4>
-
-                            <ul class="nav nav-pills bg-light rounded">
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="#">In Process</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">Upcoming</a>
-                                </li>
-                            </ul>
-
-                            <div class="mt-4">
-                                <div data-simplebar style="max-height: 250px;">
-                                
-                                    <div class="table-responsive">
-                                        <table class="table table-nowrap align-middle table-hover mb-0">
-                                            <tbody>
-                                                <tr>
-                                                    <td style="width: 50px;">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="tasklistCheck01">
-                                                            <label class="form-check-label" for="tasklistCheck01"></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Skote Saas Dashboard</a></h5>
-                                                        <p class="text-muted mb-0">Assigned to Mark</p>
-                                                    </td>
-                                                    <td style="width: 90px;">
-                                                        <div>
-                                                            <ul class="list-inline mb-0 font-size-16">
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
-                                                                </li>
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="tasklistCheck02">
-                                                            <label class="form-check-label" for="tasklistCheck02"></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">New Landing UI</a></h5>
-                                                        <p class="text-muted mb-0">Assigned to Team A</p>
-                                                    </td>
-                                                    <td>
-                                                        <div>
-                                                            <ul class="list-inline mb-0 font-size-16">
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
-                                                                </li>
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="tasklistCheck02">
-                                                            <label class="form-check-label" for="tasklistCheck02"></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Brand logo design</a></h5>
-                                                        <p class="text-muted mb-0">Assigned to Janis</p>
-                                                    </td>
-                                                    <td>
-                                                        <div>
-                                                            <ul class="list-inline mb-0 font-size-16">
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
-                                                                </li>
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="tasklistCheck04">
-                                                            <label class="form-check-label" for="tasklistCheck04"></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Blog Template UI</a></h5>
-                                                        <p class="text-muted mb-0">Assigned to Dianna</p>
-                                                    </td>
-                                                    <td>
-                                                        <div>
-                                                            <ul class="list-inline mb-0 font-size-16">
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
-                                                                </li>
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="tasklistCheck05">
-                                                            <label class="form-check-label" for="tasklistCheck05"></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Multipurpose Landing</a></h5>
-                                                        <p class="text-muted mb-0">Assigned to Team B</p>
-                                                    </td>
-                                                    <td>
-                                                        <div>
-                                                            <ul class="list-inline mb-0 font-size-16">
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
-                                                                </li>
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="tasklistCheck06">
-                                                            <label class="form-check-label" for="tasklistCheck06"></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Redesign - Landing page</a></h5>
-                                                        <p class="text-muted mb-0">Assigned to Jerry</p>
-                                                    </td>
-                                                    <td>
-                                                        <div>
-                                                            <ul class="list-inline mb-0 font-size-16">
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
-                                                                </li>
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="tasklistCheck07">
-                                                            <label class="form-check-label" for="tasklistCheck07"></label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Skote Crypto Dashboard</a></h5>
-                                                        <p class="text-muted mb-0">Assigned to Eric</p>
-                                                    </td>
-                                                    <td>
-                                                        <div>
-                                                            <ul class="list-inline mb-0 font-size-16">
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
-                                                                </li>
-                                                                <li class="list-inline-item">
-                                                                    <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                <div class="card-body border-top py-3">
+                                    <p class="text-muted mb-0 text-center">
+                                        <i class="mdi mdi-information" aria-hidden="true"></i>
+                                        Servis yang sudah diambil
+                                    </p>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="card-footer bg-transparent border-top">
-                            <div class="text-center">
-                                <a href="javascript: void(0);" class="btn btn-primary waves-effect waves-light"> Add new Task</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-4">
-                    <div class="card">
-                        <div class="card-body border-bottom">
-                            <div class="row">
-                                <div class="col-md-4 col-9">
-                                    <h5 class="font-size-15 mb-1">Steven Franklin</h5>
-                                    <p class="text-muted mb-0"><i class="mdi mdi-circle text-success align-middle me-1"></i> Active now</p>
-                                </div>
-                                <div class="col-md-8 col-3">
-                                    <ul class="list-inline user-chat-nav text-end mb-0">
-                                        <li class="list-inline-item d-none d-sm-inline-block">
-                                            <div class="dropdown">
-                                                <button class="btn nav-btn" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="bx bx-search-alt-2"></i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end py-0 dropdown-menu-md">
-                                                    <form class="p-3">
-                                                        <div class="form-group m-0">
-                                                            <div class="input-group">
-                                                                <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
-                                                                
-                                                                <button class="btn btn-primary" type="submit"><i class="mdi mdi-magnify"></i></button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
+                        {{-- End Servis Keluar --}}
+                        {{-- Pemasukan --}}
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+                            <div class="card card-statistics">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1">
+                                            <p class="mb-0 text-right">Total Pemasukan</p>
+                                            <div class="fluid-container">
+                                                <h3 class="font-weight-medium text-right mb-0">
+                                                    {{ 'Rp. ' . number_format($total_revenue) }}</h3>
                                             </div>
-                                        </li>
-                                        <li class="list-inline-item  d-none d-sm-inline-block">
-                                            <div class="dropdown">
-                                                <button class="btn nav-btn" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="bx bx-cog"></i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">View Profile</a>
-                                                    <a class="dropdown-item" href="#">Clear chat</a>
-                                                    <a class="dropdown-item" href="#">Muted</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </li>
-
-                                        <li class="list-inline-item">
-                                            <div class="dropdown">
-                                                <button class="btn nav-btn" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="bx bx-dots-horizontal-rounded"></i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else</a>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body pb-0">
-                            <div>
-                                <div class="chat-conversation">
-                                    <ul class="list-unstyled" data-simplebar style="max-height: 260px;">
-                                        <li> 
-                                            <div class="chat-day-title">
-                                                <span class="title">Today</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="conversation-list">
-                                                <div class="dropdown">
-
-                                                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                                      </a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">Copy</a>
-                                                        <a class="dropdown-item" href="#">Save</a>
-                                                        <a class="dropdown-item" href="#">Forward</a>
-                                                        <a class="dropdown-item" href="#">Delete</a>
-                                                    </div>
-                                                </div>
-                                                <div class="ctext-wrap">
-                                                    <div class="conversation-name">Steven Franklin</div>
-                                                    <p>
-                                                        Hello!
-                                                    </p>
-                                                    <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> 10:00</p>
-                                                </div>
-                                                
-                                            </div>
-                                        </li>
-
-                                        <li class="right">
-                                            <div class="conversation-list">
-                                                <div class="dropdown">
-
-                                                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                                      </a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">Copy</a>
-                                                        <a class="dropdown-item" href="#">Save</a>
-                                                        <a class="dropdown-item" href="#">Forward</a>
-                                                        <a class="dropdown-item" href="#">Delete</a>
-                                                    </div>
-                                                </div>
-                                                <div class="ctext-wrap">
-                                                    <div class="conversation-name">Henry Wells</div>
-                                                    <p>
-                                                        Hi, How are you? What about our next meeting?
-                                                    </p>
-
-                                                    <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> 10:02</p>
-                                                </div>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="conversation-list">
-                                                <div class="dropdown">
-
-                                                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                                      </a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">Copy</a>
-                                                        <a class="dropdown-item" href="#">Save</a>
-                                                        <a class="dropdown-item" href="#">Forward</a>
-                                                        <a class="dropdown-item" href="#">Delete</a>
-                                                    </div>
-                                                </div>
-                                                <div class="ctext-wrap">
-                                                    <div class="conversation-name">Steven Franklin</div>
-                                                    <p>
-                                                        Yeah everything is fine
-                                                    </p>
-                                                    
-                                                    <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> 10:06</p>
-                                                </div>
-                                                
-                                            </div>
-                                        </li>
-
-                                        <li class="last-chat">
-                                            <div class="conversation-list">
-                                                <div class="dropdown">
-
-                                                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                                      </a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">Copy</a>
-                                                        <a class="dropdown-item" href="#">Save</a>
-                                                        <a class="dropdown-item" href="#">Forward</a>
-                                                        <a class="dropdown-item" href="#">Delete</a>
-                                                    </div>
-                                                </div>
-                                                <div class="ctext-wrap">
-                                                    <div class="conversation-name">Steven Franklin</div>
-                                                    <p>& Next meeting tomorrow 10.00AM</p>
-                                                    <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> 10:06</p>
-                                                </div>
-                                                
-                                            </div>
-                                        </li>
-
-                                        <li class="right">
-                                            <div class="conversation-list">
-                                                <div class="dropdown">
-
-                                                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                                      </a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">Copy</a>
-                                                        <a class="dropdown-item" href="#">Save</a>
-                                                        <a class="dropdown-item" href="#">Forward</a>
-                                                        <a class="dropdown-item" href="#">Delete</a>
-                                                    </div>
-                                                </div>
-                                                <div class="ctext-wrap">
-                                                    <div class="conversation-name">Henry Wells</div>
-                                                    <p>
-                                                        Wow that's great
-                                                    </p>
-
-                                                    <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> 10:07</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        
-                                        
-                                    </ul>
-                                </div>
-                                
-                            </div>
-                        </div>
-
-                        <div class="p-3 chat-input-section">
-                            <div class="row">
-                                <div class="col">
-                                    <div class="position-relative">
-                                        <input type="text" class="form-control rounded chat-input" placeholder="Enter Message...">
-                                        <div class="chat-input-links">
-                                            <ul class="list-inline mb-0">
-                                                <li class="list-inline-item"><a href="javascript: void(0);"><i class="mdi mdi-emoticon-happy-outline"></i></a></li>
-                                                <li class="list-inline-item"><a href="javascript: void(0);"><i class="mdi mdi-file-image-outline"></i></a></li>
-                                                <li class="list-inline-item"><a href="javascript: void(0);"><i class="mdi mdi-file-document-outline"></i></a></li>
-                                            </ul>
+                                        </div>
+                                        <div class="flex-shrink-0 align-self-center">
+                                            <i class="mdi mdi-cube text-danger fa-2x"></i>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-auto">
-                                    <button type="submit" class="btn btn-primary chat-send w-md waves-effect waves-light"><span class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send"></i></button>
+                                <div class="card-body border-top py-3">
+                                    <p class="text-muted mb-0 text-center">
+                                        <i class="mdi mdi-information" aria-hidden="true"></i>
+                                        Total Pemasukan
+                                    </p>
                                 </div>
+                            </div>
+                        </div>
+                        {{-- End Pemasukan --}}
+                    </div>
+                @endcan
+
+                {{-- Teknisi --}}
+                @can('dashboard_report_technician')
+                    <div class="row">
+                        {{-- Servis Masuk --}}
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+                            <div class="card card-statistics">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1">
+                                            <p class="mb-0 text-right">Servis Antrian</p>
+                                            <div class="fluid-container">
+                                                <h3 class="font-weight-medium text-right mb-0">{{ $total_queue }}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="flex-shrink-0 align-self-center">
+                                            <i class="mdi mdi-archive text-warning fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body border-top py-3">
+                                    <p class="text-muted mb-0 text-center">
+                                        @if ($queue_date->isNotEmpty())
+                                            <i class="mdi mdi-reload mr-1" aria-hidden="true"></i> Update :
+                                            {{ $queue_date->map(function ($date) {
+                                                    return $date->format('d M, Y');
+                                                })->implode(', ') }}
+                                        @else
+                                            Tidak ada antrian saat ini.
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- End Servis Masuk --}}
+                        {{-- Servis Selesai --}}
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+                            <div class="card card-statistics">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1">
+                                            <p class="mb-0 text-right">Proses Servis</p>
+                                            <div class="fluid-container">
+                                                <h3 class="font-weight-medium text-right mb-0">{{ $total_in_progress }}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="flex-shrink-0 align-self-center">
+                                            <i class="mdi mdi-autorenew text-primary fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body border-top py-3">
+                                    <p class="text-muted mb-0 text-center">
+                                        @if ($progress_date->isNotEmpty())
+                                            <i class="mdi mdi-reload mr-1" aria-hidden="true"></i> Update :
+                                            {{ $progress_date->map(function ($date) {
+                                                    return $date->format('d M, Y');
+                                                })->implode(', ') }}
+                                        @else
+                                            Tidak proses servis saat ini.
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- End Servis Selesai --}}
+                        {{-- Servis Keluar --}}
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+                            <div class="card card-statistics">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1">
+                                            <p class="mb-0 text-right">Servis Keluar</p>
+                                            <div class="fluid-container">
+                                                <h3 class="font-weight-medium text-right mb-0">{{ $total_success_teknisi }}
+                                                </h3>
+                                            </div>
+                                        </div>
+                                        <div class="flex-shrink-0 align-self-center">
+                                            <i class="bx bxs-log-out text-success fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body border-top py-3">
+                                    <p class="text-muted mb-0 text-center">
+                                        <i class="mdi mdi-calendar mr-1" aria-hidden="true"></i>
+                                        @if (request()->has('start_date'))
+                                            {{ \Carbon\Carbon::parse(request('start_date'))->format('d M, Y') }}
+                                            -
+                                            {{ \Carbon\Carbon::parse(request('end_date'))->format('d M, Y') }}
+                                        @else
+                                            {{ date('d M, Y') }}
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- End Servis Keluar --}}
+                        {{-- Pemasukan --}}
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+                            <div class="card card-statistics">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1">
+                                            <p class="mb-0 text-right">Total Pemasukan</p>
+                                            <div class="fluid-container">
+                                                <h3 class="font-weight-medium text-right mb-0">
+                                                    {{ 'Rp. ' . number_format($total_revenue_teknisi) }}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="flex-shrink-0 align-self-center">
+                                            <i class="mdi mdi-cube text-danger fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body border-top py-3">
+                                    <p class="text-muted mb-0 text-center">
+                                        <i class="mdi mdi-calendar mr-1" aria-hidden="true"></i>
+                                        @if (request()->has('start_date'))
+                                            {{ \Carbon\Carbon::parse(request('start_date'))->format('d M, Y') }}
+                                            -
+                                            {{ \Carbon\Carbon::parse(request('end_date'))->format('d M, Y') }}
+                                        @else
+                                            {{ date('d M, Y') }}
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- End Pemasukan --}}
+                    </div>
+                @endcan
+
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-2">Statistik Servis</h4>
+                                <h6>Tahun {{ Carbon\Carbon::now()->format('Y') }}</h6>
+                                <div id="service_chart" data-colors='["--bs-primary","--bs-warning", "--bs-success"]'
+                                    class="apex-charts" dir="ltr"></div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                {{-- Latest Transaction --}}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-4">Latest Transaction</h4>
+                                <div class="table-responsive">
+                                    <table class="table align-middle table-nowrap mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="align-middle">Kode Servis</th>
+                                                <th class="align-middle">Tanggal</th>
+                                                <th class="align-middle">Pemilik</th>
+                                                <th class="align-middle">Barang</th>
+                                                <th class="align-middle">Kerusakan</th>
+                                                <th class="align-middle">Status</th>
+                                                @if (Auth::user()->detail_user->type_user_id <= 2)
+                                                    <th class="align-middle">Teknisi</th>
+                                                @endif
+                                                <th class="align-middle">Kondisi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($latest_services as $service)
+                                                <tr>
+                                                    <td class="text-body fw-bold">{{ $service->kode_servis ?? '' }}</td>
+                                                    <td>{{ $service->updated_at ?? '' }}</td>
+                                                    <td>{{ $service->customer->name ?? '' }}</td>
+                                                    <td>{{ $service->jenis ?? '' }} {{ $service->tipe ?? '' }}</td>
+                                                    <td>{{ $service->kerusakan ?? '' }}</td>
+                                                    <td>
+                                                        @if ($service->status == 1)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-secondary font-size-11">{{ 'Belum Cek' }}</span>
+                                                        @elseif($service->status == 2)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-info font-size-11">{{ 'Akan Dikerjakan' }}</span>
+                                                        @elseif($service->status == 3)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-info font-size-11">{{ 'Sedang Cek' }}</span>
+                                                        @elseif($service->status == 4)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-success font-size-11">{{ 'Sedang Dikerjakan' }}</span>
+                                                        @elseif($service->status == 5)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-warning font-size-11">{{ 'Sedang Tes' }}</span>
+                                                        @elseif($service->status == 6)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-danger font-size-11">{{ 'Menunggu Konfirmasi' }}</span>
+                                                        @elseif($service->status == 7)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-primary font-size-11">{{ 'Menunggu Sparepart' }}</span>
+                                                        @elseif($service->status == 8)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-primary font-size-11">{{ 'Bisa Diambil' }}</span>
+                                                        @elseif($service->status == 9)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-success font-size-11">{{ 'Sudah Diambil' }}</span>
+                                                        @elseif($service->status == 10)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-primary font-size-11">{{ 'Terkonfirmasi' }}</span>
+                                                        @elseif($service->status == 11)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-primary font-size-11">{{ 'Dibatalkan' }}</span>
+                                                        @elseif($service->service_detail?->transaction?->warranty_history?->status == 1)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-warning font-size-11">{{ 'Garansi' }}</span>
+                                                        @elseif($service->service_detail?->transaction?->warranty_history?->status == 2)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-warning font-size-11">{{ 'Garansi Bisa Diambil' }}</span>
+                                                        @elseif($service->service_detail?->transaction?->warranty_history?->status == 3)
+                                                            <span
+                                                                class="badge badge-pill badge-soft-warning font-size-11">{{ 'Garansi Sudah Diambil' }}</span>
+                                                        @endif
+                                                    </td>
+                                                    @if (Auth::user()->detail_user->type_user_id <= 2)
+                                                        <!-- Check if user is an admin -->
+                                                        <td>
+                                                            @if ($service->teknisi)
+                                                                {{ explode(' ', $service->teknisi_detail->name)[0] }}
+                                                            @else
+                                                                Belum Ada
+                                                            @endif
+                                                        </td>
+                                                    @endif
+                                                    <td>
+                                                        @isset($service->service_detail)
+                                                            @if ($service->service_detail->kondisi == 1)
+                                                                <i
+                                                                    class="mdi mdi-circle text-success align-middle me-1"></i>{{ 'Sudah Jadi' }}
+                                                            @elseif($service->service_detail->kondisi == 2)
+                                                                <i
+                                                                    class="mdi mdi-circle text-danger align-middle me-1"></i>{{ 'Tidak Bisa' }}
+                                                            @elseif($service->service_detail->kondisi == 3)
+                                                                <i
+                                                                    class="mdi mdi-circle text-secondary align-middle me-1"></i>{{ 'Dibatalkan' }}
+                                                            @endif
+                                                        @else
+                                                            <i
+                                                                class="mdi mdi-circle text-primary align-middle me-1"></i>{{ 'Proses Servis' }}
+                                                        @endisset
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- end table-responsive -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{-- End Latest Transaction --}}
 
             </div>
-            <!-- end row -->
-
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title mb-4">Latest Transaction</h4>
-                            <div class="table-responsive">
-                                <table class="table align-middle table-nowrap mb-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th style="width: 20px;">
-                                                <div class="form-check font-size-16 align-middle">
-                                                    <input class="form-check-input" type="checkbox" id="transactionCheck01">
-                                                    <label class="form-check-label" for="transactionCheck01"></label>
-                                                </div>
-                                            </th>
-                                            <th class="align-middle">Order ID</th>
-                                            <th class="align-middle">Billing Name</th>
-                                            <th class="align-middle">Date</th>
-                                            <th class="align-middle">Total</th>
-                                            <th class="align-middle">Payment Status</th>
-                                            <th class="align-middle">Payment Method</th>
-                                            <th class="align-middle">View Details</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div class="form-check font-size-16">
-                                                    <input class="form-check-input" type="checkbox" id="transactionCheck02">
-                                                    <label class="form-check-label" for="transactionCheck02"></label>
-                                                </div>
-                                            </td>
-                                            <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2540</a> </td>
-                                            <td>Neal Matthews</td>
-                                            <td>
-                                                07 Oct, 2019
-                                            </td>
-                                            <td>
-                                                $400
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-soft-success font-size-11">Paid</span>
-                                            </td>
-                                            <td>
-                                                <i class="fab fa-cc-mastercard me-1"></i> Mastercard
-                                            </td>
-                                            <td>
-                                                <!-- Button trigger modal -->
-                                                <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".transaction-detailModal">
-                                                    View Details
-                                                </button>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="form-check font-size-16">
-                                                    <input class="form-check-input" type="checkbox" id="transactionCheck03">
-                                                    <label class="form-check-label" for="transactionCheck03"></label>
-                                                </div>
-                                            </td>
-                                            <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2541</a> </td>
-                                            <td>Jamal Burnett</td>
-                                            <td>
-                                                07 Oct, 2019
-                                            </td>
-                                            <td>
-                                                $380
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-soft-danger font-size-11">Chargeback</span>
-                                            </td>
-                                            <td>
-                                                <i class="fab fa-cc-visa me-1"></i> Visa
-                                            </td>
-                                            <td>
-                                                <!-- Button trigger modal -->
-                                                <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".transaction-detailModal">
-                                                    View Details
-                                                </button>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="form-check font-size-16">
-                                                    <input class="form-check-input" type="checkbox" id="transactionCheck04">
-                                                    <label class="form-check-label" for="transactionCheck04"></label>
-                                                </div>
-                                            </td>
-                                            <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2542</a> </td>
-                                            <td>Juan Mitchell</td>
-                                            <td>
-                                                06 Oct, 2019
-                                            </td>
-                                            <td>
-                                                $384
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-soft-success font-size-11">Paid</span>
-                                            </td>
-                                            <td>
-                                                <i class="fab fa-cc-paypal me-1"></i> Paypal
-                                            </td>
-                                            <td>
-                                                <!-- Button trigger modal -->
-                                                <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".transaction-detailModal">
-                                                    View Details
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="form-check font-size-16">
-                                                    <input class="form-check-input" type="checkbox" id="transactionCheck05">
-                                                    <label class="form-check-label" for="transactionCheck05"></label>
-                                                </div>
-                                            </td>
-                                            <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2543</a> </td>
-                                            <td>Barry Dick</td>
-                                            <td>
-                                                05 Oct, 2019
-                                            </td>
-                                            <td>
-                                                $412
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-soft-success font-size-11">Paid</span>
-                                            </td>
-                                            <td>
-                                                <i class="fab fa-cc-mastercard me-1"></i> Mastercard
-                                            </td>
-                                            <td>
-                                                <!-- Button trigger modal -->
-                                                <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".transaction-detailModal">
-                                                    View Details
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="form-check font-size-16">
-                                                    <input class="form-check-input" type="checkbox" id="transactionCheck06">
-                                                    <label class="form-check-label" for="transactionCheck06"></label>
-                                                </div>
-                                            </td>
-                                            <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2544</a> </td>
-                                            <td>Ronald Taylor</td>
-                                            <td>
-                                                04 Oct, 2019
-                                            </td>
-                                            <td>
-                                                $404
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-soft-warning font-size-11">Refund</span>
-                                            </td>
-                                            <td>
-                                                <i class="fab fa-cc-visa me-1"></i> Visa
-                                            </td>
-                                            <td>
-                                                <!-- Button trigger modal -->
-                                                <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".transaction-detailModal">
-                                                    View Details
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="form-check font-size-16">
-                                                    <input class="form-check-input" type="checkbox" id="transactionCheck07">
-                                                    <label class="form-check-label" for="transactionCheck07"></label>
-                                                </div>
-                                            </td>
-                                            <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2545</a> </td>
-                                            <td>Jacob Hunter</td>
-                                            <td>
-                                                04 Oct, 2019
-                                            </td>
-                                            <td>
-                                                $392
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-pill badge-soft-success font-size-11">Paid</span>
-                                            </td>
-                                            <td>
-                                                <i class="fab fa-cc-paypal me-1"></i> Paypal
-                                            </td>
-                                            <td>
-                                                <!-- Button trigger modal -->
-                                                <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".transaction-detailModal">
-                                                    View Details
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- end table-responsive -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- end row -->
-
+            <!-- container-fluid -->
         </div>
-        <!-- container-fluid -->
     </div>
-</div>
 
 @endsection
+
+@push('before-script')
+    <script src="{{ asset('/assets/backsite/libs/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('/assets/backsite/js/pages/apexcharts.init.js') }}"></script>
+@endpush
+
+@push('after-script')
+    <script>
+        var mixedChartColors = getChartColorsArray('service_chart');
+        mixedChartColors && (function() {
+            var options = {
+                chart: {
+                    height: 350,
+                    type: 'line',
+                    stacked: false,
+                    toolbar: {
+                        show: true
+                    }
+                },
+                stroke: {
+                    width: [0, 2, 4],
+                    curve: 'smooth'
+                },
+                plotOptions: {
+                    bar: {
+                        columnWidth: '30%'
+                    }
+                },
+                colors: mixedChartColors,
+                series: [{
+                        name: 'Servis Masuk',
+                        type: 'column',
+                        data: @json($chartData['totalMasuk'])
+                    },
+                    {
+                        name: 'Bisa Diambil',
+                        type: 'area',
+                        data: @json($chartData['totalSelesai'])
+                    },
+                    {
+                        name: 'Servis Keluar',
+                        type: 'line',
+                        data: @json($chartData['totalKeluar'])
+                    },
+                ],
+                fill: {
+                    opacity: [0.85, 0.50, 1],
+                    gradient: {
+                        inverseColors: false,
+                        shade: 'light',
+                        type: 'vertical',
+                        opacityFrom: 0.85,
+                        opacityTo: 0.55,
+                        stops: [0, 100, 100, 100],
+                    },
+                },
+                labels: @json($chartData['months']),
+                markers: {
+                    size: 0
+                },
+                xaxis: {
+                    type: 'category'
+                },
+                yaxis: {
+                    title: {
+                        text: 'Total Keseluruhan'
+                    },
+                    labels: {
+                        formatter: function(value) {
+                            return Math.round(value)
+                                .toString(); // Menggunakan Math.round() untuk membulatkan ke bilangan bulat
+                        }
+                    }
+                },
+                tooltip: {
+                    shared: true,
+                    intersect: false,
+                    y: {
+                        formatter: function(e) {
+                            return e !== undefined ? e.toFixed(0) + ' Servis' : e;
+                        },
+                    },
+                },
+                grid: {
+                    borderColor: '#f1f1f1'
+                },
+            };
+
+            var chart = new ApexCharts(document.querySelector('#service_chart'), options);
+            chart.render();
+        })();
+    </script>
+@endpush

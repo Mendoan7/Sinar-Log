@@ -38,24 +38,34 @@ class CustomerController extends Controller
 
     public function index()
     {
+        $user_type = auth()->user()->detail_user->type_user_id;
         // for table grid
         $customer = Customer::with(['service.service_detail.transaction.warranty_history'])
+        ->withCount([
+            'service as total_service',
+            'service as proses_servis' => function ($query) {
+                $query->whereIn('status', [1, 2, 3, 4, 5, 6, 7, 10, 11]);
+            },
+            'service as bisa_diambil' => function ($query) {
+                $query->where('status', 8);
+            },
+            'service as servis_selesai' => function ($query) {
+                $query->where('status', 9)
+                ->whereDoesntHave('service_detail.transaction.warranty_history')
+                    ->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+                        $query->where('status', 3);
+                    });
+            },
+            'service as proses_garansi' => function ($query) {
+                $query->whereHas('service_detail.transaction.warranty_history', function ($query) {
+                    $query->whereIn('status', [1,2]);
+                });
+            },
+        ])
         ->orderBy('created_at', 'desc')
         ->get();
-        
-        // menghitung servis selesai
-        $customer->each(function ($customer_item) {
-            $service_selesai = $customer_item->service->filter(function ($service) {
-                return $service->status === 9 && (
-                    $service->service_detail->transaction->warranty_history->isEmpty() ||
-                    $service->service_detail->transaction->warranty_history->where('status', 3)->isNotEmpty()
-                );
-            })->count();
-    
-            $customer_item->service_selesai = $service_selesai;
-        });
 
-        return view('pages.backsite.operational.customer.index', compact('customer'));
+        return view('pages.backsite.operational.customer.index', compact('customer', 'user_type'));
     }
 
     /**
