@@ -4,10 +4,10 @@
 
 @section('content')
 
-<div class="py-16 xl:pb-56 bg-white overflow-hidden">
+<div class="py-16 xl:pb-56 bg-gradient-to-b from-gray-100 to-white">
     <div class="container px-4 mx-auto">
       <div class="text-center max-w-md mx-auto">
-        <a class="mb-20 inline-block" href="#">
+        <a class="mb-10 inline-block" href="/">
             <img class="h-16" src="{{ asset('/assets/frontsite/images/logo.png') }}"
             alt="Sinar Cell Logo"/>
           </a>

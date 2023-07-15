@@ -37,9 +37,10 @@ class ReportEmployeesController extends Controller
         $start_date = $request->input('start_date') ? Carbon::createFromFormat('Y-m-d', $request->input('start_date')) : Carbon::now()->startOfMonth();
         $end_date = $request->input('end_date') ? Carbon::createFromFormat('Y-m-d', $request->input('end_date')) : Carbon::now();
 
-        // $start_date = $request->query('start_date') ? Carbon::createFromFormat('Y-m-d', $request->query('start_date')) : Carbon::now()->startOfMonth();
-        // $end_date = $request->query('end_date') ? Carbon::createFromFormat('Y-m-d', $request->query('end_date')) : Carbon::now();
-
+        // Validasi jika tanggal sama
+        if ($start_date->isSameDay($end_date)) {
+            $end_date->endOfDay(); // Atur end_date menjadi akhir hari
+        }
 
         // Ambil data teknisi
         $teknisi = User::query();
@@ -85,13 +86,6 @@ class ReportEmployeesController extends Controller
                 $total_profit_service[$teknisi_id] += ($service->service_detail->biaya - $service->service_detail->modal);
             }
         }
-        // foreach ($services as $service) {
-        //     $teknisi_id = $service->teknisi;
-        //     $total_service[$teknisi_id]++;
-        //     $total_biaya_service[$teknisi_id] += $service->service_detail->biaya;
-        //     $total_modal_service[$teknisi_id] += $service->service_detail->modal;
-        //     $total_profit_service[$teknisi_id] += ($service->service_detail->biaya - $service->service_detail->modal);
-        // }
 
         // Menghitung total keseluruhan
         $total_servis_selesai = array_sum($total_service);
@@ -149,6 +143,7 @@ class ReportEmployeesController extends Controller
             ->where('status', 9)
             ->orderBy('created_at', 'asc')
             ->get()
+            ->sortBy('service_detail.transaction.created_at')
             ->groupBy(function ($item) {
                 return $item->service_detail->transaction->created_at->format('Y-m-d');
             })

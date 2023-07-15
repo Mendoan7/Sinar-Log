@@ -108,7 +108,8 @@
                                                             @if ($services_item->transaction?->warranty_history->status == 2)
                                                                 <td class="text-body fw-bold">
                                                                     {{ $services_item->service->kode_servis ?? '' }}</td>
-                                                                <td data-order="{{ $services_item->transaction->warranty_history->updated_at }}">
+                                                                <td
+                                                                    data-order="{{ $services_item->transaction->warranty_history->updated_at }}">
                                                                     {{ $services_item->transaction->warranty_history->updated_at->isoFormat('D MMM Y') }}
                                                                 </td>
                                                                 <td class="text-body fw-bold">
@@ -190,8 +191,7 @@
                                                                                             <h5 class="modal-title"
                                                                                                 id="showServicesModalLabel">Detail
                                                                                                 Servis</h5>
-                                                                                            <button type="button"
-                                                                                                class="btn-close"
+                                                                                            <button type="button" class="btn-close"
                                                                                                 data-bs-dismiss="modal"
                                                                                                 aria-label="Close"></button>
                                                                                         </div>
@@ -507,408 +507,445 @@
                                                             </td>
                                                             <td>
                                                                 <ul class="list-unstyled hstack gap-1 mb-0">
-                                                                    @can('service_detail_update')
-                                                                        {{-- Start Button Status --}}
-                                                                        <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                            title="Ubah Status">
+                                                                    <div class="d-flex flex-column">
+                                                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Ubah
+                                                                            {{ $services_item->service->kode_servis }} menjadi
+                                                                            Proses Servis kembali.">
+                                                                            <button class="btn btn-sm btn-soft-danger mb-1"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#servisKembali{{ $services_item->id }}">
+                                                                                Servis Ulang
+                                                                            </button>
+                                                                        </li>
+                                                                        <div class="modal fade bs-example-modal-center" id="servisKembali{{ $services_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="servisKembaliModalLabel" aria-expanded="false">
+                                                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                                <div class="modal-content">
+                                                                                    <div class="modal-header">
+                                                                                        <h5 class="modal-title" id="servisKembaliModalLabel">Konfirmasi Servis Ulang</h5>
+                                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                    </div>
+                                                                                    <form class="form form-horizontal" action="{{ route('backsite.service-detail.reservice', $services_item->service_id) }}" method="POST">
+                                                                                        @csrf
+                                                                                            <div class="modal-body">
+                                                                                                <p>Servis ulang kode servis <strong>{{ $services_item->service->kode_servis }}</strong>, dikarenakan sebelum barang diambil kondisinya rusak kembali.</p>
+                                                                                                <div class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                                                                    <input class="form-check-input" type="checkbox" value="" id="servisKembaliCheckbox{{ $services_item->id }}" required>
+                                                                                                    <label class="form-check-label" for="servisKembaliCheckbox{{ $services_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju untuk dilakukan servis ulang.</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="modal-footer">
+                                                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                                <button type="submit" class="btn btn-primary">Servis Ulang</button>
+                                                                                            </div>
+                                                                                    </form>        
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        @can('service_detail_update')
+                                                                        {{-- Button Sudah Diambil --}}
+                                                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Ubah Status
+                                                                            {{ $services_item->service->kode_servis }} menjadi
+                                                                            Sudah Diambil">
                                                                             <button class="btn btn-sm btn-soft-success"
                                                                                 data-bs-toggle="modal"
                                                                                 data-bs-target="#sudahDiambil{{ $services_item->id }}">
                                                                                 Sudah Diambil
                                                                             </button>
-                                                                            {{-- Start Modal Status --}}
-                                                                            <form class="form form-horizontal"
-                                                                                action="{{ $services_item->transaction?->warranty_history->status == 2 ? route('backsite.transaction.warranty') : route('backsite.transaction.store') }}"
-                                                                                method="POST">
-                                                                                @csrf
-                                                                                <div class="modal fade bs-example-modal-center"
-                                                                                    id="sudahDiambil{{ $services_item->id }}"
-                                                                                    tabindex="-1" aria-hidden="true"
-                                                                                    aria-labelledby="bisaDiambilModalLabel">
-                                                                                    <div class="modal-dialog modal-dialog-scrollable"
-                                                                                        role="document">
-                                                                                        <div class="modal-content">
-                                                                                            <div class="modal-header">
-                                                                                                <h5 class="modal-title">Ubah data
-                                                                                                    menjadi Sudah Diambil</h5>
-                                                                                                <button type="button"
-                                                                                                    class="btn-close"
-                                                                                                    data-bs-dismiss="modal"
-                                                                                                    aria-label="Close"></button>
-                                                                                            </div>
-                                                                                            @if ($services_item->transaction?->warranty_history->status == 2)
-                                                                                                {{-- start body garansi --}}
-                                                                                                <div class="modal-body">
-                                                                                                    @if ($errors->any())
-                                                                                                        <div class="alert alert-danger alert-dismissible fade show"
-                                                                                                            role="alert">
-                                                                                                            <ul>
-                                                                                                                @foreach ($errors->all() as $error)
-                                                                                                                    <li>{{ $error }}
-                                                                                                                    </li>
-                                                                                                                @endforeach
-                                                                                                            </ul>
-                                                                                                            <button type="button"
-                                                                                                                class="btn-close"
-                                                                                                                data-bs-dismiss="alert"
-                                                                                                                aria-label="Close"></button>
-                                                                                                        </div>
-                                                                                                    @endif
-                                                                                                    <input type="hidden"
-                                                                                                        name="service_detail_id"
-                                                                                                        value="{{ $services_item->id }}">
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="customer_id"
-                                                                                                            class="form-label">Pemilik
-                                                                                                            Barang</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ $services_item->service->customer->name ?? '' }} - No.Telp {{ $services_item->service->customer->contact ?? '' }}">
+                                                                        </li>
+                                                                        {{-- End Button Sudah Diambil --}}
+                                                                        @endcan
+                                                                        {{-- Start Modal Sudah Diambil --}}
+                                                                        <form class="form form-horizontal"
+                                                                            action="{{ $services_item->transaction?->warranty_history->status == 2 ? route('backsite.transaction.warranty') : route('backsite.transaction.store') }}"
+                                                                            method="POST">
+                                                                            @csrf
+                                                                            <div class="modal fade bs-example-modal-center"
+                                                                                id="sudahDiambil{{ $services_item->id }}"
+                                                                                tabindex="-1" aria-hidden="true"
+                                                                                aria-labelledby="bisaDiambilModalLabel">
+                                                                                <div class="modal-dialog modal-dialog-scrollable"
+                                                                                    role="document">
+                                                                                    <div class="modal-content">
+                                                                                        <div class="modal-header">
+                                                                                            <h5 class="modal-title">Ubah data
+                                                                                                menjadi Sudah Diambil</h5>
+                                                                                            <button type="button"
+                                                                                                class="btn-close"
+                                                                                                data-bs-dismiss="modal"
+                                                                                                aria-label="Close"></button>
+                                                                                        </div>
+                                                                                        @if ($services_item->transaction?->warranty_history->status == 2)
+                                                                                            {{-- start body garansi --}}
+                                                                                            <div class="modal-body">
+                                                                                                @if ($errors->any())
+                                                                                                    <div class="alert alert-danger alert-dismissible fade show"
+                                                                                                        role="alert">
+                                                                                                        <ul>
+                                                                                                            @foreach ($errors->all() as $error)
+                                                                                                                <li>{{ $error }}
+                                                                                                                </li>
+                                                                                                            @endforeach
+                                                                                                        </ul>
+                                                                                                        <button type="button"
+                                                                                                            class="btn-close"
+                                                                                                            data-bs-dismiss="alert"
+                                                                                                            aria-label="Close"></button>
                                                                                                     </div>
+                                                                                                @endif
+                                                                                                <input type="hidden"
+                                                                                                    name="service_detail_id"
+                                                                                                    value="{{ $services_item->id }}">
 
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="jenis"
-                                                                                                            class="form-label">Nama
-                                                                                                            Barang</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ $services_item->service->jenis ?? '' }} {{ $services_item->service->tipe ?? '' }}">
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="kerusakan"
-                                                                                                            class="form-label">Kerusakan
-                                                                                                            Awal</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ $services_item->service->kerusakan ?? '' }}">
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="tindakan"
-                                                                                                            class="form-label">Tindakan
-                                                                                                            Awal</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ $services_item->tindakan ?? '' }}"
-                                                                                                            required>
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="biaya"
-                                                                                                            class="form-label">Biaya
-                                                                                                            Sebelumnya</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ 'RP. ' . number_format($services_item->biaya) ?? '' }}"
-                                                                                                            required>
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="tindakan"
-                                                                                                            class="form-label">Ket.
-                                                                                                            Klaim</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ $services_item->transaction->warranty_history->keterangan ?? '' }}"
-                                                                                                            required>
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="tindakan"
-                                                                                                            class="form-label">Tindakan</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ $services_item->transaction->warranty_history->tindakan ?? '' }}"
-                                                                                                            required>
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="tindakan"
-                                                                                                            class="form-label">Catatan</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ $services_item->transaction->warranty_history->catatan ?? '' }}"
-                                                                                                            required>
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="pengambil"
-                                                                                                            class="form-label">Pengambil</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            name="pengambil"
-                                                                                                            id="pengambil"
-                                                                                                            placeholder="Nama Pengambil"
-                                                                                                            required>
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="penyerah"
-                                                                                                            class="form-label">Penyerah</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            name="penyerah"
-                                                                                                            id="penyerah"
-                                                                                                            placeholder="Penyerah"
-                                                                                                            value="{{ Auth::user()->name }}"
-                                                                                                            disabled required>
-                                                                                                    </div>
-
-                                                                                                    <!-- Form Check -->
-                                                                                                    <div
-                                                                                                        class="form-check d-flex justify-content-end gap-2 mt-4">
-                                                                                                        <input
-                                                                                                            class="form-check-input"
-                                                                                                            type="checkbox"
-                                                                                                            value=""
-                                                                                                            id="sudahDiambilCheckbox{{ $services_item->id }}"
-                                                                                                            required>
-                                                                                                        <label
-                                                                                                            class="form-check-label"
-                                                                                                            for="sudahDiambilCheckbox{{ $services_item->id }}">Dengan
-                                                                                                            ini saya, <span
-                                                                                                                class="text-danger">{{ Auth::user()->name }}</span>
-                                                                                                            setuju mengubah Status
-                                                                                                            menjadi Bisa
-                                                                                                            Diambil</label>
-                                                                                                    </div>
-                                                                                                    <!-- End Form Check -->
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="customer_id"
+                                                                                                        class="form-label">Pemilik
+                                                                                                        Barang</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ $services_item->service->customer->name ?? '' }} - No.Telp {{ $services_item->service->customer->contact ?? '' }}">
                                                                                                 </div>
-                                                                                                {{-- end body garansi --}}
-                                                                                            @else
-                                                                                                {{-- start body non-garansi --}}
-                                                                                                <div class="modal-body">
-                                                                                                    @if ($errors->any())
-                                                                                                        <div class="alert alert-danger alert-dismissible fade show"
-                                                                                                            role="alert">
-                                                                                                            <ul>
-                                                                                                                @foreach ($errors->all() as $error)
-                                                                                                                    <li>{{ $error }}
-                                                                                                                    </li>
-                                                                                                                @endforeach
-                                                                                                            </ul>
-                                                                                                            <button type="button"
-                                                                                                                class="btn-close"
-                                                                                                                data-bs-dismiss="alert"
-                                                                                                                aria-label="Close"></button>
-                                                                                                        </div>
-                                                                                                    @endif
-                                                                                                    <input type="hidden"
-                                                                                                        name="service_detail_id"
-                                                                                                        value="{{ $services_item->id }}">
 
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="customer_id"
-                                                                                                            class="form-label">Pemilik
-                                                                                                            Barang</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ $services_item->service->customer->name ?? '' }} - No.Telp {{ $services_item->service->customer->contact ?? '' }}">
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="jenis"
-                                                                                                            class="form-label">Nama
-                                                                                                            Barang</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ $services_item->service->jenis ?? '' }} {{ $services_item->service->tipe ?? '' }}">
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="kerusakan"
-                                                                                                            class="form-label">Kerusakan</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ $services_item->service->kerusakan ?? '' }}">
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="kondisi"
-                                                                                                            class="form-label">Kondisi</label>
-                                                                                                        <div class="form-group">
-                                                                                                            @if ($services_item->kondisi == 1)
-                                                                                                                <input
-                                                                                                                    type="text"
-                                                                                                                    name="kondisi"
-                                                                                                                    id="kondisi"
-                                                                                                                    class="form-control"
-                                                                                                                    disabled
-                                                                                                                    value="Sudah Jadi">
-                                                                                                            @elseif($services_item->kondisi == 2)
-                                                                                                                <input
-                                                                                                                    type="text"
-                                                                                                                    name="kondisi"
-                                                                                                                    id="kondisi"
-                                                                                                                    class="form-control"
-                                                                                                                    disabled
-                                                                                                                    value="Tidak Bisa">
-                                                                                                            @elseif($services_item->kondisi == 3)
-                                                                                                                <input
-                                                                                                                    type="text"
-                                                                                                                    name="kondisi"
-                                                                                                                    id="kondisi"
-                                                                                                                    class="form-control"
-                                                                                                                    disabled
-                                                                                                                    value="Dibatalkan">
-                                                                                                            @else
-                                                                                                                <input
-                                                                                                                    type="text"
-                                                                                                                    name="kondisi"
-                                                                                                                    id="kondisi"
-                                                                                                                    class="form-control"
-                                                                                                                    disabled
-                                                                                                                    value="{{ 'N/A' }}">
-                                                                                                            @endif
-                                                                                                        </div>
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="tindakan"
-                                                                                                            class="form-label">Tindakan</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ $services_item->tindakan ?? '' }}"
-                                                                                                            required>
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="biaya"
-                                                                                                            class="form-label">Biaya</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            disabled
-                                                                                                            value="{{ 'RP. ' . number_format($services_item->biaya) ?? '' }}"
-                                                                                                            required>
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="pembayaran"
-                                                                                                            class="form-label">Pembayaran</label>
-                                                                                                        <select name="pembayaran"
-                                                                                                            id="pembayaran"
-                                                                                                            class="form-select"
-                                                                                                            aria-label="Pembayaran"
-                                                                                                            required>
-                                                                                                            <option
-                                                                                                                value="{{ '' }}"
-                                                                                                                disabled selected>
-                                                                                                                Pilih Pembayaran
-                                                                                                            </option>
-                                                                                                            <option
-                                                                                                                value="Tidak Ada">
-                                                                                                                Tidak Ada</option>
-                                                                                                            <option value="Tunai">
-                                                                                                                Tunai</option>
-                                                                                                            <option
-                                                                                                                value="Transfer">
-                                                                                                                Transfer</option>
-                                                                                                        </select>
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="garansi"
-                                                                                                            class="form-label">Garansi</label>
-                                                                                                        <select name="garansi"
-                                                                                                            id="garansi"
-                                                                                                            class="form-select"
-                                                                                                            aria-label="Garansi"
-                                                                                                            required>
-                                                                                                            <option
-                                                                                                                value="{{ '' }}"
-                                                                                                                disabled selected>
-                                                                                                                Pilih Masa Garansi
-                                                                                                            </option>
-                                                                                                            <option value="0">
-                                                                                                                Tidak Ada</option>
-                                                                                                            <option value="1">
-                                                                                                                1 Hari</option>
-                                                                                                            <option value="3">
-                                                                                                                3 Hari</option>
-                                                                                                            <option value="7">
-                                                                                                                1 Minggu</option>
-                                                                                                            <option value="14">
-                                                                                                                2 Minggu</option>
-                                                                                                            <option value="30">
-                                                                                                                1 Bulan</option>
-                                                                                                        </select>
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="pengambil"
-                                                                                                            class="form-label">Pengambil</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            name="pengambil"
-                                                                                                            id="pengambil"
-                                                                                                            placeholder="Nama Pengambil"
-                                                                                                            required>
-                                                                                                    </div>
-
-                                                                                                    <div class="mb-2">
-                                                                                                        <label for="penyerah"
-                                                                                                            class="form-label">Penyerah</label>
-                                                                                                        <input type="text"
-                                                                                                            class="form-control"
-                                                                                                            name="penyerah"
-                                                                                                            id="penyerah"
-                                                                                                            placeholder="Penyerah"
-                                                                                                            value="{{ Auth::user()->name }}"
-                                                                                                            disabled required>
-                                                                                                    </div>
-
-                                                                                                    <!-- Form Check -->
-                                                                                                    <div
-                                                                                                        class="form-check d-flex justify-content-end gap-2 mt-4">
-                                                                                                        <input
-                                                                                                            class="form-check-input"
-                                                                                                            type="checkbox"
-                                                                                                            value=""
-                                                                                                            id="sudahDiambilCheckbox{{ $services_item->id }}"
-                                                                                                            required>
-                                                                                                        <label
-                                                                                                            class="form-check-label"
-                                                                                                            for="sudahDiambilCheckbox{{ $services_item->id }}">Dengan
-                                                                                                            ini saya, <span
-                                                                                                                class="text-danger">{{ Auth::user()->name }}</span>
-                                                                                                            setuju mengubah Status
-                                                                                                            menjadi Bisa
-                                                                                                            Diambil</label>
-                                                                                                    </div>
-                                                                                                    <!-- End Form Check -->
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="jenis"
+                                                                                                        class="form-label">Nama
+                                                                                                        Barang</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ $services_item->service->jenis ?? '' }} {{ $services_item->service->tipe ?? '' }}">
                                                                                                 </div>
-                                                                                                {{-- end body non-garansi --}}
-                                                                                            @endif
-                                                                                            <div class="modal-footer">
-                                                                                                <button type="button"
-                                                                                                    class="btn btn-secondary"
-                                                                                                    data-bs-dismiss="modal">Batal</button>
-                                                                                                <button type="submit"
-                                                                                                    class="btn btn-primary">Bisa
-                                                                                                    Diambil</button>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="kerusakan"
+                                                                                                        class="form-label">Kerusakan
+                                                                                                        Awal</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ $services_item->service->kerusakan ?? '' }}">
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="tindakan"
+                                                                                                        class="form-label">Tindakan
+                                                                                                        Awal</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ $services_item->tindakan ?? '' }}"
+                                                                                                        required>
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="biaya"
+                                                                                                        class="form-label">Biaya
+                                                                                                        Sebelumnya</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ 'RP. ' . number_format($services_item->biaya) ?? '' }}"
+                                                                                                        required>
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="tindakan"
+                                                                                                        class="form-label">Ket.
+                                                                                                        Klaim</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ $services_item->transaction->warranty_history->keterangan ?? '' }}"
+                                                                                                        required>
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="tindakan"
+                                                                                                        class="form-label">Tindakan</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ $services_item->transaction->warranty_history->tindakan ?? '' }}"
+                                                                                                        required>
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="tindakan"
+                                                                                                        class="form-label">Catatan</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ $services_item->transaction->warranty_history->catatan ?? '' }}"
+                                                                                                        required>
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="pengambil"
+                                                                                                        class="form-label">Pengambil</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        name="pengambil"
+                                                                                                        id="pengambil"
+                                                                                                        placeholder="Nama Pengambil"
+                                                                                                        required>
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="penyerah"
+                                                                                                        class="form-label">Penyerah</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        name="penyerah"
+                                                                                                        id="penyerah"
+                                                                                                        placeholder="Penyerah"
+                                                                                                        value="{{ Auth::user()->name }}"
+                                                                                                        disabled required>
+                                                                                                </div>
+
+                                                                                                <!-- Form Check -->
+                                                                                                <div
+                                                                                                    class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                                                                    <input
+                                                                                                        class="form-check-input"
+                                                                                                        type="checkbox"
+                                                                                                        value=""
+                                                                                                        id="sudahDiambilCheckbox{{ $services_item->id }}"
+                                                                                                        required>
+                                                                                                    <label
+                                                                                                        class="form-check-label"
+                                                                                                        for="sudahDiambilCheckbox{{ $services_item->id }}">Dengan
+                                                                                                        ini saya, <span
+                                                                                                            class="text-danger">{{ Auth::user()->name }}</span>
+                                                                                                        setuju mengubah Status
+                                                                                                        menjadi Bisa
+                                                                                                        Diambil</label>
+                                                                                                </div>
+                                                                                                <!-- End Form Check -->
                                                                                             </div>
+                                                                                            {{-- end body garansi --}}
+                                                                                        @else
+                                                                                            {{-- start body non-garansi --}}
+                                                                                            <div class="modal-body">
+                                                                                                @if ($errors->any())
+                                                                                                    <div class="alert alert-danger alert-dismissible fade show"
+                                                                                                        role="alert">
+                                                                                                        <ul>
+                                                                                                            @foreach ($errors->all() as $error)
+                                                                                                                <li>{{ $error }}
+                                                                                                                </li>
+                                                                                                            @endforeach
+                                                                                                        </ul>
+                                                                                                        <button type="button"
+                                                                                                            class="btn-close"
+                                                                                                            data-bs-dismiss="alert"
+                                                                                                            aria-label="Close"></button>
+                                                                                                    </div>
+                                                                                                @endif
+                                                                                                <input type="hidden"
+                                                                                                    name="service_detail_id"
+                                                                                                    value="{{ $services_item->id }}">
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="customer_id"
+                                                                                                        class="form-label">Pemilik
+                                                                                                        Barang</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ $services_item->service->customer->name ?? '' }} - No.Telp {{ $services_item->service->customer->contact ?? '' }}">
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="jenis"
+                                                                                                        class="form-label">Nama
+                                                                                                        Barang</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ $services_item->service->jenis ?? '' }} {{ $services_item->service->tipe ?? '' }}">
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="kerusakan"
+                                                                                                        class="form-label">Kerusakan</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ $services_item->service->kerusakan ?? '' }}">
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="kondisi"
+                                                                                                        class="form-label">Kondisi</label>
+                                                                                                    <div class="form-group">
+                                                                                                        @if ($services_item->kondisi == 1)
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                name="kondisi"
+                                                                                                                id="kondisi"
+                                                                                                                class="form-control"
+                                                                                                                disabled
+                                                                                                                value="Sudah Jadi">
+                                                                                                        @elseif($services_item->kondisi == 2)
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                name="kondisi"
+                                                                                                                id="kondisi"
+                                                                                                                class="form-control"
+                                                                                                                disabled
+                                                                                                                value="Tidak Bisa">
+                                                                                                        @elseif($services_item->kondisi == 3)
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                name="kondisi"
+                                                                                                                id="kondisi"
+                                                                                                                class="form-control"
+                                                                                                                disabled
+                                                                                                                value="Dibatalkan">
+                                                                                                        @else
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                name="kondisi"
+                                                                                                                id="kondisi"
+                                                                                                                class="form-control"
+                                                                                                                disabled
+                                                                                                                value="{{ 'N/A' }}">
+                                                                                                        @endif
+                                                                                                    </div>
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="tindakan"
+                                                                                                        class="form-label">Tindakan</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ $services_item->tindakan ?? '' }}"
+                                                                                                        required>
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="biaya"
+                                                                                                        class="form-label">Biaya</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        disabled
+                                                                                                        value="{{ 'RP. ' . number_format($services_item->biaya) ?? '' }}"
+                                                                                                        required>
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="pembayaran"
+                                                                                                        class="form-label">Pembayaran</label>
+                                                                                                    <select name="pembayaran"
+                                                                                                        id="pembayaran"
+                                                                                                        class="form-select"
+                                                                                                        aria-label="Pembayaran"
+                                                                                                        required>
+                                                                                                        <option
+                                                                                                            value="{{ '' }}"
+                                                                                                            disabled selected>
+                                                                                                            Pilih Pembayaran
+                                                                                                        </option>
+                                                                                                        <option
+                                                                                                            value="Tidak Ada">
+                                                                                                            Tidak Ada</option>
+                                                                                                        <option value="Tunai">
+                                                                                                            Tunai</option>
+                                                                                                        <option
+                                                                                                            value="Transfer">
+                                                                                                            Transfer</option>
+                                                                                                    </select>
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="garansi"
+                                                                                                        class="form-label">Garansi</label>
+                                                                                                    <select name="garansi"
+                                                                                                        id="garansi"
+                                                                                                        class="form-select"
+                                                                                                        aria-label="Garansi"
+                                                                                                        required>
+                                                                                                        <option
+                                                                                                            value="{{ '' }}"
+                                                                                                            disabled selected>
+                                                                                                            Pilih Masa Garansi
+                                                                                                        </option>
+                                                                                                        <option value="0">
+                                                                                                            Tidak Ada</option>
+                                                                                                        <option value="1">
+                                                                                                            1 Hari</option>
+                                                                                                        <option value="3">
+                                                                                                            3 Hari</option>
+                                                                                                        <option value="7">
+                                                                                                            1 Minggu</option>
+                                                                                                        <option value="14">
+                                                                                                            2 Minggu</option>
+                                                                                                        <option value="30">
+                                                                                                            1 Bulan</option>
+                                                                                                    </select>
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="pengambil"
+                                                                                                        class="form-label">Pengambil</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        name="pengambil"
+                                                                                                        id="pengambil"
+                                                                                                        placeholder="Nama Pengambil"
+                                                                                                        required>
+                                                                                                </div>
+
+                                                                                                <div class="mb-2">
+                                                                                                    <label for="penyerah"
+                                                                                                        class="form-label">Penyerah</label>
+                                                                                                    <input type="text"
+                                                                                                        class="form-control"
+                                                                                                        name="penyerah"
+                                                                                                        id="penyerah"
+                                                                                                        placeholder="Penyerah"
+                                                                                                        value="{{ Auth::user()->name }}"
+                                                                                                        disabled required>
+                                                                                                </div>
+
+                                                                                                <!-- Form Check -->
+                                                                                                <div
+                                                                                                    class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                                                                    <input
+                                                                                                        class="form-check-input"
+                                                                                                        type="checkbox"
+                                                                                                        value=""
+                                                                                                        id="sudahDiambilCheckbox{{ $services_item->id }}"
+                                                                                                        required>
+                                                                                                    <label
+                                                                                                        class="form-check-label"
+                                                                                                        for="sudahDiambilCheckbox{{ $services_item->id }}">Dengan
+                                                                                                        ini saya, <span
+                                                                                                            class="text-danger">{{ Auth::user()->name }}</span>
+                                                                                                        setuju mengubah Status
+                                                                                                        menjadi Bisa
+                                                                                                        Diambil</label>
+                                                                                                </div>
+                                                                                                <!-- End Form Check -->
+                                                                                            </div>
+                                                                                            {{-- end body non-garansi --}}
+                                                                                        @endif
+                                                                                        <div class="modal-footer">
+                                                                                            <button type="button"
+                                                                                                class="btn btn-secondary"
+                                                                                                data-bs-dismiss="modal">Batal</button>
+                                                                                            <button type="submit"
+                                                                                                class="btn btn-primary">Bisa
+                                                                                                Diambil</button>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </form>
-                                                                            {{-- End Modal Status --}}
-                                                                        </li>
-                                                                        {{-- End Button Status --}}
-                                                                    @endcan
+                                                                            </div>
+                                                                        </form>
+                                                                        {{-- End Modal Sudah Diambil --}}
+                                                                    </div>
                                                                 </ul>
                                                             </td>
                                                         </tr>

@@ -296,7 +296,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title mb-4">Latest Transaction</h4>
+                                <h4 class="card-title mb-4">Transaksi Terakhir</h4>
                                 <div class="table-responsive">
                                     <table class="table align-middle table-nowrap mb-0">
                                         <thead class="table-light">

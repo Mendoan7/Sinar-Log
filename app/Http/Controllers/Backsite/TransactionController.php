@@ -54,44 +54,68 @@ class TransactionController extends Controller
             });
         }
 
-        if ($status == 'done') {
-            $transactionsQuery->whereHas('service_detail', function ($query) {
-                $query->where('kondisi', 1);
-            })->whereHas('service_detail.service', function ($query) {
-                $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
-            })->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
-                $query->where('status', 3)->where('kondisi', 1);
+        // Filter Rentang Tanggal
+        $start_date = $request->query('start_date');
+        $end_date = $request->query('end_date');
+        
+        if ($start_date && $end_date) {
+            $transactionsQuery->where(function ($query) use ($start_date, $end_date) {
+                $query->whereDate('created_at', [$start_date, $end_date])
+                    ->orWhereHas('warranty_history', function ($query) use ($start_date, $end_date) {
+                        $query->whereDate('updated_at', [$start_date, $end_date]);
+                    });
             });
-        } elseif ($status == 'notdone') {
-            $transactionsQuery->whereHas('service_detail', function ($query) {
-                $query->where('kondisi', 2);
-            })->whereHas('service_detail.service', function ($query) {
-                $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
-            })->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
-                $query->where('status', 3)->where('kondisi', 2);
-            });
-        } elseif ($status == 'cancel') {
-            $transactionsQuery->whereHas('service_detail', function ($query) {
-                $query->where('kondisi', 3);
-            })->whereHas('service_detail.service', function ($query) {
-                $query->where('status', 9)->whereDoesntHave('service_detail.transaction.warranty_history');
-            })->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
-                $query->where('status', 3)->where('kondisi', 3);
+        }
+
+        // Counting
+        $transactions = $transactionsQuery->get();
+        $all_count = $transactions->count();
+        $done_count = $transactions->filter(function ($transaction) {
+            if ($transaction->warranty_history) {
+                return $transaction->warranty_history->kondisi == 1;
+            } else {
+                return $transaction->service_detail->kondisi == 1;
+            }
+        })->count();
+        $notdone_count = $transactions->filter(function ($transaction) {
+            if ($transaction->warranty_history) {
+                return $transaction->warranty_history->kondisi == 2;
+            } else {
+                return $transaction->service_detail->kondisi == 2;
+            }
+        })->count();
+        $cancel_count = $transactions->filter(function ($transaction) {
+            if ($transaction->warranty_history) {
+                return $transaction->warranty_history->kondisi == 3;
+            } else {
+                return $transaction->service_detail->kondisi == 3;
+            }
+        })->count();        
+
+        // Filter Tab
+        if ($status) {
+            if ($status == 'done') {
+                $kondisi = 1;
+            } elseif ($status == 'notdone') {
+                $kondisi = 2;
+            } elseif ($status == 'cancel') {
+                $kondisi = 3;
+            }
+    
+            $transactionsQuery->where(function ($query) use ($kondisi) {
+                $query->where(function ($query) use ($kondisi) {
+                    $query->whereHas('warranty_history', function ($query) use ($kondisi) {
+                        $query->where('kondisi', $kondisi);
+                    });
+                })->orWhere(function ($query) use ($kondisi) {
+                    $query->whereHas('service_detail', function ($query) use ($kondisi) {
+                        $query->where('kondisi', $kondisi);
+                    })->whereDoesntHave('warranty_history');
+                });
             });
         }
 
         $transactions = $transactionsQuery->orderBy('created_at', 'desc')->get();
-
-        $all_count = $transactionsQuery->count();
-        $done_count = $transactionsQuery->whereHas('service_detail', function ($query) {
-            $query->where('kondisi', 1);
-        })->count();
-        $notdone_count = $transactionsQuery->whereHas('service_detail', function ($query) {
-            $query->where('kondisi', 2);
-        })->count();
-        $cancel_count = $transactionsQuery->whereHas('service_detail', function ($query) {
-            $query->where('kondisi', 3);
-        })->count();
 
         $warrantyInfo = [];
 
@@ -110,7 +134,6 @@ class TransactionController extends Controller
 
         return view('pages.backsite.operational.transaction.index', compact('transactions', 'all_count', 'done_count', 'notdone_count', 'cancel_count', 'warrantyInfo'));
     }
-
 
     /**
      * Show the form for creating a new resource.

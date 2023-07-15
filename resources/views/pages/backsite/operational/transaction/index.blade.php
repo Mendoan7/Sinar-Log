@@ -15,6 +15,42 @@
                         <div class="card-body border-bottom">
                             <div class="d-flex align-items-center">
                                 <h5 class="mb-0 card-title flex-grow-1">Sudah Diambil</h5>
+                                <div class="flex-shrink-0">
+                                    <button class="btn btn-soft-success"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#dateFilter"><i
+                                        class="mdi mdi-filter-outline align-middle"></i>
+                                        Filter
+                                    </button>
+                                    <div class="modal fade bs-example-modal-center" id="dateFilter" tabindex="-1" aria-hidden="true" aria-labelledby="dateFilterModalLabel" aria-expanded="false">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="dateFilterModalLabel">Filter Servis Keluar</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form method="GET" action="{{ route('backsite.transaction.index') }}">
+                                                    <div class="modal-body">
+                                                        <div class="input-daterange input-group" id="datepicker"
+                                                            data-date-format="yyyy-mm-dd" data-date-autoclose="true"
+                                                            data-provide="datepicker" data-date-container='#datepicker'>
+                                                            <input type="text" class="form-control" id="start_date"
+                                                                name="start_date" placeholder="Tanggal Mulai" />
+                                                            <input type="text" class="form-control" id="end_date"
+                                                                name="end_date" placeholder="Tanggal Akhir" />
+                                                        </div>
+                                                        <p class="mt-4">Informasi : Filter ini berdasarkan Tanggal Ambil.</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                        <button type="submit" class="btn btn-primary"><i
+                                                            class="mdi mdi-filter-outline align-middle"></i>Filter</button>
+                                                    </div>
+                                                </form>        
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -32,34 +68,34 @@
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="statusDropdown">
                                         <li>
-                                            <a class="dropdown-item{{ request('status') === 'done' ? ' active' : '' }}" href="{{ route('backsite.transaction.index', ['status' => 'done']) }}">
+                                            <a class="dropdown-item{{ request('status') === 'done' ? ' active' : '' }}" href="{{ route('backsite.transaction.index', ['status' => 'done', 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}">
                                                 Sudah Jadi <span class="badge bg-success ms-1">{{ $done_count }}</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item{{ request('status') === 'notdone' ? ' active' : '' }}" href="{{ route('backsite.transaction.index', ['status' => 'notdone']) }}">
+                                            <a class="dropdown-item{{ request('status') === 'notdone' ? ' active' : '' }}" href="{{ route('backsite.transaction.index', ['status' => 'notdone', 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}">
                                                 Tidak Bisa <span class="badge bg-danger ms-1">{{ $notdone_count }}</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item{{ request('status') === 'cancel' ? ' active' : '' }}" href="{{ route('backsite.transaction.index', ['status' => 'cancel']) }}">
+                                            <a class="dropdown-item{{ request('status') === 'cancel' ? ' active' : '' }}" href="{{ route('backsite.transaction.index', ['status' => 'cancel', 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}">
                                                 Dibatalkan <span class="badge bg-secondary ms-1">{{ $cancel_count }}</span>
                                             </a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li class="nav-item d-none d-md-block">
-                                    <a class="nav-link{{ request('status') === 'done' ? ' active' : '' }}" href="{{ route('backsite.transaction.index', ['status' => 'done']) }}">
+                                    <a class="nav-link{{ request('status') === 'done' ? ' active' : '' }}" href="{{ route('backsite.transaction.index', ['status' => 'done', 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}">
                                         Sudah Jadi <span class="badge bg-success ms-1">{{ $done_count }}</span>
                                     </a>
                                 </li>
                                 <li class="nav-item d-none d-md-block">
-                                    <a class="nav-link{{ request('status') === 'notdone' ? ' active' : '' }}" href="{{ route('backsite.transaction.index', ['status' => 'notdone']) }}">
+                                    <a class="nav-link{{ request('status') === 'notdone' ? ' active' : '' }}" href="{{ route('backsite.transaction.index', ['status' => 'notdone', 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}">
                                         Tidak Bisa <span class="badge bg-danger ms-1">{{ $notdone_count }}</span>
                                     </a>
                                 </li>
                                 <li class="nav-item d-none d-md-block">
-                                    <a class="nav-link{{ request('status') === 'cancel' ? ' active' : '' }}" href="{{ route('backsite.transaction.index', ['status' => 'cancel']) }}">
+                                    <a class="nav-link{{ request('status') === 'cancel' ? ' active' : '' }}" href="{{ route('backsite.transaction.index', ['status' => 'cancel', 'start_date' => request('start_date'), 'end_date' => request('end_date')]) }}">
                                         Dibatalkan <span class="badge bg-secondary ms-1">{{ $cancel_count }}</span>
                                     </a>
                                 </li>
@@ -475,16 +511,23 @@
                                                         <ul class="list-unstyled hstack gap-1 mb-0">
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $transaction_item->garansi == 0 ? 'Tidak ada garansi' : ($warrantyInfo[$transaction_item->id]['end_warranty'] < now() ? 'Garansi hangus' : 'Menerima Garansi') }}">
                                                                 @if ($transaction_item->garansi > 0)
-                                                                    <button class="btn btn-sm {{ $warrantyInfo[$transaction_item->id]['end_warranty'] < now() ? 'btn-soft-primary' : 'btn-primary' }}"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#garansi{{ $transaction_item->id }}">
-                                                                        Garansi
-                                                                    </button>
+                                                                    @if ($transaction_item->warranty_history && ($transaction_item->warranty_history->kondisi == 2 || $transaction_item->warranty_history->kondisi == 3))
+                                                                        <button class="btn btn-sm btn-secondary" disabled>
+                                                                            Garansi
+                                                                        </button>
+                                                                    @else
+                                                                        <button class="btn btn-sm {{ $warrantyInfo[$transaction_item->id]['end_warranty'] < now() ? 'btn-soft-primary' : 'btn-primary' }}"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#garansi{{ $transaction_item->id }}">
+                                                                            Garansi
+                                                                        </button>
+                                                                    @endif
                                                                 @else
                                                                     <button class="btn btn-sm btn-secondary" disabled>
                                                                         Garansi
                                                                     </button>
                                                                 @endif
+
                                                                 {{-- Start Modal Status --}}
                                                                 <form class="form form-horizontal" action="{{ route('backsite.transaction.claimWarranty') }}" method="POST">
                                                                     @csrf

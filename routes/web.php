@@ -71,6 +71,7 @@ Route::group(['prefix' => 'backsite', 'as' => 'backsite.', 'middleware' => ['aut
     // service detail
     Route::resource('service-detail', ServiceDetailController::class);
     Route::post('service-detail/notification/', [ServiceDetailController::class, 'sendNotification']);
+    Route::post('service-detail/reservice/{serviceId}', [ServiceDetailController::class,'reservice'])->name('service-detail.reservice');
     Route::post('service-detail/warranty/', [ServiceDetailController::class, 'warranty'])->name('service-detail.warranty');
 
     // transaction

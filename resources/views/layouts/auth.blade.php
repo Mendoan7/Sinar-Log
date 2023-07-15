@@ -11,18 +11,20 @@
         @stack('after-style')
 
     </head>
-    <body>
+    <body class="font-inter antialiased bg-white text-gray-900 tracking-tight">
+        <div class="flex flex-col min-h-screen overflow-hidden">
 
-        @include('sweetalert::alert')
+            @include('sweetalert::alert')
 
-        @yield('content')
+            @yield('content')
 
-        @stack('before-script')
-            @include('includes.frontsite.script')
-        @stack('after-script')
+            @stack('before-script')
+                @include('includes.frontsite.script')
+            @stack('after-script')
 
-        {{-- modals --}}
-        {{-- if you have a modal, create here --}}
-
+            {{-- modals --}}
+            {{-- if you have a modal, create here --}}
+            
+        </div>
     </body>
 </html>

@@ -656,11 +656,15 @@
                                                             {{-- Start Button Bisa Diambil --}}
                                                             <li>
                                                                 @if ($service_item->teknisi)
-                                                                    <button class="btn btn-sm btn-primary" 
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#bisaDiambil{{ $service_item->id }}">
-                                                                        Bisa Diambil
-                                                                    </button>
+                                                                    <div data-bs-toggle="tooltip" data-bs-placement="top" title="Ubah Status
+                                                                    {{ $service_item->kode_servis }} menjadi
+                                                                    Bisa Diambil">
+                                                                        <button class="btn btn-sm btn-primary"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#bisaDiambil{{ $service_item->id }}">
+                                                                            Bisa Diambil
+                                                                        </button>
+                                                                    </div>
                                                                 @else
                                                                     <button class="btn btn-sm btn-soft-primary waves-effect"
                                                                         data-bs-toggle="popover"
