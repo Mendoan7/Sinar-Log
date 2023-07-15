@@ -18,7 +18,7 @@
 <script src="{{ asset('/assets/backsite/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
 
 <!-- Responsive Table js -->
-<script src="{{ asset('/assets/backsite/libs/admin-resources/rwd-table/rwd-table.min.js') }}"></script>
+{{-- <script src="{{ asset('/assets/backsite/libs/admin-resources/rwd-table/rwd-table.min.js') }}"></script> --}}
 
 <!-- Buttons examples -->
 <script src="{{ asset('/assets/backsite/libs/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
@@ -31,14 +31,14 @@
 <script src="{{ asset('/assets/backsite/libs/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
 
 <!-- Responsive examples -->
-<script src="{{ asset('/assets/backsite/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+{{-- <script src="{{ asset('/assets/backsite/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
 <script src="{{ asset('/assets/backsite/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}">
-</script>
+</script> --}}
 
 <!-- Datatable init js -->
-{{-- <script src="{{ asset('/assets/backsite/js/pages/datatables.init.js') }}"></script> --}}
+<script src="{{ asset('/assets/backsite/js/pages/datatables.init.js') }}"></script>
 {{-- <script src="{{ asset('/assets/backsite/js/pages/table-responsive.init.js') }}"></script> --}}
-<script src="{{ asset('/assets/backsite/js/pages/form-advanced.init.js') }}"></script>
+{{-- <script src="{{ asset('/assets/backsite/js/pages/form-advanced.init.js') }}"></script> --}}
 <script src="{{ asset('/assets/backsite/js/pages/form-mask.init.js') }}"></script>
 <script src="{{ asset('/assets/backsite/js/pages/modal.init.js') }}"></script>
 

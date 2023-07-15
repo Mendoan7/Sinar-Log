@@ -70,7 +70,7 @@
                         <div class="card-body">
                             <div class="table-rep-plugin">
                                 <div class="table-responsive">
-                                    <table id="datatable" class="table table-hover mb-0">
+                                    <table id="customerTable" class="table table-hover mb-0">
                                         <thead class="table-dark">
                                             <tr>
                                                 <th scope="col">Nama</th>
@@ -90,14 +90,7 @@
                                             <tr data-entry-id="{{ $customer_item->id }}">
                                                 <td>{{ $customer_item->name ?? '' }}</td>
                                                 @if ($user_type === 3)
-                                                    @php
-                                                        $contact = $customer_item->contact;
-                                                        $length = strlen($contact);
-                                                        $visible = 5;
-                                                        $hidden = $length - ($visible * 2);
-                                                        $masked_contact = substr($contact, 0, $visible) . str_repeat('*', $hidden) . substr($contact, -$visible);   
-                                                    @endphp
-                                                <td>{{ $masked_contact }}</td>
+                                                    <td>{{ substr_replace($customer_item->contact, str_repeat('*', strlen($customer_item->contact) - (5 * 2)), 5, -5) }}</td>
                                                 @else
                                                     <td>{{ $customer_item->contact ?? '' }}</td>
                                                 @endif
@@ -171,6 +164,33 @@
 
 <script>
     $('.contact').mask('+62 000-0000-00000');
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Panggil DataTables pada tabel
+        $('#customerTable').DataTable({
+            "language": {
+                "sEmptyTable": "Tidak ada data yang tersedia pada tabel",
+                "sInfo": "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
+                "sInfoEmpty": "Menampilkan 0 hingga 0 dari 0 data",
+                "sInfoFiltered": "(disaring dari _MAX_ data keseluruhan)",
+                "sInfoPostFix": "",
+                "sInfoThousands": ",",
+                "sLengthMenu": "Tampilkan _MENU_ data",
+                "sLoadingRecords": "Memuat...",
+                "sProcessing": "Sedang diproses...",
+                "sSearch": "Cari :",
+                "sZeroRecords": "Tidak ada data yang cocok ditemukan",
+                "oPaginate": {
+                    "sFirst": "Pertama",
+                    "sLast": "Terakhir",
+                    "sNext": "Berikutnya",
+                    "sPrevious": "Sebelumnya"
+                },
+            },
+        });
+    });
 </script>
 
 @endpush

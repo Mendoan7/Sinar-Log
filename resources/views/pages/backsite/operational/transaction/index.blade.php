@@ -185,7 +185,7 @@
                                                         <ul class="list-unstyled hstack gap-1 mb-0">
                                                             @can('transaction_show')
                                                             {{-- Start Button View --}}
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat Detail Servis">
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat Detail Servis" class="disable-tooltip">
                                                                 <button class="btn btn-sm btn-soft-primary" 
                                                                         data-bs-toggle="modal" 
                                                                         data-bs-target="#show{{ $transaction_item->id }}">
@@ -459,7 +459,7 @@
                                                             {{-- Start Button Confirm --}}
                                                             <form action="transaction/notification" method="POST">
                                                                 @csrf
-                                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Konfirmasi Sudah Diambil Ke Pelanggan">               
+                                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Konfirmasi Sudah Diambil Ke Pelanggan" class="disable-tooltip">               
                                                                     <input type="hidden" name="transaction_id" value="{{ $transaction_item->id }}">
                                                                     <button type="submit" class="btn btn-sm btn-soft-warning">
                                                                         <i class="mdi mdi-near-me"></i>
@@ -471,7 +471,7 @@
 
                                                             @can('transaction_delete')
                                                             {{-- Start Button Delete --}}
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus Data Transaksi">
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus Data Transaksi" class="disable-tooltip">
                                                                 <a  data-bs-toggle="modal"
                                                                     data-bs-target="#transactionDelete{{ $transaction_item->id }}" 
                                                                     class="btn btn-sm btn-soft-danger">
@@ -509,7 +509,7 @@
                                                     <td>
                                                         {{-- Start Button Status --}}
                                                         <ul class="list-unstyled hstack gap-1 mb-0">
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $transaction_item->garansi == 0 ? 'Tidak ada garansi' : ($warrantyInfo[$transaction_item->id]['end_warranty'] < now() ? 'Garansi hangus' : 'Menerima Garansi') }}">
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $transaction_item->garansi == 0 ? 'Tidak ada garansi' : ($warrantyInfo[$transaction_item->id]['end_warranty'] < now() ? 'Garansi hangus' : 'Menerima Garansi') }}" class="disable-tooltip">
                                                                 @if ($transaction_item->garansi > 0)
                                                                     @if ($transaction_item->warranty_history && ($transaction_item->warranty_history->kondisi == 2 || $transaction_item->warranty_history->kondisi == 3))
                                                                         <button class="btn btn-sm btn-secondary" disabled>
@@ -673,6 +673,16 @@
                 text: 'Harap cek kembali form garansi',
             });
         @endif
+    </script>
+
+    <script>
+        $(document).on('shown.bs.modal', function() {
+            $('.disable-tooltip').tooltip('dispose');
+        });
+
+        $(document).on('hidden.bs.modal', function() {
+            $('.disable-tooltip').tooltip('enable');
+        });
     </script>
 
     <script>

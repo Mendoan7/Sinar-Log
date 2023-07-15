@@ -171,8 +171,7 @@
                                                                 <ul class="list-unstyled hstack gap-1 mb-0">
                                                                     @can('service_detail_show')
                                                                         {{-- Start Button Show --}}
-                                                                        <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                            title="Lihat Detail Servis">
+                                                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat Detail Servis" class="disable-tooltip">
                                                                             <button class="btn btn-sm btn-soft-primary"
                                                                                 data-bs-toggle="modal"
                                                                                 data-bs-target="#showModal{{ $services_item->id }}">
@@ -431,8 +430,7 @@
 
                                                                     @can('service_detail_confirmation')
                                                                         {{-- Start Button Notif --}}
-                                                                        <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                            title="Konfirmasi Bisa Diambil Ke Pelanggan">
+                                                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Konfirmasi Bisa Diambil Ke Pelanggan" class="disable-tooltip">
 
                                                                             <form action="service-detail/notification"
                                                                                 method="POST">
@@ -450,8 +448,7 @@
 
                                                                     @can('service_detail_delete')
                                                                         {{-- Start Button Delete --}}
-                                                                        <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                            title="Hapus Data Transaksi">
+                                                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus Data Transaksi" class="disable-tooltip">
                                                                             <a data-bs-toggle="modal"
                                                                                 data-bs-target="#servicesDelete{{ $services_item->id }}"
                                                                                 class="btn btn-sm btn-soft-danger">
@@ -510,7 +507,7 @@
                                                                     <div class="d-flex flex-column">
                                                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Ubah
                                                                             {{ $services_item->service->kode_servis }} menjadi
-                                                                            Proses Servis kembali.">
+                                                                            Proses Servis kembali." class="disable-tooltip">
                                                                             <button class="btn btn-sm btn-soft-danger mb-1"
                                                                                 data-bs-toggle="modal"
                                                                                 data-bs-target="#servisKembali{{ $services_item->id }}">
@@ -546,7 +543,7 @@
                                                                         {{-- Button Sudah Diambil --}}
                                                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Ubah Status
                                                                             {{ $services_item->service->kode_servis }} menjadi
-                                                                            Sudah Diambil">
+                                                                            Sudah Diambil" class="disable-tooltip">
                                                                             <button class="btn btn-sm btn-soft-success"
                                                                                 data-bs-toggle="modal"
                                                                                 data-bs-target="#sudahDiambil{{ $services_item->id }}">
@@ -985,6 +982,16 @@
                 text: 'Harap cek dan isi form dengan benar',
             });
         @endif
+    </script>
+
+    <script>
+        $(document).on('shown.bs.modal', function() {
+            $('.disable-tooltip').tooltip('dispose');
+        });
+
+        $(document).on('hidden.bs.modal', function() {
+            $('.disable-tooltip').tooltip('enable');
+        });
     </script>
 
     <script>

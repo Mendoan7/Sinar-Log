@@ -186,7 +186,7 @@
                                                     @can('add_technician')
                                                     <td>
                                                         <ul class="list-unstyled hstack gap-1 mb-0">
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Pilih Teknisi">
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Pilih Teknisi" class="disable-tooltip">
                                                                 @if ($service_item->teknisi)
                                                                     <button class="btn btn-sm btn-soft-primary fw-bold" data-bs-toggle="modal" data-bs-target="#teknisiModal{{ $service_item->id }}">
                                                                         {{ explode(' ', $service_item->teknisi_detail->name)[0] }}
@@ -299,7 +299,7 @@
                                                             @can('service_confirmation')
                                                             {{-- Button Konfirmasi --}}
                                                             @if ($service_item->teknisi)
-                                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Konfirmasi Biaya Servis">  
+                                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Konfirmasi Biaya Servis" class="disable-tooltip">  
                                                                 <button class="btn btn-sm btn-soft-warning" 
                                                                     data-bs-toggle="modal" 
                                                                     data-bs-target="#cash{{ $service_item->id }}">
@@ -352,7 +352,7 @@
                                                             @endcan
                                                             @can('service_show')
                                                             {{-- Button View --}}
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Melihat Detail Servis">               
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Melihat Detail Servis" class="disable-tooltip">               
                                                                 <button class="btn btn-sm btn-soft-primary" 
                                                                         data-bs-toggle="modal" 
                                                                         data-bs-target="#show{{ $service_item->id }}">
@@ -524,7 +524,7 @@
                                                             @can('service_edit')
                                                             {{-- Button Edit --}}
                                                             @if (!$service_item->service_detail?->transaction?->warranty_history?->status == 1)
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Status Servis">
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Status Servis" class="disable-tooltip">
                                                                 <button class="btn btn-sm btn-soft-info" 
                                                                         data-bs-toggle="modal" 
                                                                         data-bs-target="#edit{{ $service_item->id }}">
@@ -615,7 +615,7 @@
                                                             @endcan
                                                             @can('service_delete')
                                                             {{-- Button Delete --}}
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus Data Transaksi">
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus Data Transaksi" class="disable-tooltip">
                                                                 <a  data-bs-toggle="modal"
                                                                     data-bs-target="#serviceDelete{{ $service_item->id }}" 
                                                                     class="btn btn-sm btn-soft-danger">
@@ -658,7 +658,7 @@
                                                                 @if ($service_item->teknisi)
                                                                     <div data-bs-toggle="tooltip" data-bs-placement="top" title="Ubah Status
                                                                     {{ $service_item->kode_servis }} menjadi
-                                                                    Bisa Diambil">
+                                                                    Bisa Diambil" class="disable-tooltip">
                                                                         <button class="btn btn-sm btn-primary"
                                                                             data-bs-toggle="modal"
                                                                             data-bs-target="#bisaDiambil{{ $service_item->id }}">
@@ -868,6 +868,16 @@
         @endif
     </script>
 
+    <script>
+        $(document).on('shown.bs.modal', function() {
+            $('.disable-tooltip').tooltip('dispose');
+        });
+
+        $(document).on('hidden.bs.modal', function() {
+            $('.disable-tooltip').tooltip('enable');
+        });
+    </script>
+    
     <script>
         $('#addServiceModal').on('shown.bs.modal', function () {
             $("#customer_id").select2({
