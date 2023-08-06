@@ -33,25 +33,25 @@
                                     <div class="row mb-4">
                                         <label for="name" class="col-form-label col-lg-2">Nama</label>
                                         <div class="col-lg-10">
-                                            <input id="name" name="name" type="text" class="form-control" placeholder="example admin or users" value="{{ old('name', isset($customer) ? $customer->name : '') }}" autocomplete="off" required>
+                                            <input id="name" name="name" type="text" class="form-control" placeholder="example admin or users" value="{{ old('name', isset($customer) ? $customer->name : '') }}" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="row mb-4">
                                         <label for="contact" class="col-form-label col-lg-2">Nomer Telepon</label>
                                         <div class="col-lg-10">
-                                            <input id="contact" contact="contact" type="text" class="form-control" placeholder="example admin or users" value="{{ old('contact', isset($customer) ? $customer->contact : '') }}" autocomplete="off" required>
+                                            <input id="contact" name="contact" type="text" class="form-control" placeholder="example admin or users" value="{{ old('contact', isset($customer) ? $customer->contact : '') }}" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="row mb-4">
                                         <label for="email" class="col-form-label col-lg-2">Email</label>
                                         <div class="col-lg-10">
-                                            <input id="email" email="email" type="text" class="form-control" placeholder="example admin or users" value="{{ old('email', isset($customer) ? $customer->email : '') }}" autocomplete="off" required>
+                                            <input id="email" name="email" type="text" class="form-control" placeholder="example admin or users" value="{{ old('email', isset($customer) ? $customer->email : '') }}" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="row mb-4">
                                         <label for="address" class="col-form-label col-lg-2">Alamat</label>
                                         <div class="col-lg-10">
-                                            <input id="address" address="address" type="text" class="form-control" placeholder="example admin or users" value="{{ old('address', isset($customer) ? $customer->address : '') }}" autocomplete="off" required>
+                                            <input id="address" name="address" type="text" class="form-control" placeholder="example admin or users" value="{{ old('address', isset($customer) ? $customer->address : '') }}" autocomplete="off">
                                         </div>
                                     </div>
 

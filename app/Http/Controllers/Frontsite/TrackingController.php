@@ -31,7 +31,23 @@ class TrackingController extends Controller
      */
     public function track(Request $request)
     {
-        $customer = Customer::where('contact', $request->contact)->first();
+        // Ambil nomor telepon yang dimasukkan oleh pengguna
+        $inputContact = $request->contact;
+
+        // Ubah format nomor telepon menjadi '6285815203540'
+        if (substr($inputContact, 0, 2) !== '62') {
+            $formattedContact = '62' . ltrim($inputContact, '0');
+        } else {
+            $formattedContact = $inputContact;
+        }
+
+        // Cari data pelanggan berdasarkan nomor telepon yang sudah diubah formatnya
+        $customer = Customer::where('contact', $formattedContact)->first();
+
+        if (!$customer) {
+            return redirect()->back()->with('error', 'Pelanggan dengan nomor telepon tersebut tidak ditemukan.');
+        }
+
         $track = Customer::with('service')->find($customer->id);
 
         return view('pages.frontsite.tracking.data', compact('track'));

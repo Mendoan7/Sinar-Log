@@ -57,12 +57,14 @@ class TransactionController extends Controller
         // Filter Rentang Tanggal
         $start_date = $request->query('start_date');
         $end_date = $request->query('end_date');
-        
+
         if ($start_date && $end_date) {
             $transactionsQuery->where(function ($query) use ($start_date, $end_date) {
-                $query->whereDate('created_at', [$start_date, $end_date])
+                $query->whereDate('created_at', '>=', $start_date)
+                    ->whereDate('created_at', '<=', $end_date)
                     ->orWhereHas('warranty_history', function ($query) use ($start_date, $end_date) {
-                        $query->whereDate('updated_at', [$start_date, $end_date]);
+                        $query->whereDate('updated_at', '>=', $start_date)
+                            ->whereDate('updated_at', '<=', $end_date);
                     });
             });
         }
@@ -170,12 +172,17 @@ class TransactionController extends Controller
         if ($service) {
             $service->status = 9;
             $service->save();
+            
+            // Cek checkbox apakah akan mengirim notifikasi
+            $sendNotification = $request->input('send_notification'); // Ambil nilai dari input checkbox
+            if ($sendNotification) {
+                
+                // Kirim Notif Whatsapp Queue
+                ServiceOutWhatsappNotificationJob::dispatch($service)->onQueue('notifications');
 
-            // Kirim Notif Whatsapp Queue
-            ServiceOutWhatsappNotificationJob::dispatch($service)->onQueue('notifications');
-
-            // Kirim Notif Email Queue
-            ServiceOutEmailNotificationJob::dispatch($service)->onQueue('notifications');
+                // Kirim Notif Email Queue
+                ServiceOutEmailNotificationJob::dispatch($service)->onQueue('notifications');
+            }
         }
 
         alert()->success('Success Message', 'Barang telah selesai diambil');
@@ -224,7 +231,14 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
+        // Menghapus data dari tabel Service
         $transaction->service_detail->service->forceDelete();
+
+        // Menghapus data dari tabel Service_Detail
+        $transaction->service_detail->forceDelete();
+
+        // Menghapus data dari tabel Transaction
+        $transaction->forceDelete();
 
         alert()->success('Success Message', 'Berhasil menghapus data transaksi');
         return back();

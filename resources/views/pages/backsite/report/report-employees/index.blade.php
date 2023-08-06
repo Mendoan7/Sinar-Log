@@ -66,22 +66,28 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($teknisi as $user)
+                                                    @if (count($teknisi) > 0)
+                                                        @foreach ($teknisi as $user)
+                                                            <tr>
+                                                                <td>
+                                                                    <a href="{{ route('backsite.report-employees.show', ['teknisiId' => $user->id, 'start_date' => $start_date->format('Y-m-d'), 'end_date' => $end_date->format('Y-m-d')]) }}"
+                                                                        class="fw-bold">{{ $user->name }}
+                                                                    </a>
+                                                                </td>
+                                                                <td>{{ $total_service[$user->id] }}</td>
+                                                                <td>{{ 'RP. ' . number_format($total_biaya_service[$user->id]) }}
+                                                                </td>
+                                                                <td>{{ 'RP. ' . number_format($total_modal_service[$user->id]) }}
+                                                                </td>
+                                                                <td>{{ 'RP. ' . number_format($total_profit_service[$user->id]) }}
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @else
                                                         <tr>
-                                                            <td>
-                                                                <a href="{{ route('backsite.report-employees.show', ['teknisiId' => $user->id, 'start_date' => $start_date->format('Y-m-d'), 'end_date' => $end_date->format('Y-m-d')]) }}"
-                                                                    class="fw-bold">{{ $user->name }}
-                                                                </a>
-                                                            </td>
-                                                            <td>{{ $total_service[$user->id] }}</td>
-                                                            <td>{{ 'RP. ' . number_format($total_biaya_service[$user->id]) }}
-                                                            </td>
-                                                            <td>{{ 'RP. ' . number_format($total_modal_service[$user->id]) }}
-                                                            </td>
-                                                            <td>{{ 'RP. ' . number_format($total_profit_service[$user->id]) }}
-                                                            </td>
+                                                            <td colspan="5" class="text-center">Belum ada Teknisi</td>
                                                         </tr>
-                                                    @endforeach
+                                                    @endif
                                                 </tbody>
                                                 <tfoot class="table-secondary">
                                                     <tr>

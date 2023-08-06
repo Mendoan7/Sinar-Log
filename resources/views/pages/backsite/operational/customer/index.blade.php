@@ -76,10 +76,7 @@
                                                 <th scope="col">Nama</th>
                                                 <th scope="col">Nomer Telepon</th>
                                                 <th scope="col">Alamat</th>
-                                                <th scope="col">Proses Servis</th>
-                                                <th scope="col">Servis Selesai</th>
-                                                <th scope="col">Servis Keluar</th>
-                                                <th scope="col">Proses Garansi</th>
+                                                <th scope="col">Status</th>
                                                 <th scope="col">Total Servis</th>
                                                 <th scope="col" style="text-align:center; width:150px;">Action</th>
                                             </tr>
@@ -95,25 +92,37 @@
                                                     <td>{{ $customer_item->contact ?? '' }}</td>
                                                 @endif
                                                 <td>{{ $customer_item->address ?? '' }}</td>
-                                                <td>{{ $customer_item->proses_servis ?? 0 }}</td>
-                                                <td>{{ $customer_item->bisa_diambil ?? 0 }}</td>
-                                                <td>{{ $customer_item->servis_selesai ?? 0 }}</td>
-                                                <td>{{ $customer_item->proses_garansi ?? 0 }}</td>
+                                                <td>
+                                                    @if ($customer_item->proses_servis >= 1)
+                                                        <span class="badge bg-success">{{ 'Ada Servis' }}</span>
+                                                    @elseif ($customer_item->bisa_diambil >= 1)
+                                                        <span class="badge bg-success">{{ 'Ada Servis' }}</span>
+                                                    @else
+                                                        <span class="badge bg-secondary">{{ 'Tidak Ada Servis' }}</span>    
+                                                    @endif
+                                                </td>
                                                 <td>{{ $customer_item->total_service ?? 0 }}</td>
                                                 <td class="text-center">
                                                     <div class="dropdown">
                                                         @if ($user_type === 3)
-                                                        <button class="btn btn-sm btn-soft-primary waves-effect"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Pilihan ini hanya berlaku akun Admin">
-                                                            Tidak Ada Pilihan
-                                                        </button>
+                                                            <button class="btn btn-sm btn-soft-primary waves-effect"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Pilihan ini hanya berlaku akun Admin">
+                                                                Tidak Ada Pilihan
+                                                            </button>
                                                         @else
                                                             <a href="#" class="dropdown-toggle card-drop" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <i class="mdi mdi-dots-horizontal font-size-18"></i>
                                                             </a>
                                                         @endif
-
                                                         <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li>
+                                                                <a class="dropdown-item" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#show{{ $customer_item->id }}">
+                                                                    Show
+                                                                </a> 
+                                                            </li>
+                                                            
                                                             @can('customer_edit')
                                                             {{-- Start Button Edit --}}
                                                             <li>
@@ -137,6 +146,67 @@
                                                             {{-- End Button Delete --}}
                                                             @endcan
                                                         </ul>
+                                                        <div class="modal fade bs-example-modal-center" id="show{{ $customer_item->id}}" tabindex="-1" aria-hidden="true" aria-labelledby="showCustomerModalLabel" aria-expanded="false">
+                                                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="showCustomerModalLabel">Detail Pelanggan</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <table class="table table-striped mb-0">
+                                                                            <tbody>
+                                                                                <tr class="table-info">
+                                                                                    <th colspan="2" class="text-center fw-bold">Data Pelanggan</th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th scope="row">Nama</th>
+                                                                                    <td>{{ isset($customer_item->name) ? $customer_item->name : 'N/A' }}</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th scope="row">No. Telepon</th>
+                                                                                    <td>{{ isset($customer_item->contact) ? $customer_item->contact : 'N/A' }}</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th scope="row">Email</th>
+                                                                                    <td>{{ isset($customer_item->email) ? $customer_item->email : 'N/A' }}</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th scope="row">Alamat</th>
+                                                                                    <td>{{ isset($customer_item->address) ? $customer_item->address : 'N/A' }}</td>
+                                                                                </tr>
+                                                                                <tr class="table-info">
+                                                                                    <th colspan="2" class="text-center fw-bold">Detail Servis</th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th scope="row">Proses Servis</th>
+                                                                                    <td>{{ $customer_item->proses_servis ?? 0 }}</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th scope="row">Bisa Diambil</th>
+                                                                                    <td>{{ $customer_item->bisa_diambil ?? 0 }}</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th scope="row">Servis Keluar</th>
+                                                                                    <td>{{ $customer_item->servis_selesai ?? 0 }}</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th scope="row">Proses Garansi</th>
+                                                                                    <td>{{ $customer_item->proses_garansi ?? 0 }}</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th scope="row">Total Servis</th>
+                                                                                    <td>{{ $customer_item->total_service ?? 0 }}</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                                                    </div>        
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -162,9 +232,9 @@
 
 @push('after-script')
 
-<script>
+{{-- <script>
     $('.contact').mask('+62 000-0000-00000');
-</script>
+</script> --}}
 
 <script>
     $(document).ready(function() {

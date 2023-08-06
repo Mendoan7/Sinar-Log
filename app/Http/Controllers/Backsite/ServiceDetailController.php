@@ -132,18 +132,22 @@ class ServiceDetailController extends Controller
         $service->save();
 
         $admins = User::whereHas('detail_user.type_user', function ($query) {
-            $query->where('type_user_id', 1); // Mengambil pengguna dengan tipe 1 (admin)
+            $query->where('type_user_id', 2); // Mengambil pengguna dengan tipe 1 dan 2 (admin)
         })->get();
-        
+
         foreach ($admins as $admin) {
             $admin->notify(new TechnicianServiceDoneNotification($service_detail));
         }
 
-        // Kirim Notif Whatsapp Queue
-        ServiceDoneWhatsAppNotificationJob::dispatch($service)->onQueue('notifications');
-
-        // Kirim Notif Email Queue
-        ServiceDoneEmailNotificationJob::dispatch($service)->onQueue('notifications');
+        $sendNotification = $request->input('send_notification'); // Ambil nilai dari input checkbox
+        
+        if ($sendNotification) {
+            // Kirim Notif Whatsapp Queue
+            ServiceDoneWhatsAppNotificationJob::dispatch($service)->onQueue('notifications');
+                                    
+            // Kirim Notif Email Queue
+            ServiceDoneEmailNotificationJob::dispatch($service)->onQueue('notifications');
+        }
 
         alert()->success('Success Message', 'Berhasil, barang siap diambil');
         return redirect()->route('backsite.service.index');
@@ -191,6 +195,7 @@ class ServiceDetailController extends Controller
      */
     public function destroy(ServiceDetail $service_detail)
     {
+        $service_detail->forceDelete();
         $service_detail->service->forceDelete();
 
         alert()->success('Success Message', 'Berhasil menghapus data transaksi');

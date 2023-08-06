@@ -34,13 +34,11 @@ class ReportEmployeesController extends Controller
     public function index(Request $request)
     {
         // Ambil tanggal
-        $start_date = $request->input('start_date') ? Carbon::createFromFormat('Y-m-d', $request->input('start_date')) : Carbon::now()->startOfMonth();
-        $end_date = $request->input('end_date') ? Carbon::createFromFormat('Y-m-d', $request->input('end_date')) : Carbon::now();
+        $start_date = $request->query('start_date') ? Carbon::createFromFormat('Y-m-d', $request->query('start_date')) : Carbon::now()->startOfMonth();
+        $end_date = $request->query('end_date') ? Carbon::createFromFormat('Y-m-d', $request->query('end_date')) : Carbon::now();
 
-        // Validasi jika tanggal sama
-        if ($start_date->isSameDay($end_date)) {
-            $end_date->endOfDay(); // Atur end_date menjadi akhir hari
-        }
+        // Simpan rentang tanggal dalam session
+        session(['start_date' => $start_date, 'end_date' => $end_date]);
 
         // Ambil data teknisi
         $teknisi = User::query();
@@ -70,7 +68,7 @@ class ReportEmployeesController extends Controller
         $services = Service::with(['service_detail.transaction'])
             ->whereHas('service_detail', function ($query) use ($start_date, $end_date) {
                 $query->whereHas('transaction', function ($query) use ($start_date, $end_date) {
-                    $query->whereBetween('created_at', [$start_date, $end_date]);
+                    $query->whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date);
                 });
             })
             ->where('status', 9)
@@ -126,8 +124,8 @@ class ReportEmployeesController extends Controller
 
     public function show(Request $request, $teknisiId)
     {
-        $start_date = $request->query('start_date') ? Carbon::createFromFormat('Y-m-d', $request->input('start_date')) : Carbon::now()->startOfMonth();
-        $end_date = $request->query('end_date') ? Carbon::createFromFormat('Y-m-d', $request->input('end_date')) : Carbon::now();
+        $start_date = $request->query('start_date') ? Carbon::createFromFormat('Y-m-d', $request->query('start_date')) : session('start_date', Carbon::now()->startOfMonth());
+        $end_date = $request->query('end_date') ? Carbon::createFromFormat('Y-m-d', $request->query('end_date')) : session('end_date', Carbon::now());
         
         // Ambil data teknisi
         $teknisi = User::findOrFail($teknisiId);
@@ -137,7 +135,7 @@ class ReportEmployeesController extends Controller
             ->where('teknisi', $teknisiId)
             ->whereHas('service_detail', function ($query) use ($start_date, $end_date) {
                 $query->whereHas('transaction', function ($query) use ($start_date, $end_date) {
-                    $query->whereBetween('created_at', [$start_date, $end_date]);
+                    $query->whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date);
                 });
             })
             ->where('status', 9)
@@ -227,6 +225,9 @@ class ReportEmployeesController extends Controller
             })
             ->get();
 
-        return view('pages.backsite.report.report-employees.detail', compact('teknisi', 'dataService', 'tanggal'));
+        $start_date = session('start_date', Carbon::now()->startOfMonth());
+        $end_date = session('end_date', Carbon::now());
+
+        return view('pages.backsite.report.report-employees.detail', compact('teknisi', 'dataService', 'tanggal', 'start_date', 'end_date'));
     }
 }

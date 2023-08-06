@@ -688,7 +688,7 @@
                                                                                                         required>
                                                                                                 </div>
 
-                                                                                                <div class="mb-2">
+                                                                                                <div class="mb-4">
                                                                                                     <label for="penyerah"
                                                                                                         class="form-label">Penyerah</label>
                                                                                                     <input type="text"
@@ -698,6 +698,14 @@
                                                                                                         placeholder="Penyerah"
                                                                                                         value="{{ Auth::user()->name }}"
                                                                                                         disabled required>
+                                                                                                </div>
+
+                                                                                                <div class="form-check">
+                                                                                                    <label class="form-check-label" for="send_notification">
+                                                                                                        <input class="form-check-input" type="checkbox" id="send_notification" name="send_notification" value="1">
+                                                                                                        Kirim Notifikasi
+                                                                                                    </label>
+                                                                                                    <p class="text-muted">Centang untuk mengirimkan notifikasi ke pelanggan</p>
                                                                                                 </div>
 
                                                                                                 <!-- Form Check -->
@@ -895,7 +903,7 @@
                                                                                                         required>
                                                                                                 </div>
 
-                                                                                                <div class="mb-2">
+                                                                                                <div class="mb-4">
                                                                                                     <label for="penyerah"
                                                                                                         class="form-label">Penyerah</label>
                                                                                                     <input type="text"
@@ -905,6 +913,14 @@
                                                                                                         placeholder="Penyerah"
                                                                                                         value="{{ Auth::user()->name }}"
                                                                                                         disabled required>
+                                                                                                </div>
+
+                                                                                                <div class="form-check">
+                                                                                                    <label class="form-check-label" for="send_notification1">
+                                                                                                        <input class="form-check-input" type="checkbox" id="send_notification1" name="send_notification" value="1">
+                                                                                                        Kirim Notifikasi
+                                                                                                    </label>
+                                                                                                    <p class="text-muted">Centang untuk mengirimkan notifikasi ke pelanggan</p>
                                                                                                 </div>
 
                                                                                                 <!-- Form Check -->

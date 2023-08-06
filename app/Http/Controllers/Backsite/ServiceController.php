@@ -153,11 +153,16 @@ class ServiceController extends Controller
         $service->status = 1; // set to belum cek
         $service->save();
 
-        // Kirim Notif Whatsapp Queue
-        NewServiceWhatsAppNotificationJob::dispatch($service)->onQueue('notifications');
+        // Ambil nilai checkbox dari request
+        $sendNotification = $request->input('send_notification');
 
-        // Kirim Notif Email Queue
-        NewServiceEmailNotificationJob::dispatch($service)->onQueue('notifications');
+        if ($sendNotification) {
+            // Kirim Notif Whatsapp Queue
+            NewServiceWhatsAppNotificationJob::dispatch($service)->onQueue('notifications');
+
+            // Kirim Notif Email Queue
+            NewServiceEmailNotificationJob::dispatch($service)->onQueue('notifications');
+        }
 
         alert()->success('Berhasil', 'Sukses menambahkan data servis baru');
         return redirect()->route('backsite.service.index');
@@ -217,9 +222,8 @@ class ServiceController extends Controller
     public function destroy(Service $service)
     {
         $service->forceDelete();
-        $service->status = 2;
 
-        alert()->success('Success Message', 'Berhasil menghapus data pelanggan');
+        alert()->success('Success Message', 'Berhasil menghapus data servis');
         return back();
     }
 

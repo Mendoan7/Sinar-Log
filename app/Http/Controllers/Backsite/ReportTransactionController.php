@@ -52,50 +52,56 @@ class ReportTransactionController extends Controller
 
         // Ambil data berdasarkan created_at
         foreach ($dates as $date) {
+            $serviceQuery = Service::whereDate('created_at', $date);
             $service_detailQuery = ServiceDetail::whereDate('created_at', $date);
             $transactionQuery = Transaction::whereDate('created_at', $date);
-            $serviceQuery = Service::selectRaw('COUNT(id) as count')->whereDate('created_at', $date);
 
             if ($isTeknisi) {
                 $teknisiId = $user->id;
+                $serviceQuery->where('teknisi', $user->id);
                 $service_detailQuery->whereHas('service', function ($query) use ($teknisiId) {
                     $query->where('teknisi', $teknisiId);
                 });
                 $transactionQuery->whereHas('service_detail.service', function ($query) use ($teknisiId) {
                     $query->where('teknisi', $teknisiId);
                 });
-                $serviceQuery->where('teknisi', $user->id);
             }
 
-            $service_detail = $service_detailQuery->get();
-            $transaction = $transactionQuery->get();
-            $service = $serviceQuery->first();
+            $service = $serviceQuery->count();
+            $service_detail = $service_detailQuery->count();
+            $transaction = $transactionQuery->count();
 
-            if ($transaction->isNotEmpty()) {
-                // Hitung total biaya untuk setiap service yang berhasil dilakukan pada hari ini
-                $total_income = $transaction->where('service_detail.service.status', 9)->sum('service_detail.biaya');
-                $modal = $transaction->where('service_detail.service.status', 9)->sum('service_detail.modal');
-                $profit = $total_income - $modal;
+            $total_income = $service_detailQuery->whereHas('service', function ($query) {
+                $query->where('status', 9);
+            })->sum('biaya');
+        
+            $modal = $service_detailQuery->whereHas('service', function ($query) {
+                $query->where('status', 9);
+            })->sum('modal');
+        
+            $profit = $total_income - $modal;
 
+            // Menambahkan kondisi untuk hanya menampilkan data yang ada pada tanggal tersebut
+            if ($service > 0 || $service_detail > 0 || $transaction > 0) {
                 $report[$date->format('Y-m-d')] = [
                     'date' => $date,
-                    'service_detail' => $service_detail->count(),
-                    'transaction' => $transaction->count(),
-                    'service' => $service->count,
+                    'service' => $service,
+                    'service_detail' => $service_detail,
+                    'transaction' => $transaction,
                     'income' => $total_income,
                     'modal' => $modal,
                     'profit' => $profit,
                 ];
-                // Mendapatkan total
-                $total_service += $service->count;
-                $total_success += $service_detail->count();
-                $total_out += $transaction->count();
+
+                $total_service += $service;
+                $total_success += $service_detail;
+                $total_out += $transaction;
                 $total_revenue += $total_income;
                 $total_modal += $modal;
                 $total_profit += $profit;
             }
-        }
 
+        }
         // ChartData
         $chartData = $this->generateChartData($isTeknisi, $user);
 

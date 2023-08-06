@@ -219,7 +219,7 @@
                                         <div class="flex-grow-1">
                                             <p class="mb-0 text-right">Servis Keluar</p>
                                             <div class="fluid-container">
-                                                <h3 class="font-weight-medium text-right mb-0">{{ $total_success_teknisi }}
+                                                <h3 class="font-weight-medium text-right mb-0">{{ $total_out_teknisi }}
                                                 </h3>
                                             </div>
                                         </div>

@@ -88,7 +88,7 @@
                                 </div>
                                 <div class="row mt-4">
                                     <div class="col-sm-6">
-                                        <a href="{{ route('backsite.report-employees.show', ['teknisiId' => $teknisi->id]) }}"
+                                        <a href="{{ route('backsite.report-employees.show', ['teknisiId' => $teknisi->id, 'start_date' => $start_date->format('Y-m-d'), 'end_date' => $end_date->format('Y-m-d')]) }}"
                                             class="btn btn-secondary">
                                             <i class="mdi mdi-arrow-left me-1"></i> Lihat Transaksi Lainnya
                                         </a>

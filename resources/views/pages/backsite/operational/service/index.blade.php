@@ -94,9 +94,17 @@
                                                         <input type="text" class="form-control @error('kerusakan') is-invalid @enderror" name="kerusakan" id="kerusakan" placeholder="Silahkan isi kerusakan barang" required>
                                                     </div>
 
-                                                    <div class="mb-2">
+                                                    <div class="mb-4">
                                                         <label for="penerima" class="form-label">Penerima</label>
                                                         <input type="text" class="form-control" name="penerima" id="penerima" placeholder="Penerima Servis" value="{{ Auth::user()->name }}" disabled>
+                                                    </div>
+
+                                                    <div class="form-check">
+                                                        <label class="form-check-label" for="send_notification">
+                                                            <input class="form-check-input" type="checkbox" id="send_notification" name="send_notification" value="1">
+                                                            Kirim Notifikasi
+                                                        </label>
+                                                        <p class="text-muted">Centang untuk mengirimkan notifikasi ke pelanggan</p>
                                                     </div>
 
                                                     <!-- Form Check -->
@@ -603,7 +611,7 @@
                                                                                     </div>
                                                                                     <div class="modal-footer">
                                                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                                                        <button type="submit" class="btn btn-primary" onclick="return confirm('Are you sure want to save this data ?')">Perbarui Status</button>
+                                                                                        <button type="submit" class="btn btn-primary" onclick="return confirm('Yakin ingin merubah status servis?')">Perbarui Status</button>
                                                                                     </div>
                                                                             </form>
                                                                         </div>
@@ -737,9 +745,17 @@
                                                                                             <input type="text" class="form-control" name="tindakan" id="tindakan" placeholder="Tindakan Servis" required>
                                                                                         </div>
 
-                                                                                        <div class="mb-2">
+                                                                                        <div class="mb-4">
                                                                                             <label for="catatan" class="form-label">Catatan</label>
                                                                                             <textarea type="text" id="catatan" name="catatan" placeholder="Keterangan claim garansi" value="{{old('catatan')}}" class="form-control"></textarea>
+                                                                                        </div>
+
+                                                                                        <div class="form-check">
+                                                                                            <label class="form-check-label" for="send_notification1">
+                                                                                                <input class="form-check-input" type="checkbox" id="send_notification1" name="send_notification" value="1">
+                                                                                                Kirim Notifikasi
+                                                                                            </label>
+                                                                                            <p class="text-muted">Centang untuk mengirimkan notifikasi ke pelanggan</p>
                                                                                         </div>
 
                                                                                         <!-- Form Check -->
@@ -802,13 +818,21 @@
                                                                                             <input type="text" class="form-control input-mask text-start" name="modal" id="modal" placeholder="Modal Sparepart" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
                                                                                         </div>
 
-                                                                                        <div class="mb-2">
+                                                                                        <div class="mb-4">
                                                                                             <label for="biaya" class="form-label">Biaya</label>
                                                                                             <input type="text" class="form-control input-mask text-start" name="biaya" id="biaya" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
                                                                                         </div>
 
+                                                                                        <div class="form-check">
+                                                                                            <label class="form-check-label" for="send_notification2">
+                                                                                                <input class="form-check-input" type="checkbox" id="send_notification2" name="send_notification" value="1">
+                                                                                                Kirim Notifikasi
+                                                                                            </label>
+                                                                                            <p class="text-muted">Centang untuk mengirimkan notifikasi ke pelanggan</p>
+                                                                                        </div>
+
                                                                                         <!-- Form Check -->
-                                                                                        <div class="form-check d-flex justify-content-end gap-2 mt-4">
+                                                                                        <div class="form-check justify-content-end gap-2 mt-4">
                                                                                             <input class="form-check-input" type="checkbox" value="" id="bisaDiambilCheckbox{{ $service_item->id }}" required>
                                                                                             <label class="form-check-label" for="bisaDiambilCheckbox{{ $service_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju mengubah Status menjadi Bisa Diambil</label>
                                                                                         </div>

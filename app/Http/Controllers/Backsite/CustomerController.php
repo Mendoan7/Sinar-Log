@@ -62,7 +62,7 @@ class CustomerController extends Controller
                 });
             },
         ])
-        ->orderBy('created_at', 'desc')
+        ->orderBy('created_at', 'asc')
         ->get();
 
         return view('pages.backsite.operational.customer.index', compact('customer', 'user_type'));
@@ -88,7 +88,11 @@ class CustomerController extends Controller
     {
         // get all request from frontsite
         $data = $request->all();
-        $data['contact'] = str_replace('0', '62', $data['contact']);
+        // Remove '0' from the contact number
+        $data['contact'] = ltrim($data['contact'], '0');
+
+        // Add '62' in front of the contact number
+        $data['contact'] = '62' . $data['contact'];
 
         // store to database
         $customer = Customer::create($data);
@@ -130,7 +134,7 @@ class CustomerController extends Controller
     {
         // get all request
         $data = $request->all();
-
+        
         // update to database
         $customer->update($data);
 

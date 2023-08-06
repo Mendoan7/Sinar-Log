@@ -14,7 +14,7 @@
                     <div class="card">
                         <div class="card-body border-bottom">
                             <div class="d-flex align-items-center">
-                                <h5 class="mb-0 card-title flex-grow-1">Sudah Diambil</h5>
+                                <h5 class="mb-0 card-title flex-grow-1">Servis Keluar</h5>
                                 <div class="flex-shrink-0">
                                     <button class="btn btn-soft-success"
                                         data-bs-toggle="modal" 
@@ -120,7 +120,9 @@
                                                 <th scope="col">Biaya</th>
                                                 <th scope="col">Status</th>
                                                 <th scope="col">Aksi</th>
+                                                @can('transaction_delete')
                                                 <th scope="col">Ubah Status</th>
+                                                @endcan
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -505,9 +507,9 @@
                                                             @endcan
                                                         </ul>
                                                     </td>
-
+                                                    @can('transaction_delete')
                                                     <td>
-                                                        {{-- Start Button Status --}}
+                                                        {{-- Start Button Garansi --}}
                                                         <ul class="list-unstyled hstack gap-1 mb-0">
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $transaction_item->garansi == 0 ? 'Tidak ada garansi' : ($warrantyInfo[$transaction_item->id]['end_warranty'] < now() ? 'Garansi hangus' : 'Menerima Garansi') }}" class="disable-tooltip">
                                                                 @if ($transaction_item->garansi > 0)
@@ -633,8 +635,9 @@
                                                                 {{-- End Modal Status --}}
                                                             </li>
                                                         </ul>
-                                                        {{-- End Button Status --}}
-                                                    </td> 
+                                                        {{-- End Button Garansi --}}
+                                                    </td>
+                                                    @endcan 
                                                 </tr>
                                             @empty
                                             {{-- not found --}}
