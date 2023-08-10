@@ -12,6 +12,7 @@
 <script src="{{ asset('/assets/backsite/libs/bootstrap-maxlength/bootstrap-maxlength.min.js') }}"></script>
 <script src="{{ asset('/assets/backsite/libs/%40chenfengyuan/datepicker/datepicker.min.js') }}"></script>
 <script src="{{ asset('/assets/backsite/libs/inputmask/min/jquery.inputmask.bundle.min.js') }}"></script>
+<script src="{{ asset('/assets/backsite/libs/jquery.repeater/jquery.repeater.min.js') }}"></script>
 
 <!-- Required datatable js -->
 <script src="{{ asset('/assets/backsite/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
@@ -51,6 +52,8 @@
 
 <!-- email editor init -->
 <script src="{{ asset('/assets/backsite/js/pages/email-editor.init.js') }}"></script>
+
+{{-- <script src="{{ asset('/assets/backsite/js/pages/form-repeater.int.js') }}"></script> --}}
 
 <!-- App js -->
 <script src="{{ asset('/assets/backsite/js/app.js') }}"></script>

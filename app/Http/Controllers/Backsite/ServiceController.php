@@ -295,10 +295,30 @@ class ServiceController extends Controller
             $selamat = "Selamat Malam";
         }
     
-        // Teks pesan yang akan dikirim
         $tindakan = $request->input('tindakan');
         $biaya = $request->input('biaya');
-        $message = "*Konfirmasi Servis | SINAR CELL*\n\n$selamat, pelanggan yang terhormat.\nKami ingin melakukan konfirmasi untuk mengatasi kerusakan pada barang servis $jenis $tipe dengan No. Servis $kode akan dilakukan tindakan *$tindakan* dengan biaya *$biaya*.\nMohon segera konfirmasi kembali untuk melanjutkan atau tidaknya servis. Terima Kasih.";
+        $totalBiaya = 0;
+
+        $message = "*Konfirmasi Servis | SINAR CELL*\n\n$selamat, pelanggan yang terhormat.\nKami ingin melakukan konfirmasi untuk mengatasi kerusakan pada barang servis $jenis $tipe dengan No. Servis $kode ";
+
+        if (count($tindakan) === 1) {
+            $message .= "akan dilakukan tindakan *$tindakan[0]* dengan biaya *$biaya[0]*.";
+            $totalBiaya = (int) str_replace(',', '', $biaya[0]);
+        } elseif (count($tindakan) > 1) {
+            $message .= "akan dilakukan tindakan:\n";
+
+            for ($i = 0; $i < count($tindakan); $i++) {
+                $message .= "*$tindakan[$i]* (Rp $biaya[$i])";
+
+                if ($i !== count($tindakan) - 1) {
+                    $message .= ", ";
+                }
+
+                $totalBiaya += (int) str_replace(',', '', $biaya[$i]);
+            }
+
+            $message .= " dengan Total biaya *Rp " . number_format($totalBiaya, 0, ',', '.') . "*.";
+        }
     
         // Link konfirmasi
         $confirmationToken = Uuid::uuid4()->toString();
@@ -310,6 +330,9 @@ class ServiceController extends Controller
         $service_item->estimasi_biaya = $biaya;
         $service_item->confirmation_token = $confirmationToken;
         $service_item->expired_time = $expiredTime;
+        $service_item->save();
+
+        $service_item->status = 6;
         $service_item->save();
 
         $confirmationLink = route('confirmation.service', ['token' => $confirmationToken]);

@@ -325,37 +325,51 @@
                                                             @endif
                                                             {{-- End Button Konfirmasi --}}
                                                             {{-- Start Modal Konfirmasi --}}
-                                                            <div class="modal fade bs-example-modal-center" id="cash{{ $service_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="cashServiceModalLabel" aria-expanded="false">
-                                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title" id="cashServiceModalLabel">Konfirmasi Biaya Servis</h5>
-                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            <form class="form form-horizontal" action="service/confirmation" method="POST" target="_blank">
+                                                                @csrf
+                                                                <div class="modal fade" id="cash{{ $service_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="cashServiceModalLabel">
+                                                                    <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <h5 class="modal-title" id="cashServiceModalLabel">Konfirmasi Biaya Servis</h5>
+                                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <input type="hidden" name="service_id" value="{{ $service_item->id }}">
+                                                                                <div class="repeater" enctype="multipart/form-data">
+                                                                                    <div data-repeater-list="group-a">
+                                                                                        <div data-repeater-item class="row">
+                                                                                            <h6 class="mb-2">Konfirmasi</h6>
+                                                                                            <div class="mb-2">
+                                                                                                <label for="tindakan">Tindakan</label>
+                                                                                                <input type="text" id="tindakan" name="tindakan[]" class="form-control" placeholder="Tindakan Servis" required/>
+                                                                                            </div>
+                                                                                            <div class="mb-2">
+                                                                                                <label for="biaya">Biaya</label>
+                                                                                                <div class="input-group">
+                                                                                                    <div class="input-group-text">RP.</div>
+                                                                                                    <input type="text" id="biaya" class="form-control input-mask text-start" name="biaya[]" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0" required>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="mb-2 align-self-center">
+                                                                                                <div class="d-grid">
+                                                                                                    <input data-repeater-delete type="button" class="btn btn-primary" value="Hapus" />
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <input data-repeater-create type="button" class="btn btn-success mt-3 mt-lg-0" value="Tambah" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                                <button type="submit" class="btn btn-primary">Konfirmasi</button>
+                                                                            </div>     
                                                                         </div>
-                                                                        <form class="form form-horizontal" action="service/confirmation" method="POST">
-                                                                            @csrf
-                                                                                <div class="modal-body">
-                                                                                    <input type="hidden" name="service_id" value="{{ $service_item->id }}">
-
-                                                                                    <div class="mb-2">
-                                                                                        <label for="tindakan" class="form-label">Tindakan</label>
-                                                                                        <input type="text" class="form-control" name="tindakan" id="tindakan" placeholder="Tindakan Servis" required>
-                                                                                    </div>
-
-                                                                                    <div class="mb-2">
-                                                                                        <label for="biaya" class="form-label">Biaya</label>
-                                                                                        <input type="text" class="form-control input-mask text-start" name="biaya" id="biaya" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'Rp. ', 'placeholder': '0'" required>
-                                                                                    </div>
-
-                                                                                </div>
-                                                                                <div class="modal-footer">
-                                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                                                    <button type="submit" class="btn btn-primary">Konfirmasi</button>
-                                                                                </div>
-                                                                        </form>        
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            </form>
+                                                            
                                                             {{-- End Modal Konfirmasi --}}
                                                             @endcan
                                                             @can('service_show')
@@ -815,12 +829,18 @@
 
                                                                                         <div class="mb-2">
                                                                                             <label for="modal" class="form-label">Modal</label>
-                                                                                            <input type="text" class="form-control input-mask text-start" name="modal" id="modal" placeholder="Modal Sparepart" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
+                                                                                            <div class="input-group">
+                                                                                                <div class="input-group-text">RP.</div>
+                                                                                                <input type="text" class="form-control input-mask text-start" name="modal" id="modal" placeholder="Modal Sparepart" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0" required>
+                                                                                            </div>
                                                                                         </div>
 
                                                                                         <div class="mb-4">
                                                                                             <label for="biaya" class="form-label">Biaya</label>
-                                                                                            <input type="text" class="form-control input-mask text-start" name="biaya" id="biaya" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0, 'prefix': 'RP. ', 'placeholder': '0'" required>
+                                                                                            <div class="input-group">
+                                                                                                <div class="input-group-text">RP.</div>
+                                                                                                <input type="text" class="form-control input-mask text-start" name="biaya" id="biaya" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0" required>
+                                                                                            </div>
                                                                                         </div>
 
                                                                                         <div class="form-check">
@@ -959,4 +979,60 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function () {
+            // Inisialisasi Input Mask
+            $('.input-mask').inputmask({
+                'alias': 'numeric',
+                'groupSeparator': ',',
+                'autoGroup': true,
+                'digits': 0,
+                'digitsOptional': 0
+            });
+    
+            // Menangani aksi tambah (Tambah) dalam repeater
+            $(document).on('click', '[data-repeater-create]', function () {
+                var repeaterGroup = $(this).closest('.repeater');
+                var clonedItem = repeaterGroup.find('[data-repeater-item]:first').clone();
+
+                clonedItem.find('input').val('').end()
+                        .find('.input-mask').inputmask('remove')
+                                        .inputmask({
+                                            'alias': 'numeric',
+                                            'groupSeparator': ',',
+                                            'autoGroup': true,
+                                            'digits': 0,
+                                            'digitsOptional': 0
+                                        });
+
+                repeaterGroup.find('[data-repeater-list]').append(clonedItem);
+                clonedItem.find('[data-repeater-delete]').show().val('Hapus');
+                clonedItem.hide().slideDown();
+
+                // Update ulang judul konfirmasi pada semua elemen repeater
+                repeaterGroup.find('[data-repeater-item]').each(function(index) {
+                    var newTitle = 'Konfirmasi ' + (index + 1);
+                    $(this).find('h6').text(newTitle);
+                });
+            });
+    
+            // Menangani aksi hapus (Hapus) dalam repeater
+            $(document).on('click', '[data-repeater-delete]', function () {
+                var repeaterItem = $(this).closest('[data-repeater-item]');
+                var repeaterGroup = repeaterItem.closest('.repeater');
+    
+                if (repeaterGroup.find('[data-repeater-item]').length > 1) {
+                    repeaterItem.slideUp(function () {
+                        $(this).remove();
+                        // Update ulang judul konfirmasi setelah item dihapus
+                        repeaterGroup.find('[data-repeater-item]').each(function(index) {
+                            var newTitle = index === 0 ? 'Konfirmasi 1' : 'Konfirmasi ' + (index + 1);
+                            $(this).find('h6').text(newTitle);
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+    
 @endpush
