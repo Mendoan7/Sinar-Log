@@ -86,31 +86,28 @@ class TrackingController extends Controller
         
         if ($service->status <= 7) {
             $service_detail = null;
-            $transaction = null;
         } elseif ($service->status == 8) {
             $service_detail = $service->service_detail;
-            $transaction = null;
         } else {
             $service_detail = $service->service_detail;
-            $transaction = $service_detail?->transaction;
         }
 
         $warrantyInfo = [];
 
-        if ($transaction) {
-            $warranty = $transaction->garansi;
-            $end_warranty = $transaction->created_at->addDays($warranty);
+        if ($service) {
+            $warranty = $service_detail->garansi;
+            $end_warranty = Carbon::parse($service->date_out)->addDays($warranty);
             $remainingTime = now()->diff($end_warranty);
             $sisa_warranty = $remainingTime->format('%d Hari %h Jam');
 
-            $warrantyInfo[$transaction->id] = [
+            $warrantyInfo[$service->id] = [
                 'warranty' => $warranty,
                 'end_warranty' => $end_warranty,
                 'sisa_warranty' => $sisa_warranty,
             ];
         }
         
-        return view('pages.frontsite.tracking.show', compact('service', 'service_detail', 'transaction', 'warrantyInfo', 'buttonSisa'));
+        return view('pages.frontsite.tracking.show', compact('service', 'service_detail', 'warrantyInfo', 'buttonSisa'));
     }
 
     /**

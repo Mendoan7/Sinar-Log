@@ -71,7 +71,11 @@
                     <li>
                         <a class="has-arrow waves-effect">
                             <i class="bx bx-slider-alt"></i>
-                            <span>Kelola Akses</span>
+                            @if(auth()->user()->detail_user->type_user_id == 2)
+                                <span>Kelola Pegawai</span>
+                            @else
+                                <span>Kelola Akses</span>
+                            @endif
                         </a>
                         <ul class="sub-menu" aria-expanded="false">
                             @can('permission_access')

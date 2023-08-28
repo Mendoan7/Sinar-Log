@@ -45,7 +45,7 @@
                                     <dl class="row mb-0">
                                         <dt class="col-sm-4 fw-bold text-muted">Kerusakan</dt>
                                         <dd class="col-sm-8">
-                                            <span class="fw-bold fs-6">{{ $service->kerusakan }}</span>
+                                            <span class="fw-bold fs-6">{{ $service->service_detail->kerusakan }}</span>
                                         </dd>
                                     </dl>
                                     <dl class="row mb-3">

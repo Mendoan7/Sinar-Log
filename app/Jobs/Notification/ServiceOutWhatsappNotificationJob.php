@@ -41,10 +41,10 @@ class ServiceOutWhatsappNotificationJob implements ShouldQueue
         $tipe = $this->service->tipe;
         $status = $this->service->status;
         $kondisi = $this->service->service_detail->kondisi;
-        $tanggal = Carbon::parse($this->service->service_detail->transaction->created_at)->isoFormat('D MMMM Y HH:mm');
-        $pengambil = $this->service->service_detail->transaction->pengambil;
-        $pembayaran = $this->service->service_detail->transaction->pembayaran;
-        $garansi = $this->service->service_detail->transaction->garansi;
+        $tanggal = Carbon::parse($this->service->date_out)->isoFormat('D MMMM Y HH:mm');
+        $pengambil = $this->service->pengambil;
+        $pembayaran = $this->service->service_detail->pembayaran;
+        $garansi = $this->service->service_detail->garansi;
         $trackLink = route('tracking.show', ['id' => $this->service->id]);
 
         //Merubah Format Biaya

@@ -153,17 +153,17 @@
                                             @forelse($service as $key => $service_item)
                                                 <tr data-entry-id="{{ $service_item->id }}">
                                                     <th scope="row" class="text-body fw-bold">{{ $service_item->kode_servis ?? '' }}</th>
-                                                    <td data-order="{{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 
-                                                        ? $service_item->service_detail->transaction->warranty_history->created_at : $service_item->created_at ?? '' }}">
-                                                        {{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 
-                                                            ? $service_item->service_detail->transaction->warranty_history->created_at->isoFormat('D MMM Y') 
+                                                    <td data-order="{{ $service_item->service_detail?->warranty_history?->status == 1 
+                                                        ? $service_item->service_detail->warranty_history->created_at : $service_item->created_at ?? '' }}">
+                                                        {{ $service_item->service_detail?->warranty_history?->status == 1 
+                                                            ? $service_item->service_detail->warranty_history->created_at->isoFormat('D MMM Y') 
                                                             : $service_item->created_at->isoFormat('D MMM Y') ?? '' }}
                                                     </td>
                                                     <td class="text-body fw-bold">{{ $service_item->customer->name ?? '' }}</td>
                                                     <td data-toggle="tooltip" data-placement="top" title="{{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}">
                                                         {{ $service_item->jenis ?? '' }} {{ $service_item->tipe ?? '' }}</td>
                                                     <td>
-                                                        {{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 ? $service_item->service_detail->transaction->warranty_history->keterangan : $service_item->kerusakan ?? '' }}
+                                                        {{ $service_item->service_detail?->warranty_history?->status == 1 ? $service_item->service_detail->warranty_history->keterangan : $service_item->service_detail->kerusakan ?? '' }}
                                                     </td>
                                                     <td>{{ $service_item->duration ?? '' }}</td>
 
@@ -186,7 +186,7 @@
                                                             <span class="badge bg-primary">{{ 'Terkonfirmasi' }}</span>
                                                         @elseif($service_item->status == 11)
                                                             <span class="badge bg-primary">{{ 'Dibatalkan' }}</span>
-                                                        @elseif($service_item->service_detail?->transaction?->warranty_history?->status == 1)
+                                                        @elseif($service_item->service_detail?->warranty_history?->status == 1)
                                                             <span class="badge bg-warning">{{ 'Garansi' }}</span>          
                                                         @endif
                                                     </td>
@@ -305,15 +305,14 @@
                                                     <td>
                                                         <ul class="list-unstyled hstack gap-2 mb-0">
                                                             @can('service_confirmation')
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Konfirmasi Biaya Servis" class="disable-tooltip">
                                                             {{-- Button Konfirmasi --}}
-                                                            @if ($service_item->teknisi)
-                                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Konfirmasi Biaya Servis" class="disable-tooltip">  
+                                                            @if ($service_item->teknisi)                                                                
                                                                 <button class="btn btn-sm btn-soft-warning" 
                                                                     data-bs-toggle="modal" 
                                                                     data-bs-target="#cash{{ $service_item->id }}">
                                                                     <i class="mdi mdi-near-me"></i>
                                                                 </button>
-                                                                </li>
                                                             @else
                                                                 <button class="btn btn-sm btn-soft-warning"
                                                                     data-bs-toggle="popover"
@@ -351,7 +350,7 @@
                                                                                                     <input type="text" id="biaya" class="form-control input-mask text-start" name="biaya[]" placeholder="Biaya Servis" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0" required>
                                                                                                 </div>
                                                                                             </div>
-                                                                                            <div class="mb-2 align-self-center">
+                                                                                            <div class="mb-4 align-self-center">
                                                                                                 <div class="d-grid">
                                                                                                     <input data-repeater-delete type="button" class="btn btn-primary" value="Hapus" />
                                                                                                 </div>
@@ -368,10 +367,11 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </form>
-                                                            
+                                                            </form>                                                            
                                                             {{-- End Modal Konfirmasi --}}
+                                                            </li>
                                                             @endcan
+
                                                             @can('service_show')
                                                             {{-- Button View --}}
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Melihat Detail Servis" class="disable-tooltip">               
@@ -388,7 +388,7 @@
                                                                                 <h5 class="modal-title" id="showServiceModalLabel">Detail Servis</h5>
                                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                             </div>
-                                                                            @if ($service_item->service_detail?->transaction?->warranty_history->status == 1)
+                                                                            @if ($service_item->service_detail?->warranty_history?->status == 1)
                                                                             {{-- Start Body Garansi --}}
                                                                             <div class="modal-body">
                                                                                 <table class="table table-striped mb-0">
@@ -413,43 +413,80 @@
                                                                                         </tr>
                                                                                         <tr>
                                                                                             <th scope="row">Kerusakan Awal</th>
-                                                                                            <td>{{ isset($service_item->kerusakan) ? $service_item->kerusakan : 'N/A' }}</td>
+                                                                                            <td>{{ isset($service_item->service_detail->kerusakan) ? $service_item->service_detail->kerusakan : 'N/A' }}</td>
                                                                                         </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Tindakan</th>
-                                                                                            <td>{{ isset($service_item->service_detail->tindakan) ? $service_item->service_detail->tindakan : 'N/A' }}</td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Modal</th>
-                                                                                            <td>{{ isset($service_item->service_detail->modal) ? 'RP. '.number_format($service_item->service_detail->modal) : 'N/A' }}</td>
-                                                                                        </tr>
+
+                                                                                        {{-- Tindakan dan Modal --}}
+                                                                                        @if(isset($service_item->service_detail->tindakan) && isset($service_item->service_detail->modal))
+                                                                                            @php
+                                                                                                $tindakan = json_decode($service_item->service_detail->tindakan, true);
+                                                                                                $modal = json_decode($service_item->service_detail->modal);
+                                                                                                $totalModal = array_sum($modal);
+                                                                                            @endphp
+
+                                                                                            @if(count($tindakan) === 1)
+                                                                                                <tr>
+                                                                                                    <th scope="row">Tindakan</th>
+                                                                                                    <td>{{ $tindakan[0] }}</td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                    <th scope="row">Modal</th>
+                                                                                                    <td>RP. {{ number_format($modal[0]) }}</td>
+                                                                                                </tr>
+                                                                                            @else
+                                                                                                <tr>
+                                                                                                    <td colspan="2">
+                                                                                                        <div class="accordion" id="accordionFlushShow">
+                                                                                                            <div class="accordion-item">
+                                                                                                                <h2 class="accordion-header" id="flush-headingOne">
+                                                                                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="true" aria-controls="flush-collapseOne">
+                                                                                                                        <span class="fw-bold">Tindakan dan Modal</span>
+                                                                                                                    </button>
+                                                                                                                </h2>
+                                                                                                                <div id="flush-collapseOne" class="accordion-collapse collapse show" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushShow">
+                                                                                                                    <div class="accordion-body">
+                                                                                                                        <table class="table table-striped mb-0">
+                                                                                                                            <thead class="table-secondary">
+                                                                                                                                <tr>
+                                                                                                                                    <th scope="col">#</th>
+                                                                                                                                    <th scope="col">Tindakan</th>
+                                                                                                                                    <th scope="col">Modal</th>
+                                                                                                                                </tr>
+                                                                                                                            </thead>
+                                                                                                                            <tbody>
+                                                                                                                                @foreach($tindakan as $index => $item)
+                                                                                                                                    <tr>
+                                                                                                                                        <th scope="row">{{ $index + 1 }}</th>
+                                                                                                                                        <td>{{ $item }}</td>
+                                                                                                                                        <td>RP. {{ number_format($modal[$index]) }}</td>
+                                                                                                                                    </tr>
+                                                                                                                                @endforeach
+                                                                                                                            </tbody>
+                                                                                                                            <tfoot class="table-secondary">
+                                                                                                                                <tr>
+                                                                                                                                    <th colspan="2" scope="row" class="fw-bold">Total Modal</th>
+                                                                                                                                    <td class="fw-bold">RP. {{ number_format($totalModal) }}</td>
+                                                                                                                                </tr>
+                                                                                                                            </tfoot>
+                                                                                                                        </table>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            @endif
+                                                                                        @else
+                                                                                            <tr>
+                                                                                                <td colspan="2">N/A</td>
+                                                                                            </tr>
+                                                                                        @endif
+                                                                                        {{-- End Tindakan dan Modal --}}
+
                                                                                         <tr>
                                                                                             <th scope="row">Biaya</th>
-                                                                                            <td>{{ isset($service_item->service_detail->biaya) ? 'RP. '.number_format($service_item->service_detail->biaya) : 'N/A' }}</td>
+                                                                                            <td><span class="fw-bold">{{ isset($service_item->service_detail->biaya) ? 'RP. '.number_format($service_item->service_detail->biaya) : 'N/A' }}</span></td>
                                                                                         </tr>
-                                                                                        <tr class="table-info">
-                                                                                            <th colspan="2" class="text-center fw-bold">Detail Garansi</th>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Tanggal Klaim </th>
-                                                                                            <td>{{ $service_item->service_detail->transaction->warranty_history->created_at->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Ket. Klaim</th>
-                                                                                            <td>{{ $service_item->service_detail->transaction->warranty_history->keterangan }}</td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Garansi</th>
-                                                                                            <td>{{ isset($service_item->service_detail->transaction->garansi) ? $service_item->service_detail->transaction->garansi : 'N/A' }} Hari</td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Garansi Berakhir</th>
-                                                                                            <td>{{ $warrantyInfo[$service_item->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }}</td>
-                                                                                        </tr>
-                                                                                        <tr>
-                                                                                            <th scope="row">Status Garansi</th>
-                                                                                            <td>Tersisa {{ $warrantyInfo[$service_item->id]['sisa_warranty'] }}</td>
-                                                                                        </tr>                                              
                                                                                         <tr>
                                                                                             <th scope="row">Status</th>
                                                                                             <td>
@@ -467,11 +504,54 @@
                                                                                                     <span class="badge bg-danger">{{ 'Menunggu Konfirmasi' }}</span>
                                                                                                 @elseif($service_item->status == 7)
                                                                                                     <span class="badge bg-primary">{{ 'Menunggu Sparepart' }}</span>
-                                                                                                @elseif($service_item->service_detail->transaction->warranty_history->status == 1)
+                                                                                                @elseif($service_item->service_detail->warranty_history->status == 1)
                                                                                                     <span class="badge bg-warning">{{ 'Proses Garansi' }}</span>    
                                                                                                 @endif
                                                                                             </td>
                                                                                         </tr>
+                                                                                        {{-- Detail Garansi --}}
+                                                                                        <tr>
+                                                                                            <td colspan="2">
+                                                                                                <div class="accordion" id="accordionFlushGaransi">
+                                                                                                    <div class="accordion-item">
+                                                                                                        <h2 class="accordion-header" id="flush-headingGaransi">
+                                                                                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseGaransi" aria-expanded="true" aria-controls="flush-collapseGaransi">
+                                                                                                                <span class="fw-bold">Detail Garansi</span>
+                                                                                                            </button>
+                                                                                                        </h2>
+                                                                                                        <div id="flush-collapseGaransi" class="accordion-collapse collapse show" aria-labelledby="flush-headingGaransi" data-bs-parent="#accordionFlushGaransi">
+                                                                                                            <div class="accordion-body">
+                                                                                                                <table class="table table-striped mb-0">
+                                                                                                                    <tbody>
+                                                                                                                        <tr>
+                                                                                                                            <th scope="row">Tanggal Klaim</th>
+                                                                                                                            <td>{{ $service_item->service_detail->warranty_history->created_at->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
+                                                                                                                        </tr>
+                                                                                                                        <tr>
+                                                                                                                            <th scope="row">Ket. Klaim</th>
+                                                                                                                            <td>{{ $service_item->service_detail->warranty_history->keterangan }}</td>
+                                                                                                                        </tr>
+                                                                                                                        <tr>
+                                                                                                                            <th scope="row">Garansi</th>
+                                                                                                                            <td>{{ isset($service_item->service_detail->garansi) ? $service_item->service_detail->garansi : 'N/A' }} Hari</td>
+                                                                                                                        </tr>
+                                                                                                                        <tr>
+                                                                                                                            <th scope="row">Garansi Berakhir</th>
+                                                                                                                            <td>{{ $warrantyInfo[$service_item->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }}</td>
+                                                                                                                        </tr>
+                                                                                                                        <tr>
+                                                                                                                            <th scope="row">Status Garansi</th>
+                                                                                                                            <td>Tersisa {{ $warrantyInfo[$service_item->id]['sisa_warranty'] }}</td>
+                                                                                                                        </tr>
+                                                                                                                    </tbody>
+                                                                                                                </table>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        {{-- End Detail Garansi --}}
                                                                                     </tbody>
                                                                                 </table>
                                                                             </div>
@@ -505,7 +585,7 @@
                                                                                         </tr>
                                                                                         <tr>
                                                                                             <th scope="row">Kerusakan</th>
-                                                                                            <td>{{ isset($service_item->kerusakan) ? $service_item->kerusakan : 'N/A' }}</td>
+                                                                                            <td>{{ isset($service_item->service_detail->kerusakan) ? $service_item->service_detail->kerusakan : 'N/A' }}</td>
                                                                                         </tr>
                                                                                         <tr>
                                                                                             <th scope="row">Status</th>
@@ -545,7 +625,7 @@
                                                             @endcan
                                                             @can('service_edit')
                                                             {{-- Button Edit --}}
-                                                            @if (!$service_item->service_detail?->transaction?->warranty_history?->status == 1)
+                                                            @if (!$service_item->service_detail?->warranty_history?->status == 1)
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Status Servis" class="disable-tooltip">
                                                                 <button class="btn btn-sm btn-soft-info" 
                                                                         data-bs-toggle="modal" 
@@ -696,7 +776,7 @@
                                                                         Bisa Diambil
                                                                     </button>
                                                                 @endif
-                                                                <form class="form form-horizontal" action="{{ $service_item->service_detail?->transaction?->warranty_history?->status == 1 ? route('backsite.service-detail.warranty') : route('backsite.service-detail.store') }}" method="POST">
+                                                                <form class="form form-horizontal" action="{{ $service_item->service_detail?->warranty_history?->status == 1 ? route('backsite.service-detail.warranty') : route('backsite.service-detail.store') }}" method="POST">
                                                                     @csrf
                                                                     <div class="modal fade bs-example-modal-center" id="bisaDiambil{{ $service_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="bisaDiambilModalLabel">
                                                                         <div class="modal-dialog modal-dialog-scrollable" role="document">
@@ -705,7 +785,7 @@
                                                                                     <h5 class="modal-title">Ubah data menjadi Bisa Diambil</h5>
                                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                                 </div>
-                                                                                @if ($service_item->service_detail?->transaction?->warranty_history?->status == 1)
+                                                                                @if ($service_item->service_detail?->warranty_history?->status == 1)
                                                                                     <div class="modal-body">
                                                                                         @if ($errors->any())
                                                                                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -731,12 +811,12 @@
 
                                                                                         <div class="mb-2">
                                                                                             <label for="kerusakan" class="form-label">Kerusakan Awal</label>
-                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->kerusakan ?? '' }}">
+                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->service_detail->kerusakan ?? '' }}">
                                                                                         </div>
 
                                                                                         <div class="mb-2">
                                                                                             <label for="tindakans" class="form-label">Tindakan Sebelumnya</label>
-                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->service_detail->tindakan ?? '' }}">
+                                                                                            <input type="text" class="form-control" disabled value="{{ isset($service_item->service_detail->tindakan) ? implode(', ', json_decode($service_item->service_detail->tindakan)) : '' }}">
                                                                                         </div>
 
                                                                                         <div class="mb-2">
@@ -809,7 +889,7 @@
 
                                                                                         <div class="mb-2">
                                                                                             <label for="kerusakan" class="form-label">Kerusakan</label>
-                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->kerusakan ?? '' }}">
+                                                                                            <input type="text" class="form-control" disabled value="{{ $service_item->service_detail->kerusakan ?? '' }}">
                                                                                         </div>
 
                                                                                         <div class="mb-2">
@@ -822,17 +902,31 @@
                                                                                             </select>
                                                                                         </div>
 
-                                                                                        <div class="mb-2">
-                                                                                            <label for="tindakan" class="form-label">Tindakan</label>
-                                                                                            <input type="text" class="form-control" name="tindakan" id="tindakan" placeholder="Tindakan Servis" required>
-                                                                                        </div>
-
-                                                                                        <div class="mb-2">
-                                                                                            <label for="modal" class="form-label">Modal</label>
-                                                                                            <div class="input-group">
-                                                                                                <div class="input-group-text">RP.</div>
-                                                                                                <input type="text" class="form-control input-mask text-start" name="modal" id="modal" placeholder="Modal Sparepart" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0" required>
+                                                                                        <div class="repeater mb-2" enctype="multipart/form-data">
+                                                                                            <div data-repeater-list="group-a">
+                                                                                                <div data-repeater-item class="row">
+                                                                                                    <div  class="mb-2 col-lg-5">
+                                                                                                        <label for="tindakan">Tindakan</label>
+                                                                                                        <input type="text" id="tindakan" name="tindakan[]" class="form-control" placeholder="Tindakan yang dilakukan" required/>
+                                                                                                    </div>
+                                                        
+                                                                                                    <div  class="mb-2 col-lg-5">
+                                                                                                        <label for="modal">Modal</label>
+                                                                                                        <div class="input-group">
+                                                                                                            <div class="input-group-text">RP.</div>
+                                                                                                            <input type="text" id="modal" class="form-control input-mask text-start" name="modal[]" placeholder="Modal dari sparepart" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': 0" required>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    
+                                                                                                    <div class="col-lg-2 align-self-center">
+                                                                                                        <div class="d-grid">
+                                                                                                            <input data-repeater-delete type="button" class="btn btn-primary" value="Hapus"/>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                
                                                                                             </div>
+                                                                                            <input data-repeater-create type="button" class="btn btn-success mt-lg-0" value="Tambah"/>
                                                                                         </div>
 
                                                                                         <div class="mb-4">
@@ -990,30 +1084,49 @@
                 'digitsOptional': 0
             });
     
+            // Fungsi untuk mengupdate label tindakan dan modal
+            function updateLabels(repeaterGroup) {
+                repeaterGroup.find('[data-repeater-item]').each(function(index) {
+                    var tindakanLabel = $(this).find('label[for="tindakan"]');
+                    var modalLabel = $(this).find('label[for="modal"]');
+                    var konfirmasiTitle = $(this).find('h6'); // Menambahkan ini
+    
+                    if (tindakanLabel) {
+                        tindakanLabel.text('Tindakan ' + (index + 1));
+                    }
+                    
+                    if (modalLabel) {
+                        modalLabel.text('Modal ' + (index + 1));
+                    }
+    
+                    // Update judul konfirmasi
+                    if (konfirmasiTitle) {
+                        konfirmasiTitle.text('Konfirmasi ' + (index + 1));
+                    }
+                });
+            }
+    
             // Menangani aksi tambah (Tambah) dalam repeater
             $(document).on('click', '[data-repeater-create]', function () {
                 var repeaterGroup = $(this).closest('.repeater');
                 var clonedItem = repeaterGroup.find('[data-repeater-item]:first').clone();
-
+    
                 clonedItem.find('input').val('').end()
-                        .find('.input-mask').inputmask('remove')
-                                        .inputmask({
-                                            'alias': 'numeric',
-                                            'groupSeparator': ',',
-                                            'autoGroup': true,
-                                            'digits': 0,
-                                            'digitsOptional': 0
-                                        });
-
+                    .find('.input-mask').inputmask('remove')
+                        .inputmask({
+                            'alias': 'numeric',
+                            'groupSeparator': ',',
+                            'autoGroup': true,
+                            'digits': 0,
+                            'digitsOptional': 0
+                        });
+    
                 repeaterGroup.find('[data-repeater-list]').append(clonedItem);
                 clonedItem.find('[data-repeater-delete]').show().val('Hapus');
                 clonedItem.hide().slideDown();
-
+    
                 // Update ulang judul konfirmasi pada semua elemen repeater
-                repeaterGroup.find('[data-repeater-item]').each(function(index) {
-                    var newTitle = 'Konfirmasi ' + (index + 1);
-                    $(this).find('h6').text(newTitle);
-                });
+                updateLabels(repeaterGroup);
             });
     
             // Menangani aksi hapus (Hapus) dalam repeater
@@ -1025,14 +1138,10 @@
                     repeaterItem.slideUp(function () {
                         $(this).remove();
                         // Update ulang judul konfirmasi setelah item dihapus
-                        repeaterGroup.find('[data-repeater-item]').each(function(index) {
-                            var newTitle = index === 0 ? 'Konfirmasi 1' : 'Konfirmasi ' + (index + 1);
-                            $(this).find('h6').text(newTitle);
-                        });
+                        updateLabels(repeaterGroup);
                     });
                 }
             });
         });
     </script>
-    
 @endpush

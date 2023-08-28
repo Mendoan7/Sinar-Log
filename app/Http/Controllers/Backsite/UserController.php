@@ -43,7 +43,14 @@ class UserController extends Controller
     {
         // abort_if(Gate::denies('user_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $user = User::orderBy('created_at', 'desc')->get();
+        if (auth()->user()->detail_user->type_user_id == 2) {
+            $user = User::whereHas('detail_user', function ($query) {
+                $query->where('type_user_id', '!=', 1);
+            })->orderBy('created_at', 'desc')->get();
+        } else {
+            $user = User::orderBy('created_at', 'desc')->get();
+        }
+
         $type_user = TypeUser::orderBy('name', 'asc')->get();
         $roles = Role::all()->pluck('title', 'id');
 
@@ -96,8 +103,14 @@ class UserController extends Controller
     {
         // abort_if(Gate::denies('user_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $role = Role::all()->pluck('title', 'id');
-        $type_user = TypeUser::orderBy('name', 'asc')->get();
+        if (auth()->user()->detail_user->type_user_id == 2) {
+            $role = Role::where('id', '!=', 1)->pluck('title', 'id');
+            $type_user = TypeUser::where('id', '!=', 1)->orderBy('name', 'asc')->get();
+        } else {
+            $role = Role::all()->pluck('title', 'id');
+            $type_user = TypeUser::orderBy('name', 'asc')->get();
+        }
+
         $user->load('role');
 
         return view('pages.backsite.management-access.user.edit', compact('user', 'role', 'type_user'));
@@ -145,4 +158,20 @@ class UserController extends Controller
         alert()->success('Success Message', 'Successfully deleted user');
         return back();
     }
+
+    // Custom
+
+    public function updateStatus(User $user, $status)
+    {
+        
+        $statusValue = $status === 'activate' ? 1 : 0;
+        $user->update(['status' => $statusValue]);
+
+        $statusText = $status === 'activate' ? 'Berhasil Aktif' : 'Di Nonaktifkan';
+        $message = "User $statusText.";
+
+        alert()->success('Success Message', $message);
+        return back();
+    }
+
 }

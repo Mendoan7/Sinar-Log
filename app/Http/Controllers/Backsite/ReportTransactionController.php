@@ -7,7 +7,7 @@ use App\Models\Operational\Service;
 
 // use model here
 use App\Models\Operational\ServiceDetail;
-use App\Models\Operational\Transaction;
+
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -43,7 +43,7 @@ class ReportTransactionController extends Controller
         $total_success = 0;
         $total_out = 0;
         $total_revenue = 0;
-        $total_modal = 0;
+        $total_modal_all = 0;
         $total_profit = 0;
         $report = [];
 
@@ -53,18 +53,18 @@ class ReportTransactionController extends Controller
         // Ambil data berdasarkan created_at
         foreach ($dates as $date) {
             $serviceQuery = Service::whereDate('created_at', $date);
-            $service_detailQuery = ServiceDetail::whereDate('created_at', $date);
-            $transactionQuery = Transaction::whereDate('created_at', $date);
+            $service_detailQuery = ServiceDetail::whereHas('service', function ($query) use ($date) {
+                $query->whereDate('date_done', $date);
+            });
+            $transactionQuery = Service::whereDate('date_out', $date);
 
             if ($isTeknisi) {
                 $teknisiId = $user->id;
-                $serviceQuery->where('teknisi', $user->id);
+                $serviceQuery->where('teknisi', $teknisiId);
                 $service_detailQuery->whereHas('service', function ($query) use ($teknisiId) {
                     $query->where('teknisi', $teknisiId);
                 });
-                $transactionQuery->whereHas('service_detail.service', function ($query) use ($teknisiId) {
-                    $query->where('teknisi', $teknisiId);
-                });
+                $transactionQuery->where('teknisi', $teknisiId);
             }
 
             $service = $serviceQuery->count();
@@ -74,12 +74,22 @@ class ReportTransactionController extends Controller
             $total_income = $service_detailQuery->whereHas('service', function ($query) {
                 $query->where('status', 9);
             })->sum('biaya');
-        
-            $modal = $service_detailQuery->whereHas('service', function ($query) {
+
+            $service_detail_records = $service_detailQuery->whereHas('service', function ($query) {
                 $query->where('status', 9);
-            })->sum('modal');
-        
-            $profit = $total_income - $modal;
+            })->get();
+
+            $total_modal = 0;
+
+            foreach ($service_detail_records as $service_detail_record) {
+                $modal = json_decode($service_detail_record->modal, true);
+
+                if (is_array($modal)) {
+                    $total_modal += array_sum($modal);
+                }
+            }
+
+            $profit = $total_income - $total_modal;
 
             // Menambahkan kondisi untuk hanya menampilkan data yang ada pada tanggal tersebut
             if ($service > 0 || $service_detail > 0 || $transaction > 0) {
@@ -89,7 +99,7 @@ class ReportTransactionController extends Controller
                     'service_detail' => $service_detail,
                     'transaction' => $transaction,
                     'income' => $total_income,
-                    'modal' => $modal,
+                    'modal' => $total_modal,
                     'profit' => $profit,
                 ];
 
@@ -97,7 +107,7 @@ class ReportTransactionController extends Controller
                 $total_success += $service_detail;
                 $total_out += $transaction;
                 $total_revenue += $total_income;
-                $total_modal += $modal;
+                $total_modal_all += $total_modal;
                 $total_profit += $profit;
             }
 
@@ -106,7 +116,7 @@ class ReportTransactionController extends Controller
         $chartData = $this->generateChartData($isTeknisi, $user);
 
         return view('pages.backsite.report.report-transaction.index', compact('report', 'start_date', 'end_date', 'total_service',
-            'total_success', 'total_out', 'total_revenue', 'total_modal', 'total_profit', 'chartData'));
+            'total_success', 'total_out', 'total_revenue', 'total_modal_all', 'total_profit', 'chartData'));
     }
 
     private function generateChartData($isTeknisi, $user)
@@ -136,14 +146,10 @@ class ReportTransactionController extends Controller
             $totalMasuk = Service::whereBetween('created_at', [$startDate, $endDate])->count();
 
             // Mendapatkan total service selesai
-            $totalSelesai = Service::whereHas('service_detail', function ($query) use ($startDate, $endDate) {
-                $query->whereBetween('created_at', [$startDate, $endDate]);
-            })->count();
+            $totalSelesai = Service::whereBetween('date_done', [$startDate, $endDate])->count();
 
             // Mendapatkan total service keluar
-            $totalKeluar = Service::whereHas('service_detail.transaction', function ($query) use ($startDate, $endDate) {
-                $query->whereBetween('created_at', [$startDate, $endDate]);
-            })->where('status', 9)->count();
+            $totalKeluar = Service::whereBetween('date_out', [$startDate, $endDate])->where('status', 9)->count();
 
             // Jika user teknisi
             if ($isTeknisi) {
@@ -151,13 +157,11 @@ class ReportTransactionController extends Controller
                     ->whereBetween('created_at', [$startDate, $endDate])
                     ->count();
 
-                $totalSelesai = Service::whereHas('service_detail', function ($query) use ($startDate, $endDate) {
-                    $query->whereBetween('created_at', [$startDate, $endDate]);
-                })->where('teknisi', $user->id)->count();
+                $totalSelesai = Service::whereBetween('date_done', [$startDate, $endDate])
+                    ->where('teknisi', $user->id)->count();
 
-                $totalKeluar = Service::whereHas('service_detail.transaction', function ($query) use ($startDate, $endDate) {
-                    $query->whereBetween('created_at', [$startDate, $endDate]);
-                })->where('status', 9)->where('teknisi', $user->id)->count();
+                $totalKeluar = Service::whereBetween('date_out', [$startDate, $endDate])
+                    ->where('status', 9)->where('teknisi', $user->id)->count();
             }
 
             // Memasukkan data ke dalam array grafik
@@ -272,13 +276,9 @@ class ReportTransactionController extends Controller
         // Mendapatkan total service masuk
         $totalMasuk = Service::whereBetween('created_at', $date)->count();
 
-        $totalSelesai = Service::whereHas('service_detail', function ($query) use ($date) {
-            $query->whereBetween('created_at', $date);
-        })->where('status', 8)->count();
+        $totalSelesai = Service::whereBetween('date_done', $date)->where('status', 8)->count();
 
-        $totalKeluar = Service::whereHas('service_detail.transaction', function ($query) use ($date) {
-            $query->whereBetween('created_at', $date);
-        })->where('status', 9)->count();
+        $totalKeluar = Service::whereBetween('date_out', $date)->where('status', 9)->count();
     }
 
     /**

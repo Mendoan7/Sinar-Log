@@ -30,6 +30,7 @@ use App\Models\Operational\Service;
 
 use App\Jobs\Notification\NewServiceEmailNotificationJob;
 use App\Jobs\Notification\NewServiceWhatsappNotificationJob;
+use App\Models\Operational\ServiceDetail;
 
 class ServiceController extends Controller
 {
@@ -47,17 +48,17 @@ class ServiceController extends Controller
     {
         $user = Auth::user(); // Mendapatkan pengguna saat ini
 
-        $query = Service::with('service_detail.transaction', 'teknisi_detail');
+        $query = Service::with('service_detail', 'teknisi_detail');
 
         if ($user->detail_user->type_user_id == 3) {
             $query->where('teknisi', $user->id)
                 ->whereIn('status', [2, 3, 4, 5, 6, 7, 10, 11])
-                ->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+                ->orWhereHas('service_detail.warranty_history', function ($query) {
                     $query->where('status', 1);
             });
         } else {
             $query->whereIn('status', [1, 2, 3, 4, 5, 6, 7, 10, 11])
-            ->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+            ->orWhereHas('service_detail.warranty_history', function ($query) {
                 $query->where('status', 1);
             });
         }
@@ -67,7 +68,7 @@ class ServiceController extends Controller
         // Mengambil pengguna dengan tipe pengguna 3
         $technicians = User::whereHas('detail_user', function ($query) {
             $query->where('type_user_id', 3);
-        })->get();
+        })->where('status', true)->get();
     
         $now = Carbon::now();
         $warrantyInfo = [];
@@ -83,7 +84,7 @@ class ServiceController extends Controller
             }
     
             if ($service_item->service_detail?->transaction?->warranty_info?->status == 1) {
-                $warranty_history = $service_item->service_detail->transaction->warranty_history;
+                $warranty_history = $service_item->service_detail->warranty_history;
                 if ($warranty_history) {
                     $created_at = Carbon::parse($warranty_history->created_at)->startOfDay();
                     $daysPassed = $created_at->diffInDays($now);
@@ -96,11 +97,11 @@ class ServiceController extends Controller
                 }
             }
             
+            // Garansi
             $serviceDetail = $service_item->service_detail;
-            if ($serviceDetail && $serviceDetail->transaction) {
-                $transaction = $serviceDetail->transaction;
-                $warranty = $transaction->garansi;
-                $endWarranty = $transaction->created_at->addDays($warranty);
+            if ($serviceDetail) {
+                $warranty = $serviceDetail->garansi;
+                $endWarranty = Carbon::parse($service_item->date_out)->addDays($warranty);
                 $remainingTime = now()->diff($endWarranty);
                 $sisaWarranty = $remainingTime->format('%d Hari %h Jam');
     
@@ -148,10 +149,14 @@ class ServiceController extends Controller
         $service->jenis = $data['jenis'];
         $service->tipe = $data['tipe'];
         $service->kelengkapan = $data['kelengkapan'];
-        $service->kerusakan = $data['kerusakan'];
         $service->penerima =  Auth::user()->name;
         $service->status = 1; // set to belum cek
         $service->save();
+
+        $service_detail = new ServiceDetail;
+        $service_detail->service_id = $service->id;
+        $service_detail->kerusakan = $data['kerusakan'];
+        $service_detail->save();
 
         // Ambil nilai checkbox dari request
         $sendNotification = $request->input('send_notification');

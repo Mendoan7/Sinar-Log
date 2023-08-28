@@ -40,7 +40,7 @@ class CustomerController extends Controller
     {
         $user_type = auth()->user()->detail_user->type_user_id;
         // for table grid
-        $customer = Customer::with(['service.service_detail.transaction.warranty_history'])
+        $customer = Customer::with(['service.service_detail.warranty_history'])
         ->withCount([
             'service as total_service',
             'service as proses_servis' => function ($query) {
@@ -51,13 +51,13 @@ class CustomerController extends Controller
             },
             'service as servis_selesai' => function ($query) {
                 $query->where('status', 9)
-                ->whereDoesntHave('service_detail.transaction.warranty_history')
-                    ->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+                ->whereDoesntHave('service_detail.warranty_history')
+                    ->orWhereHas('service_detail.warranty_history', function ($query) {
                         $query->where('status', 3);
                     });
             },
             'service as proses_garansi' => function ($query) {
-                $query->whereHas('service_detail.transaction.warranty_history', function ($query) {
+                $query->whereHas('service_detail.warranty_history', function ($query) {
                     $query->whereIn('status', [1,2]);
                 });
             },

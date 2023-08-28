@@ -49,25 +49,29 @@
                                 <dl class="row mb-0">
                                     <dt class="col-sm-4 fw-bold text-muted">Tanggal Ambil</dt>
                                     <dd class="col-sm-8">
-                                        <span class="fw-bold fs-6">{{ $service->service_detail->transaction->created_at }}</span>
+                                        <span class="fw-bold fs-6">{{ $service->date_out }}</span>
                                     </dd>
                                 </dl>
                                 <dl class="row mb-0">
                                     <dt class="col-sm-4 fw-bold text-muted">Kerusakan Awal</dt>
                                     <dd class="col-sm-8">
-                                        <span class="fw-bold fs-6">{{ $service->kerusakan }}</span>
+                                        <span class="fw-bold fs-6">{{ $service->service_detail->kerusakan }}</span>
                                     </dd>
                                 </dl>
                                 <dl class="row mb-0">
                                     <dt class="col-sm-4 fw-bold text-muted">Tindakan</dt>
                                     <dd class="col-sm-8">
-                                        <span class="fw-bold fs-6">{{ $service->service_detail->tindakan }}</span>
+                                        <span class="fw-bold fs-6">
+                                            @if(isset($service->service_detail->tindakan))
+                                                {{ implode(', ', json_decode($service->service_detail->tindakan)) }}
+                                            @endif
+                                        </span>
                                     </dd>
                                 </dl>
                                 <dl class="row mb-0">
                                     <dt class="col-sm-4 fw-bold text-muted">Garansi</dt>
                                     <dd class="col-sm-8">
-                                        <span class="fw-bold fs-6">{{ $service->service_detail->transaction->garansi }} Hari</span>
+                                        <span class="fw-bold fs-6">{{ $service->service_detail->garansi }} Hari</span>
                                     </dd>
                                 </dl>
                                 <dl class="row mb-0">
@@ -79,7 +83,7 @@
                                 <dl class="row mb-2">
                                     <dt class="col-sm-4 fw-bold text-muted">Keterangan Klaim</dt>
                                     <dd class="col-sm-8">
-                                        <span class="fw-bold fs-6">{{ $service->service_detail->transaction->warranty_history->keterangan }}</span>
+                                        <span class="fw-bold fs-6">{{ $service->service_detail->warranty_history->keterangan }}</span>
                                     </dd>
                                 </dl>
                                 <p>Harap segera melakukan pengecekan dan tindakan yang diperlukan. Terima kasih atas kerjasamanya.</p>

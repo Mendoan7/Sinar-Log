@@ -45,18 +45,16 @@ class DashboardController extends Controller
 
             $total_in_progress = Service::where('teknisi', $user->id)
                 ->whereIn('status', [3, 4, 5, 6, 7, 10, 11])->count();
-
-            $total_success_teknisi = ServiceDetail::whereHas('service', function ($query) use ($user) {
-                $query->where('teknisi', $user->id);
-            })->whereBetween('created_at', [$startDate, $endDate])->count();
             
-            $total_out_teknisi = Transaction::whereHas('service_detail.service', function ($query) use ($user) {
-                $query->where('teknisi', $user->id);
-            })->whereBetween('created_at', [$startDate, $endDate])->count();
+            $total_success_teknisi = Service::where('teknisi', $user->id)
+                ->whereBetween('date_done', [$startDate, $endDate])->count();
 
-            $revenue_teknisi = Transaction::whereHas('service_detail.service', function ($query) use ($user) {
+            $total_out_teknisi = Service::where('teknisi', $user->id)
+                ->whereBetween('date_out', [$startDate, $endDate])->count();
+
+            $revenue_teknisi = Service::whereHas('service_detail', function ($query) use ($user) {
                 $query->where('status', 9)->where('teknisi', $user->id);
-            })->whereBetween('created_at', [$startDate, $endDate]);
+            })->whereBetween('date_out', [$startDate, $endDate]);
             
             $income_teknisi = $revenue_teknisi->get();
             $total_revenue_teknisi = $income_teknisi->sum('service_detail.biaya');
@@ -70,14 +68,13 @@ class DashboardController extends Controller
 
         $total_service = Service::whereBetween('created_at', [$startDate, $endDate])->count();
 
-        $total_success = ServiceDetail::whereBetween('created_at', [$startDate, $endDate])->count();
+        $total_success = Service::whereBetween('date_done', [$startDate, $endDate])->count();
 
-        $total_out = Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
+        $total_out = Service::whereBetween('date_out', [$startDate, $endDate])->count();
 
-        $revenue = Transaction::whereBetween('created_at', [$startDate, $endDate])
-            ->whereHas('service_detail.service', function ($query) {
-                $query->where('status', 9);
-            });
+        $revenue = Service::whereBetween('date_out', [$startDate, $endDate])
+            ->where('status', 9);
+            
         $income = $revenue->get();
         $total_revenue = $income->sum('service_detail.biaya');
 
@@ -116,14 +113,10 @@ class DashboardController extends Controller
             $totalMasuk = Service::whereBetween('created_at', [$startDate, $endDate])->count();
 
             // Mendapatkan total service selesai
-            $totalSelesai = Service::whereHas('service_detail', function ($query) use ($startDate, $endDate) {
-                $query->whereBetween('created_at', [$startDate, $endDate]);
-            })->count();
+            $totalSelesai = Service::whereBetween('date_done', [$startDate, $endDate])->count();
 
             // Mendapatkan total service keluar
-            $totalKeluar = Service::whereHas('service_detail.transaction', function ($query) use ($startDate, $endDate) {
-                $query->whereBetween('created_at', [$startDate, $endDate]);
-            })->where('status', 9)->count();
+            $totalKeluar = Service::whereBetween('date_out', [$startDate, $endDate])->where('status', 9)->count();
 
             // Jika user teknisi
             if ($isTeknisi) {
@@ -131,13 +124,11 @@ class DashboardController extends Controller
                     ->whereBetween('created_at', [$startDate, $endDate])
                     ->count();
 
-                $totalSelesai = Service::whereHas('service_detail', function ($query) use ($startDate, $endDate) {
-                    $query->whereBetween('created_at', [$startDate, $endDate]);
-                })->where('teknisi', $user->id)->count();
+                $totalSelesai = Service::whereBetween('date_done', [$startDate, $endDate])
+                    ->where('teknisi', $user->id)->count();
 
-                $totalKeluar = Service::whereHas('service_detail.transaction', function ($query) use ($startDate, $endDate) {
-                    $query->whereBetween('created_at', [$startDate, $endDate]);
-                })->where('status', 9)->where('teknisi', $user->id)->count();
+                $totalKeluar = Service::whereBetween('date_out', [$startDate, $endDate])
+                    ->where('status', 9)->where('teknisi', $user->id)->count();
             }
 
             // Memasukkan data ke dalam array grafik

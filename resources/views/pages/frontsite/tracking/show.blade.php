@@ -22,7 +22,7 @@
             
                 <div class="mb-8 relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table class="w-full text-sm text-left text-gray-500">
-                        @if ($transaction?->warranty_history?->status == 1 || $transaction?->warranty_history?->status == 2 || $transaction?->warranty_history?->status == 3 )
+                        @if ($service_detail?->warranty_history?->status == 1 || $service_detail?->warranty_history?->status == 2 || $service_detail?->warranty_history?->status == 3 )
                         <tbody>
                             <tr class="bg-gray-100 border-b">
                                 <th colspan="2" class="px-6 py-4 text-lg text-center font-bold text-gray-900 whitespace-nowrap">Informasi Klaim Servis</th>
@@ -40,7 +40,7 @@
                                     Tgl. Klaim
                                 </th>
                                 <td class="px-6 py-4">
-                                    {{ $transaction->warranty_history['created_at']->isoFormat('dddd, D MMMM Y HH:mm') ?? 'N/A' }} WIB
+                                    {{ $service_detail->warranty_history['created_at']->isoFormat('dddd, D MMMM Y HH:mm') ?? 'N/A' }} WIB
                                 </td>
                             </tr>
                             <tr class="bg-white border-b font-bold">
@@ -64,7 +64,7 @@
                                     Kerusakan Awal
                                 </th>
                                 <td class="px-6 py-4">
-                                    {{ isset($service->kerusakan) ? $service->kerusakan : 'N/A' }}
+                                    {{ isset($service_detail->kerusakan) ? $service_detail->kerusakan : 'N/A' }}
                                 </td>
                             </tr>
                             <tr class="bg-white border-b">
@@ -72,7 +72,9 @@
                                     Tindakan Sebelumnya
                                 </th>
                                 <td class="px-6 py-4">
-                                    {{ isset($service_detail->tindakan) ? $service_detail->tindakan : 'N/A' }}
+                                    @if(isset($service_detail->tindakan))
+                                        {{ implode(', ', json_decode($service_detail->tindakan)) }}
+                                    @endif
                                 </td>
                             </tr>
                             <tr class="bg-white border-b">
@@ -80,21 +82,21 @@
                                     Keterangan Klaim
                                 </th>
                                 <td class="px-6 py-4">
-                                    {{ isset($transaction->warranty_history->keterangan) ? $transaction->warranty_history->keterangan : 'N/A' }}
+                                    {{ isset($service_detail->warranty_history->keterangan) ? $service_detail->warranty_history->keterangan : 'N/A' }}
                                 </td>
                             </tr>
 
-                            @if ($transaction?->warranty_history?->status == 2 || $transaction?->warranty_history?->status == 3)
+                            @if ($service_detail?->warranty_history?->status == 2 || $service_detail?->warranty_history?->status == 3)
                                 <tr class="bg-white border-b">
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                         Kondisi
                                     </th>
                                     <td class="px-6 py-4">
-                                        @if($transaction->warranty_history->kondisi == 1)
+                                        @if($service_detail->warranty_history->kondisi == 1)
                                             <span class="text-xs inline-flex font-medium bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">{{ 'Sudah Jadi' }}</span>
-                                        @elseif($transaction->warranty_history->kondisi == 2)
+                                        @elseif($service_detail->warranty_history->kondisi == 2)
                                             <span class="text-xs inline-flex font-medium bg-rose-100 text-rose-600 rounded-full text-center px-2.5 py-1">{{ 'Tidak Bisa' }}</span>
-                                        @elseif($transaction->warranty_history->kondisi == 3)
+                                        @elseif($service_detail->warranty_history->kondisi == 3)
                                             <span class="text-xs inline-flex font-medium bg-slate-100 text-slate-600 rounded-full text-center px-2.5 py-1">{{ 'Dibatalkan' }}</span>       
                                         @endif
                                     </td>
@@ -104,7 +106,7 @@
                                         Tindakan
                                     </th>
                                     <td class="px-6 py-4">
-                                        {{ isset($transaction->warranty_history->tindakan) ? $transaction->warranty_history->tindakan : 'N/A' }}
+                                        {{ isset($service_detail->warranty_history->tindakan) ? $service_detail->warranty_history->tindakan : 'N/A' }}
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b">
@@ -112,7 +114,7 @@
                                         Catatan
                                     </th>
                                     <td class="px-6 py-4">
-                                        {{ isset($transaction->warranty_history->catatan) ? $transaction->warranty_history->catatan : 'N/A' }}
+                                        {{ isset($service_detail->warranty_history->catatan) ? $service_detail->warranty_history->catatan : 'N/A' }}
                                     </td>
                                 </tr>
                             @endif
@@ -122,17 +124,17 @@
                                     Status
                                 </th>
                                 <td class="px-6 py-4">
-                                    @if($transaction->warranty_history->status == 1)
+                                    @if($service_detail->warranty_history->status == 1)
                                         <span class="text-xs inline-flex font-medium text-white bg-yellow-500 rounded-full text-center px-2.5 py-1">{{ 'Proses Garansi' }}</span>
-                                    @elseif($transaction->warranty_history->status == 2)
+                                    @elseif($service_detail->warranty_history->status == 2)
                                         <span class="text-xs inline-flex font-medium text-white bg-blue-600 rounded-full text-center px-2.5 py-1">{{ 'Garansi Bisa Diambil' }}</span>
-                                    @elseif($transaction->warranty_history->status == 3)
+                                    @elseif($service_detail->warranty_history->status == 3)
                                         <span class="text-xs inline-flex font-medium text-white bg-green-600 rounded-full text-center px-2.5 py-1">{{ 'Sudah Diambil' }}</span>         
                                     @endif
                                 </td>
                             </tr>  
 
-                            @if($transaction?->warranty_history?->status == 3)
+                            @if($service_detail?->warranty_history?->status == 3)
                                 <tr class="bg-gray-100 border-b">
                                     <th colspan="2" class="px-6 py-4 text-lg text-center font-bold text-gray-900 whitespace-nowrap">Detail Garansi</th>
                                 </tr>
@@ -141,7 +143,7 @@
                                         Tgl. Ambil
                                     </th>
                                     <td class="px-6 py-4">
-                                        {{ $transaction['created_at']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
+                                        {{ $service_detail->warranty_history['created_at']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b">
@@ -149,34 +151,34 @@
                                         Pengambil
                                     </th>
                                     <td class="px-6 py-4">
-                                        {{ isset($transaction->pengambil) ? $transaction->pengambil : 'N/A' }}
+                                        {{ isset($service_detail->warranty_history->pengambil) ? $service_detail->warranty_history->pengambil : 'N/A' }}
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b">
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                         Garansi
                                     </th>
-                                    @if ($transaction->garansi == 0)
+                                    @if ($service_detail->garansi == 0)
                                         <td class="px-6 py-4">Tidak Ada</td>
                                     @else
-                                        <td class="px-6 py-4">{{ $transaction->garansi }} Hari</td>
+                                        <td class="px-6 py-4">{{ $service_detail->garansi }} Hari</td>
                                     @endif
                                 </tr>
-                                @if ($transaction->garansi > 0)
+                                @if ($service_detail->garansi > 0)
                                 <tr class="bg-white border-b">
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                         Garansi Berakhir
                                     </th>
-                                    <td class="px-6 py-4">{{ $warrantyInfo[$transaction->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
+                                    <td class="px-6 py-4">{{ $warrantyInfo[$service->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
                                 </tr>
                                 <tr class="bg-white border-b">
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                         Status Garansi
                                     </th>
-                                    @if ($warrantyInfo[$transaction->id]['end_warranty'] < now())
+                                    @if ($warrantyInfo[$service->id]['end_warranty'] < now())
                                         <td class="px-6 py-4">Hangus</td>
                                     @else
-                                        <td class="px-6 py-4">Tersisa {{ $warrantyInfo[$transaction->id]['sisa_warranty'] }}</td>
+                                        <td class="px-6 py-4">Tersisa {{ $warrantyInfo[$service->id]['sisa_warranty'] }}</td>
                                     @endif
                                 </tr>
                                 @endif
@@ -200,7 +202,7 @@
                                     Tgl. Masuk
                                 </th>
                                 <td class="px-6 py-4">
-                                    {{ $service['created_at']->isoFormat('dddd, D MMMM Y HH:mm') ?? 'N/A' }} WIB
+                                    {{ $service->created_at->isoFormat('dddd, D MMMM Y HH:mm') ?? 'N/A' }} WIB
                                 </td>
                             </tr>
                             <tr class="bg-white border-b">
@@ -232,7 +234,7 @@
                                     Kerusakan
                                 </th>
                                 <td class="px-6 py-4">
-                                    {{ isset($service->kerusakan) ? $service->kerusakan : 'N/A' }}
+                                    {{ isset($service_detail->kerusakan) ? $service_detail->kerusakan : 'N/A' }}
                                 </td>
                             </tr>
 
@@ -249,7 +251,7 @@
                                         @elseif($service_detail->kondisi == 3)
                                             <span class="text-xs inline-flex font-medium bg-slate-100 text-slate-600 rounded-full text-center px-2.5 py-1">{{ 'Dibatalkan' }}</span>       
                                         @endif
-                                        - {{ $service_detail['created_at']->isoFormat('dddd, D MMMM Y HH:mm') ?? 'N/A' }} WIB
+                                        - {{ \Carbon\Carbon::parse($service->date_done)->isoFormat('dddd, D MMMM Y HH:mm') ?? 'N/A' }} WIB
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b">
@@ -257,7 +259,9 @@
                                         Tindakan
                                     </th>
                                     <td class="px-6 py-4">
-                                        {{ isset($service_detail->tindakan) ? $service_detail->tindakan : 'N/A' }}
+                                        @if(isset($service_detail->tindakan))
+                                            {{ implode(', ', json_decode($service_detail->tindakan)) }}
+                                        @endif
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b">
@@ -310,7 +314,7 @@
                                         Tgl. Ambil
                                     </th>
                                     <td class="px-6 py-4">
-                                        {{ $transaction['created_at']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
+                                        {{ \Carbon\Carbon::parse($service->date_out)->isoFormat('dddd, D MMMM Y HH:mm') ?? 'N/A' }} WIB
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b">
@@ -318,36 +322,36 @@
                                         Pengambil
                                     </th>
                                     <td class="px-6 py-4">
-                                        {{ isset($transaction->pengambil) ? $transaction->pengambil : 'N/A' }}
+                                        {{ isset($service->pengambil) ? $service->pengambil : 'N/A' }}
                                     </td>
                                 </tr>
                                 <tr class="bg-white border-b">
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                         Garansi
                                     </th>
-                                    @if ($transaction->garansi == 0)
+                                    @if ($service_detail->garansi == 0)
                                         <td class="px-6 py-4">Tidak Ada</td>
                                     @else
-                                        <td class="px-6 py-4">{{ $transaction->garansi }} Hari</td>
+                                        <td class="px-6 py-4">{{ $service_detail->garansi }} Hari</td>
                                     @endif
                                 </tr>
-                                @if ($transaction->garansi > 0)
-                                <tr class="bg-white border-b">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                        Garansi Berakhir
-                                    </th>
-                                    <td class="px-6 py-4">{{ $warrantyInfo[$transaction->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
-                                </tr>
-                                <tr class="bg-white border-b">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                        Status Garansi
-                                    </th>
-                                    @if ($warrantyInfo[$transaction->id]['end_warranty'] < now())
-                                        <td class="px-6 py-4">Hangus</td>
-                                    @else
-                                        <td class="px-6 py-4">Tersisa {{ $warrantyInfo[$transaction->id]['sisa_warranty'] }}</td>
-                                    @endif
-                                </tr>
+                                @if ($service_detail->garansi > 0)
+                                    <tr class="bg-white border-b">
+                                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                            Garansi Berakhir
+                                        </th>
+                                        <td class="px-6 py-4">{{ $warrantyInfo[$service->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
+                                    </tr>
+                                    <tr class="bg-white border-b">
+                                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                            Status Garansi
+                                        </th>
+                                        @if ($warrantyInfo[$service->id]['end_warranty'] < now())
+                                            <td class="px-6 py-4">Hangus</td>
+                                        @else
+                                            <td class="px-6 py-4">Tersisa {{ $warrantyInfo[$service->id]['sisa_warranty'] }}</td>
+                                        @endif
+                                    </tr>
                                 @endif
                             @endif
 

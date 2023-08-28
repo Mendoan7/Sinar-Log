@@ -120,63 +120,63 @@
                                                 <th scope="col">Biaya</th>
                                                 <th scope="col">Status</th>
                                                 <th scope="col">Aksi</th>
-                                                @can('transaction_delete')
+                                                @can('transaction_warranty')
                                                 <th scope="col">Ubah Status</th>
                                                 @endcan
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse($transactions as $key => $transaction_item)
-                                                <tr data-entry-id="{{ $transaction_item->id }}">
-                                                    @if ($transaction_item->warranty_history?->status == 3)
-                                                        <th scope="row" class="text-body fw-bold">{{ $transaction_item->service_detail->service->kode_servis ?? '' }}</th>
-                                                        <td data-order="{{ $transaction_item->warranty_history->updated_at }}">
-                                                            {{ $transaction_item->warranty_history->updated_at->isoFormat('D MMM Y') }}
+                                            @forelse($services as $key => $service)
+                                                <tr data-entry-id="{{ $service->id }}">
+                                                    @if ($service->service_detail->warranty_history?->status == 3)
+                                                        <th scope="row" class="text-body fw-bold">{{ $service->kode_servis ?? '' }}</th>
+                                                        <td data-order="{{ $service->service_detail->warranty_history->updated_at }}">
+                                                            {{ $service->service_detail->warranty_history->updated_at->isoFormat('D MMM Y') }}
                                                         </td>
-                                                        <td class="text-body fw-bold">{{ $transaction_item->service_detail->service->customer->name ?? '' }}</td>
-                                                        <td>{{ $transaction_item->service_detail->service->jenis ?? '' }} {{ $transaction_item->service_detail->service->tipe ?? '' }}</td>
-                                                        <td>{{ $transaction_item->warranty_history->keterangan ?? '' }}</td>
+                                                        <td class="text-body fw-bold">{{ $service->customer->name ?? '' }}</td>
+                                                        <td>{{ $service->jenis ?? '' }} {{ $service->tipe ?? '' }}</td>
+                                                        <td>{{ $service->service_detail->warranty_history->keterangan ?? '' }}</td>
                                                         <td>
-                                                            @if($transaction_item->warranty_history->kondisi == 1)
+                                                            @if($service->service_detail->warranty_history->kondisi == 1)
                                                                 <span class="badge bg-success">{{ 'Sudah Jadi' }}</span>
-                                                            @elseif($transaction_item->warranty_history->kondisi == 2)
+                                                            @elseif($service->service_detail->warranty_history->kondisi == 2)
                                                                 <span class="badge bg-danger">{{ 'Tidak Bisa' }}</span>
-                                                            @elseif($transaction_item->warranty_history->kondisi == 3)
+                                                            @elseif($service->service_detail->warranty_history->kondisi == 3)
                                                                 <span class="badge bg-secondary">{{ 'Dibatalkan' }}</span>
                                                             @endif
                                                         </td>
-                                                        <td>{{ 'RP. '.number_format($transaction_item->service_detail->biaya) ?? '' }}</td>
+                                                        <td>{{ 'RP. '.number_format($service->service_detail->biaya) ?? '' }}</td>
                                                         <td>
-                                                            @if($transaction_item->warranty_history->status == 2)
+                                                            @if($service->service_detail->warranty_history->status == 2)
                                                                 <span class="badge bg-primary">{{ 'Garansi Bisa Diambil' }}</span>
-                                                            @elseif($transaction_item->warranty_history->status == 3)
+                                                            @elseif($service->service_detail->warranty_history->status == 3)
                                                                 <span class="badge bg-success">{{ 'Sudah Diambil' }}</span>
                                                             @else
                                                                 <span>{{ 'N/A' }}</span>
                                                             @endif
                                                         </td>
                                                     @else
-                                                        <th scope="row" class="text-body fw-bold">{{ $transaction_item->service_detail->service->kode_servis ?? '' }}</th>
-                                                        <td data-order="{{ $transaction_item->created_at }}">
-                                                            {{ ($transaction_item['created_at'])->isoFormat('D MMM Y') }}
+                                                        <th scope="row" class="text-body fw-bold">{{ $service->kode_servis ?? '' }}</th>
+                                                        <td data-order="{{ $service->date_out }}">
+                                                            {{ \Carbon\Carbon::parse($service->date_out)->isoFormat('D MMM Y') }}
                                                         </td>
-                                                        <td class="text-body fw-bold">{{ $transaction_item->service_detail->service->customer->name ?? '' }}</td>
-                                                        <td>{{ $transaction_item->service_detail->service->jenis ?? '' }} {{ $transaction_item->service_detail->service->tipe ?? '' }}</td>
-                                                        <td>{{ $transaction_item->service_detail->service->kerusakan ?? '' }}</td>
+                                                        <td class="text-body fw-bold">{{ $service->customer->name ?? '' }}</td>
+                                                        <td>{{ $service->jenis ?? '' }} {{ $service->tipe ?? '' }}</td>
+                                                        <td>{{ $service->service_detail->kerusakan ?? '' }}</td>
                                                         <td>
-                                                            @if($transaction_item->service_detail->kondisi == 1)
+                                                            @if($service->service_detail->kondisi == 1)
                                                                 <span class="badge bg-success">{{ 'Sudah Jadi' }}</span>
-                                                            @elseif($transaction_item->service_detail->kondisi == 2)
+                                                            @elseif($service->service_detail->kondisi == 2)
                                                                 <span class="badge bg-danger">{{ 'Tidak Bisa' }}</span>
-                                                            @elseif($transaction_item->service_detail->kondisi == 3)
+                                                            @elseif($service->service_detail->kondisi == 3)
                                                                 <span class="badge bg-secondary">{{ 'Dibatalkan' }}</span>
                                                             @endif
                                                         </td>
-                                                        <td>{{ 'RP. '.number_format($transaction_item->service_detail->biaya) ?? '' }}</td>
+                                                        <td>{{ 'RP. '.number_format($service->service_detail->biaya) ?? '' }}</td>
                                                         <td>
-                                                            @if($transaction_item->service_detail->service->status == 8)
+                                                            @if($service->status == 8)
                                                                 <span class="badge bg-primary">{{ 'Bisa Diambil' }}</span>
-                                                            @elseif($transaction_item->service_detail->service->status == 9)
+                                                            @elseif($service->status == 9)
                                                                 <span class="badge bg-success">{{ 'Sudah Diambil' }}</span>
                                                             @else
                                                                 <span>{{ 'N/A' }}</span>
@@ -190,10 +190,10 @@
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Lihat Detail Servis" class="disable-tooltip">
                                                                 <button class="btn btn-sm btn-soft-primary" 
                                                                         data-bs-toggle="modal" 
-                                                                        data-bs-target="#show{{ $transaction_item->id }}">
+                                                                        data-bs-target="#show{{ $service->id }}">
                                                                         <i class="mdi mdi-eye-outline"></i>
                                                                 </button>
-                                                                <div class="modal fade bs-example-modal-center" id="show{{ $transaction_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="showTransactionModalLabel" aria-expanded="false">
+                                                                <div class="modal fade bs-example-modal-center" id="show{{ $service->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="showTransactionModalLabel" aria-expanded="false">
                                                                     <div class="modal-dialog modal-dialog-scrollable" role="document">
                                                                         <div class="modal-content">
                                                                             <div class="modal-header">
@@ -201,97 +201,157 @@
                                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                             </div>
 
-                                                                            @if ($transaction_item->warranty_history?->status == 3)
+                                                                            @if ($service->service_detail->warranty_history?->status == 3)
                                                                                 {{-- Start Body Garansi --}}
                                                                                 <div class="modal-body">
                                                                                     <table class="table table-striped">
                                                                                         <tbody>
                                                                                             <tr>
                                                                                                 <th scope="col">No. Servis</th>
-                                                                                                <td scope="col"><span class="fw-bold">{{ isset($transaction_item->service_detail->service->kode_servis) ? $transaction_item->service_detail->service->kode_servis : 'N/A' }}</span></td>
+                                                                                                <td scope="col"><span class="fw-bold">{{ isset($service->kode_servis) ? $service->kode_servis : 'N/A' }}</span></td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Tgl. Masuk</th>
-                                                                                                <td>{{ $transaction_item->service_detail->service['created_at']->isoFormat('dddd, D MMMM Y HH:mm')}} WIB
-                                                                                                    [{{ isset($transaction_item->service_detail->service->penerima) ? $transaction_item->service_detail->service->penerima : 'N/A' }}]</td>
+                                                                                                <td>{{ $service->created_at->isoFormat('dddd, D MMMM Y HH:mm')}} WIB
+                                                                                                    [{{ isset($service->penerima) ? $service->penerima : 'N/A' }}]</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Pemilik</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->service->customer->name) ? $transaction_item->service_detail->service->customer->name : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->customer->name) ? $service->customer->name : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Barang Servis</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->service->jenis) ? $transaction_item->service_detail->service->jenis : 'N/A' }}
-                                                                                                    {{ isset($transaction_item->service_detail->service->tipe) ? $transaction_item->service_detail->service->tipe : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->jenis) ? $service->jenis : 'N/A' }}
+                                                                                                    {{ isset($service->tipe) ? $service->tipe : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Kelengkapan</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->service->kelengkapan) ? $transaction_item->service_detail->service->kelengkapan : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->kelengkapan) ? $service->kelengkapan : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Kerusakan</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->service->kerusakan) ? $transaction_item->service_detail->service->kerusakan : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->service_detail->kerusakan) ? $service->service_detail->kerusakan : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Kondisi</th>
-                                                                                                <td>@if($transaction_item->service_detail->kondisi == 1)
+                                                                                                <td>@if($service->service_detail->kondisi == 1)
                                                                                                         <span class="badge bg-success">{{ 'Sudah Jadi' }}</span>
-                                                                                                    @elseif($transaction_item->service_detail->kondisi == 2)
+                                                                                                    @elseif($service->service_detail->kondisi == 2)
                                                                                                         <span class="badge bg-danger">{{ 'Tidak Bisa' }}</span>
-                                                                                                    @elseif($transaction_item->service_detail->kondisi == 3)
+                                                                                                    @elseif($service->service_detail->kondisi == 3)
                                                                                                         <span class="badge bg-secondary">{{ 'Dibatalkan' }}</span>   
                                                                                                     @endif
-                                                                                                    - {{ $transaction_item->service_detail['updated_at']->isoFormat('dddd, D MMMM Y HH:mm')}} WIB
+                                                                                                    - {{ \Carbon\Carbon::parse($service->date_done)->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
                                                                                                 </td>
                                                                                             </tr>
-                                                                                            <tr>
-                                                                                                <th scope="row">Tindakan</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->tindakan) ? $transaction_item->service_detail->tindakan : 'N/A' }}</td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <th scope="row">Modal</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->modal) ? 'RP. '.number_format($transaction_item->service_detail->modal) : 'N/A' }}</td>
-                                                                                            </tr>
+
+                                                                                            {{-- Tindakan dan Modal --}}
+                                                                                            @if(isset($service->service_detail->tindakan) && isset($service->service_detail->modal))
+                                                                                                @php
+                                                                                                    $tindakan = json_decode($service->service_detail->tindakan, true);
+                                                                                                    $modal = json_decode($service->service_detail->modal);
+                                                                                                    $totalModal = array_sum($modal);
+                                                                                                @endphp
+
+                                                                                                @if(count($tindakan) === 1)
+                                                                                                    <tr>
+                                                                                                        <th scope="row">Tindakan</th>
+                                                                                                        <td>{{ $tindakan[0] }}</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <th scope="row">Modal</th>
+                                                                                                        <td>RP. {{ number_format($modal[0]) }}</td>
+                                                                                                    </tr>
+                                                                                                @else
+                                                                                                    <tr>
+                                                                                                        <td colspan="2">
+                                                                                                            <div class="accordion accordion-flush" id="accordionFlushShow">
+                                                                                                                <div class="accordion-item">
+                                                                                                                    <h2 class="accordion-header" id="flush-headingOne">
+                                                                                                                        <a class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="true" aria-controls="flush-collapseOne">
+                                                                                                                            Tindakan dan Modal
+                                                                                                                        </a>
+                                                                                                                    </h2>
+                                                                                                                    <div id="flush-collapseOne" class="accordion-collapse collapse show" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushShow">
+                                                                                                                        <div class="accordion-body">
+                                                                                                                            <table class="table table-striped mb-0">
+                                                                                                                                <thead class="table-dark">
+                                                                                                                                    <tr>
+                                                                                                                                        <th scope="col">#</th>
+                                                                                                                                        <th scope="col">Tindakan</th>
+                                                                                                                                        <th scope="col">Modal</th>
+                                                                                                                                    </tr>
+                                                                                                                                </thead>
+                                                                                                                                <tbody>
+                                                                                                                                    @foreach($tindakan as $index => $item)
+                                                                                                                                        <tr>
+                                                                                                                                            <th scope="row">{{ $index + 1 }}</th>
+                                                                                                                                            <td>{{ $item }}</td>
+                                                                                                                                            <td>RP. {{ number_format($modal[$index]) }}</td>
+                                                                                                                                        </tr>
+                                                                                                                                    @endforeach
+                                                                                                                                </tbody>
+                                                                                                                                <tfoot class="table-secondary">
+                                                                                                                                    <tr>
+                                                                                                                                        <th colspan="2" scope="row" class="fw-bold">Total Modal</th>
+                                                                                                                                        <td>RP. {{ number_format($totalModal) }}</td>
+                                                                                                                                    </tr>
+                                                                                                                                </tfoot>
+                                                                                                                            </table>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </td>
+                                                                                                    </tr>
+                                                                                                @endif
+                                                                                            @else
+                                                                                                <tr>
+                                                                                                    <td colspan="2">N/A</td>
+                                                                                                </tr>
+                                                                                            @endif
+                                                                                            {{-- End Tindakan dan Modal --}}
+
                                                                                             <tr>
                                                                                                 <th scope="row">Biaya</th>
-                                                                                                <td><span class="fw-bold">{{ isset($transaction_item->service_detail->biaya) ? 'RP. '.number_format($transaction_item->service_detail->biaya) : 'N/A' }}</span></td>
+                                                                                                <td><span class="fw-bold">{{ isset($service->service_detail->biaya) ? 'RP. '.number_format($service->service_detail->biaya) : 'N/A' }}</span></td>
                                                                                             </tr>
                                                                                             <tr class="table-info">
                                                                                                 <th colspan="2" class="text-center fw-bold">Detail Garansi</th>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Tanggal Klaim</th>
-                                                                                                <td>{{ $transaction_item->warranty_history->created_at->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
+                                                                                                <td>{{ $service->service_detail->warranty_history->created_at->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Ket. Klaim</th>
-                                                                                                <td>{{ $transaction_item->warranty_history->keterangan }}</td>
+                                                                                                <td>{{ $service->service_detail->warranty_history->keterangan }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Kondisi</th>
-                                                                                                <td>@if($transaction_item->warranty_history->kondisi == 1)
+                                                                                                <td>@if($service->service_detail->warranty_history->kondisi == 1)
                                                                                                         <span class="badge bg-success">{{ 'Sudah Jadi' }}</span>
-                                                                                                    @elseif($transaction_item->warranty_history->kondisi == 2)
+                                                                                                    @elseif($service->service_detail->warranty_history->kondisi == 2)
                                                                                                         <span class="badge bg-danger">{{ 'Tidak Bisa' }}</span>
-                                                                                                    @elseif($transaction_item->warranty_history->kondisi == 3)
+                                                                                                    @elseif($service->service_detail->warranty_history->kondisi == 3)
                                                                                                         <span class="badge bg-secondary">{{ 'Dibatalkan' }}</span>   
                                                                                                     @endif
                                                                                                 </td>
                                                                                             </tr>   
                                                                                             <tr>
                                                                                                 <th scope="row">Tindakan</th>
-                                                                                                <td>{{ $transaction_item->warranty_history->tindakan }}</td>
+                                                                                                <td>{{ $service->service_detail->warranty_history->tindakan }}</td>
                                                                                             </tr> 
                                                                                             <tr>
                                                                                                 <th scope="row">Catatan</th>
-                                                                                                <td>{{ $transaction_item->warranty_history->catatan }}</td>
+                                                                                                <td>{{ $service->service_detail->warranty_history->catatan }}</td>
                                                                                             </tr>                                           
                                                                                             <tr>
                                                                                                 <th scope="row">Status</th>
                                                                                                 <td>
-                                                                                                    @if($transaction_item->warranty_history->status == 2)
+                                                                                                    @if($service->service_detail->warranty_history->status == 2)
                                                                                                         <span class="badge bg-secondary">{{ 'Garansi Bisa Diambil' }}</span>
-                                                                                                    @elseif($transaction_item->warranty_history->status == 3)
+                                                                                                    @elseif($service->service_detail->warranty_history->status == 3)
                                                                                                         <span class="badge bg-warning">{{ 'Garansi Sudah Diambil' }}</span>    
                                                                                                     @endif
                                                                                                 </td>
@@ -299,26 +359,26 @@
                                                                                             <tr>
                                                                                                 <th scope="row">Tgl. Ambil</th>
                                                                                                 <td>
-                                                                                                    {{ $transaction_item->warranty_history['updated_at']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
-                                                                                                    [{{ isset($transaction_item->warranty_history->penyerah) ? $transaction_item->warranty_history->penyerah : 'N/A' }}]
+                                                                                                    {{ $service->service_detail->warranty_history->updated_at->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
+                                                                                                    [{{ isset($service->service_detail->warranty_history->penyerah) ? $service->service_detail->warranty_history->penyerah : 'N/A' }}]
                                                                                                 </td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Pengambil</th>
-                                                                                                <td>{{ isset($transaction_item->warranty_history->pengambil) ? $transaction_item->warranty_history->pengambil : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->service_detail->warranty_history->pengambil) ? $service->service_detail->warranty_history->pengambil : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Garansi</th>
-                                                                                                @if ($transaction_item->garansi == 0)
+                                                                                                @if ($service->service_detail->garansi == 0)
                                                                                                     <td class="fw-bold">Tidak Ada</td>
                                                                                                 @else
-                                                                                                    <td class="fw-bold">{{ $transaction_item->garansi }} Hari</td>
+                                                                                                    <td class="fw-bold">{{ $service->service_detail->garansi }} Hari</td>
                                                                                                 @endif
                                                                                             </tr>
-                                                                                            @if ($transaction_item->garansi > 0)
+                                                                                            {{-- @if ($service->service_detail->garansi > 0)
                                                                                                 <tr>
                                                                                                     <th scope="row">Garansi Berakhir</th>
-                                                                                                    <td>{{ $warrantyInfo[$transaction_item->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
+                                                                                                    <td>{{ $warrantyInfo[$service->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
                                                                                                 </tr>
                                                                                                 <tr>
                                                                                                     <th scope="row">Status Garansi</th>
@@ -328,7 +388,7 @@
                                                                                                         <td>Tersisa {{ $warrantyInfo[$transaction_item->id]['sisa_warranty'] }}</td>
                                                                                                     @endif
                                                                                                 </tr>
-                                                                                            @endif 
+                                                                                            @endif  --}}
                                                                                         </tbody>
                                                                                     </table>
                                                                                 </div>
@@ -340,64 +400,126 @@
                                                                                         <tbody>
                                                                                             <tr>
                                                                                                 <th scope="col">No. Servis</th>
-                                                                                                <td scope="col"><span class="fw-bold">{{ isset($transaction_item->service_detail->service->kode_servis) ? $transaction_item->service_detail->service->kode_servis : 'N/A' }}</span></td>
+                                                                                                <td scope="col"><span class="fw-bold">{{ isset($service->kode_servis) ? $service->kode_servis : 'N/A' }}</span></td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Tgl. Masuk</th>
-                                                                                                <td>{{ $transaction_item->service_detail->service['created_at']->isoFormat('dddd, D MMMM Y HH:mm')}} WIB
-                                                                                                    [{{ isset($transaction_item->service_detail->service->penerima) ? $transaction_item->service_detail->service->penerima : 'N/A' }}]</td>
+                                                                                                <td>{{ $service->created_at->isoFormat('dddd, D MMMM Y HH:mm')}} WIB
+                                                                                                    [{{ isset($service->penerima) ? $service->penerima : 'N/A' }}]</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Pemilik</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->service->customer->name) ? $transaction_item->service_detail->service->customer->name : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->customer->name) ? $service->customer->name : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Barang Servis</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->service->jenis) ? $transaction_item->service_detail->service->jenis : 'N/A' }}
-                                                                                                    {{ isset($transaction_item->service_detail->service->tipe) ? $transaction_item->service_detail->service->tipe : 'N/A' }}</td>
+                                                                                                <td>
+                                                                                                    {{ isset($service->jenis) ? $service->jenis : 'N/A' }}
+                                                                                                    {{ isset($service->tipe) ? $service->tipe : 'N/A' }}
+                                                                                                </td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Kelengkapan</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->service->kelengkapan) ? $transaction_item->service_detail->service->kelengkapan : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->kelengkapan) ? $service->kelengkapan : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Kerusakan</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->service->kerusakan) ? $transaction_item->service_detail->service->kerusakan : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->service_detail->kerusakan) ? $service->service_detail->kerusakan : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Kondisi</th>
-                                                                                                <td>@if($transaction_item->service_detail->kondisi == 1)
+                                                                                                <td>@if($service->service_detail->kondisi == 1)
                                                                                                     <span class="badge bg-success">{{ 'Sudah Jadi' }}</span>
-                                                                                                @elseif($transaction_item->service_detail->kondisi == 2)
+                                                                                                @elseif($service->service_detail->kondisi == 2)
                                                                                                     <span class="badge bg-danger">{{ 'Tidak Bisa' }}</span>
-                                                                                                @elseif($transaction_item->service_detail->kondisi == 3)
+                                                                                                @elseif($service->service_detail->kondisi == 3)
                                                                                                     <span class="badge bg-secondary">{{ 'Dibatalkan' }}</span>   
                                                                                                 @endif
-                                                                                                - {{ $transaction_item->service_detail['updated_at']->isoFormat('dddd, D MMMM Y HH:mm')}} WIB
-                                                                                            </td>
+                                                                                                    - {{ \Carbon\Carbon::parse($service->date_done)->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
+                                                                                                </td>
                                                                                             </tr>
-                                                                                            <tr>
-                                                                                                <th scope="row">Tindakan</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->tindakan) ? $transaction_item->service_detail->tindakan : 'N/A' }}</td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <th scope="row">Modal</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->modal) ? 'RP. '.number_format($transaction_item->service_detail->modal) : 'N/A' }}</td>
-                                                                                            </tr>
+
+                                                                                            {{-- Tindakan dan Modal --}}
+                                                                                            @if(isset($service->service_detail->tindakan) && isset($service->service_detail->modal))
+                                                                                                @php
+                                                                                                    $tindakan = json_decode($service->service_detail->tindakan, true);
+                                                                                                    $modal = json_decode($service->service_detail->modal);
+                                                                                                    $totalModal = array_sum($modal);
+                                                                                                @endphp
+
+                                                                                                @if(count($tindakan) === 1)
+                                                                                                    <tr>
+                                                                                                        <th scope="row">Tindakan</th>
+                                                                                                        <td>{{ $tindakan[0] }}</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <th scope="row">Modal</th>
+                                                                                                        <td>RP. {{ number_format($modal[0]) }}</td>
+                                                                                                    </tr>
+                                                                                                @else
+                                                                                                    <tr>
+                                                                                                        <td colspan="2">
+                                                                                                            <div class="accordion accordion-flush" id="accordionFlushShow">
+                                                                                                                <div class="accordion-item">
+                                                                                                                    <h2 class="accordion-header" id="flush-headingOne">
+                                                                                                                        <a class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="true" aria-controls="flush-collapseOne">
+                                                                                                                            Tindakan dan Modal
+                                                                                                                        </a>
+                                                                                                                    </h2>
+                                                                                                                    <div id="flush-collapseOne" class="accordion-collapse collapse show" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushShow">
+                                                                                                                        <div class="accordion-body">
+                                                                                                                            <table class="table table-striped mb-0">
+                                                                                                                                <thead class="table-dark">
+                                                                                                                                    <tr>
+                                                                                                                                        <th scope="col">#</th>
+                                                                                                                                        <th scope="col">Tindakan</th>
+                                                                                                                                        <th scope="col">Modal</th>
+                                                                                                                                    </tr>
+                                                                                                                                </thead>
+                                                                                                                                <tbody>
+                                                                                                                                    @foreach($tindakan as $index => $item)
+                                                                                                                                        <tr>
+                                                                                                                                            <th scope="row">{{ $index + 1 }}</th>
+                                                                                                                                            <td>{{ $item }}</td>
+                                                                                                                                            <td>RP. {{ number_format($modal[$index]) }}</td>
+                                                                                                                                        </tr>
+                                                                                                                                    @endforeach
+                                                                                                                                </tbody>
+                                                                                                                                <tfoot class="table-secondary">
+                                                                                                                                    <tr>
+                                                                                                                                        <th colspan="2" scope="row" class="fw-bold">Total Modal</th>
+                                                                                                                                        <td>RP. {{ number_format($totalModal) }}</td>
+                                                                                                                                    </tr>
+                                                                                                                                </tfoot>
+                                                                                                                            </table>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </td>
+                                                                                                    </tr>
+                                                                                                @endif
+                                                                                            @else
+                                                                                                <tr>
+                                                                                                    <td colspan="2">N/A</td>
+                                                                                                </tr>
+                                                                                            @endif
+                                                                                            {{-- End Tindakan dan Modal --}}
+
                                                                                             <tr>
                                                                                                 <th scope="row">Biaya</th>
-                                                                                                <td><span class="fw-bold">{{ isset($transaction_item->service_detail->biaya) ? 'RP. '.number_format($transaction_item->service_detail->biaya) : 'N/A' }}</span></td>
+                                                                                                <td><span class="fw-bold">{{ isset($service->service_detail->biaya) ? 'RP. '.number_format($service->service_detail->biaya) : 'N/A' }}</span></td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Teknisi</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->service->teknisi_detail->name) ? $transaction_item->service_detail->service->teknisi_detail->name : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->teknisi_detail->name) ? $service->teknisi_detail->name : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr class="table-success">
                                                                                                 <th scope="row">Status</th>
                                                                                                 <td>
-                                                                                                    @if($transaction_item->service_detail->service->status == 8)
+                                                                                                    @if($service->status == 8)
                                                                                                         <span class="badge bg-primary">{{ 'Bisa Diambil' }}</span>
-                                                                                                    @elseif($transaction_item->service_detail->service->status == 9)
+                                                                                                    @elseif($service->status == 9)
                                                                                                         <span class="badge bg-success">{{ 'Sudah Diambil' }}</span>
                                                                                                     @else
                                                                                                         <span>{{ 'N/A' }}</span>
@@ -407,37 +529,37 @@
                                                                                             <tr>
                                                                                                 <th scope="row">Tgl. Ambil</th>
                                                                                                 <td>
-                                                                                                    {{ $transaction_item['updated_at']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
-                                                                                                    [{{ isset($transaction_item->penyerah) ? $transaction_item->penyerah : 'N/A' }}]
+                                                                                                    {{ \Carbon\Carbon::parse($service->date_out)->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
+                                                                                                    [{{ isset($service->penyerah) ? $service->penyerah : 'N/A' }}]
                                                                                                 </td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Pengambil</th>
-                                                                                                <td>{{ isset($transaction_item->pengambil) ? $transaction_item->pengambil : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->pengambil) ? $service->pengambil : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Pembayaran</th>
-                                                                                                <td>{{ isset($transaction_item->pembayaran) ? $transaction_item->pembayaran : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->service_detail->pembayaran) ? $service->service_detail->pembayaran : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Garansi</th>
-                                                                                                @if ($transaction_item->garansi == 0)
+                                                                                                @if ($service->service_detail->garansi == 0)
                                                                                                     <td class="fw-bold">Tidak Ada</td>
                                                                                                 @else
-                                                                                                    <td class="fw-bold">{{ $transaction_item->garansi }} Hari</td>
+                                                                                                    <td class="fw-bold">{{ $service->service_detail->garansi }} Hari</td>
                                                                                                 @endif
                                                                                             </tr>
-                                                                                            @if ($transaction_item->garansi > 0)
+                                                                                            @if ($service->service_detail->garansi > 0)
                                                                                                 <tr>
                                                                                                     <th scope="row">Garansi Berakhir</th>
-                                                                                                    <td>{{ $warrantyInfo[$transaction_item->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
+                                                                                                    <td>{{ $warrantyInfo[$service->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB</td>
                                                                                                 </tr>
                                                                                                 <tr>
                                                                                                     <th scope="row">Status Garansi</th>
-                                                                                                    @if ($warrantyInfo[$transaction_item->id]['end_warranty'] < now())
+                                                                                                    @if ($warrantyInfo[$service->id]['end_warranty'] < now())
                                                                                                         <td><span class="badge bg-danger">Hangus</span></td>
                                                                                                     @else
-                                                                                                        <td>Tersisa {{ $warrantyInfo[$transaction_item->id]['sisa_warranty'] }}</td>
+                                                                                                        <td>Tersisa {{ $warrantyInfo[$service->id]['sisa_warranty'] }}</td>
                                                                                                     @endif
                                                                                                 </tr>
                                                                                             @endif
@@ -462,7 +584,7 @@
                                                             <form action="transaction/notification" method="POST">
                                                                 @csrf
                                                                 <li data-bs-toggle="tooltip" data-bs-placement="top" title="Konfirmasi Sudah Diambil Ke Pelanggan" class="disable-tooltip">               
-                                                                    <input type="hidden" name="transaction_id" value="{{ $transaction_item->id }}">
+                                                                    <input type="hidden" name="service_id" value="{{ $service->id }}">
                                                                     <button type="submit" class="btn btn-sm btn-soft-warning">
                                                                         <i class="mdi mdi-near-me"></i>
                                                                     </button>
@@ -475,11 +597,11 @@
                                                             {{-- Start Button Delete --}}
                                                             <li data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus Data Transaksi" class="disable-tooltip">
                                                                 <a  data-bs-toggle="modal"
-                                                                    data-bs-target="#transactionDelete{{ $transaction_item->id }}" 
+                                                                    data-bs-target="#transactionDelete{{ $service->id }}" 
                                                                     class="btn btn-sm btn-soft-danger">
                                                                     <i class="mdi mdi-delete-outline"></i>
                                                                 </a>
-                                                                <div class="modal fade" id="transactionDelete{{ $transaction_item->id }}" tabindex="-1" aria-labelledby="transactionDeleteLabel" aria-hidden="true">
+                                                                <div class="modal fade" id="transactionDelete{{ $service->id }}" tabindex="-1" aria-labelledby="transactionDeleteLabel" aria-hidden="true">
                                                                     <div class="modal-dialog modal-dialog-centered modal-sm">
                                                                         <div class="modal-content">
                                                                             <div class="modal-body px-4 py-5 text-center">
@@ -490,7 +612,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                                 <p class="text-muted font-size-16 mb-4">Anda yakin ingin menghapus data transaksi?</p>
-                                                                                <form action="{{ route('backsite.transaction.destroy', $transaction_item->id ?? '') }}" method="POST">
+                                                                                <form action="{{ route('backsite.transaction.destroy', $service->id ?? '') }}" method="POST">
                                                                                     @csrf
                                                                                     @method('DELETE')
                                                                                     <div class="hstack gap-2 justify-content-center mb-0">
@@ -507,20 +629,21 @@
                                                             @endcan
                                                         </ul>
                                                     </td>
-                                                    @can('transaction_delete')
+
+                                                    @can('transaction_warranty')
                                                     <td>
                                                         {{-- Start Button Garansi --}}
                                                         <ul class="list-unstyled hstack gap-1 mb-0">
-                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $transaction_item->garansi == 0 ? 'Tidak ada garansi' : ($warrantyInfo[$transaction_item->id]['end_warranty'] < now() ? 'Garansi hangus' : 'Menerima Garansi') }}" class="disable-tooltip">
-                                                                @if ($transaction_item->garansi > 0)
-                                                                    @if ($transaction_item->warranty_history && ($transaction_item->warranty_history->kondisi == 2 || $transaction_item->warranty_history->kondisi == 3))
+                                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $service->service_detail->garansi == 0 ? 'Tidak ada garansi' : ($warrantyInfo[$service->id]['end_warranty'] < now() ? 'Garansi hangus' : 'Menerima Garansi') }}" class="disable-tooltip">
+                                                                @if ($service->service_detail->garansi > 0)
+                                                                    @if ($service->service_detail->warranty_history && ($service->service_detail->warranty_history->kondisi == 2 || $service->service_detail->warranty_history->kondisi == 3))
                                                                         <button class="btn btn-sm btn-secondary" disabled>
                                                                             Garansi
                                                                         </button>
                                                                     @else
-                                                                        <button class="btn btn-sm {{ $warrantyInfo[$transaction_item->id]['end_warranty'] < now() ? 'btn-soft-primary' : 'btn-primary' }}"
+                                                                        <button class="btn btn-sm {{ $warrantyInfo[$service->id]['end_warranty'] < now() ? 'btn-soft-primary' : 'btn-primary' }}"
                                                                             data-bs-toggle="modal"
-                                                                            data-bs-target="#garansi{{ $transaction_item->id }}">
+                                                                            data-bs-target="#garansi{{ $service->id }}">
                                                                             Garansi
                                                                         </button>
                                                                     @endif
@@ -533,7 +656,7 @@
                                                                 {{-- Start Modal Status --}}
                                                                 <form class="form form-horizontal" action="{{ route('backsite.transaction.claimWarranty') }}" method="POST">
                                                                     @csrf
-                                                                    <div class="modal fade bs-example-modal-center" id="garansi{{ $transaction_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="garansiModalLabel">  
+                                                                    <div class="modal fade bs-example-modal-center" id="garansi{{ $service->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="garansiModalLabel">  
                                                                         <div class="modal-dialog modal-dialog-scrollable" role="document">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
@@ -551,61 +674,65 @@
                                                                                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                                                                         </div>
                                                                                     @endif
-                                                                                    <input type="hidden" name="transaction_id" value="{{ $transaction_item->id }}">
+                                                                                    <input type="hidden" name="service_detail_id" value="{{ $service->service_detail->id }}">
                                                                                     <p>Pastikan kerusakan pada saat menerima garansi, sama dengan kerusakan awal servis.</p>
                                                                                     <table class="table table-striped">
                                                                                         <tbody>
                                                                                             <tr>
                                                                                                 <th scope="col">No. Servis</th>
-                                                                                                <td scope="col" class="fw-bold">{{ isset($transaction_item->service_detail->service->kode_servis) ? $transaction_item->service_detail->service->kode_servis : 'N/A' }}</td>
+                                                                                                <td scope="col" class="fw-bold">{{ isset($service->kode_servis) ? $service->kode_servis : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Barang Servis</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->service->jenis) ? $transaction_item->service_detail->service->jenis : 'N/A' }}
-                                                                                                    {{ isset($transaction_item->service_detail->service->tipe) ? $transaction_item->service_detail->service->tipe : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->jenis) ? $service->jenis : 'N/A' }}
+                                                                                                    {{ isset($service->tipe) ? $service->tipe : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Teknisi</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->service->teknisi_detail->name) ? $transaction_item->service_detail->service->teknisi_detail->name : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->teknisi_detail->name) ? $service->teknisi_detail->name : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Tgl. Ambil</th>
                                                                                                 <td>
-                                                                                                    {{ $transaction_item['updated_at']->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
-                                                                                                    [{{ isset($transaction_item->penyerah) ? $transaction_item->penyerah : 'N/A' }}]
+                                                                                                    {{ \Carbon\Carbon::parse($service->date_out)->isoFormat('dddd, D MMMM Y HH:mm') }} WIB
+                                                                                                    [{{ isset($service->penyerah) ? $service->penyerah : 'N/A' }}]
                                                                                                 </td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Pengambil</th>
-                                                                                                <td>{{ isset($transaction_item->pengambil) ? $transaction_item->pengambil : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->pengambil) ? $service->pengambil : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Kerusakan Awal</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->service->kerusakan) ? $transaction_item->service_detail->service->kerusakan : 'N/A' }}</td>
+                                                                                                <td>{{ isset($service->service_detail->kerusakan) ? $service->service_detail->kerusakan : 'N/A' }}</td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <th scope="row">Tindakan</th>
-                                                                                                <td>{{ isset($transaction_item->service_detail->tindakan) ? $transaction_item->service_detail->tindakan : 'N/A' }}</td>
+                                                                                                <td>
+                                                                                                    @if(isset($service->service_detail->tindakan)) 
+                                                                                                    {{ implode(', ', json_decode($service->service_detail->tindakan)) }}
+                                                                                                    @endif
+                                                                                                </td>
                                                                                             </tr>                                                                                      
                                                                                             <tr>
                                                                                                 <th scope="row">Garansi</th>
-                                                                                                @if ($transaction_item->garansi == 0)
+                                                                                                @if ($service->service_detail->garansi == 0)
                                                                                                     <td class="fw-bold">Tidak Ada</td>
                                                                                                 @else
-                                                                                                    <td class="fw-bold">{{ $transaction_item->garansi }} Hari</td>
+                                                                                                    <td class="fw-bold">{{ $service->service_detail->garansi }} Hari</td>
                                                                                                 @endif
                                                                                             </tr>
-                                                                                            @if ($transaction_item->garansi > 0)
+                                                                                            @if ($service->service_detail->garansi > 0)
                                                                                                 <tr>
                                                                                                     <th scope="row">Garansi Berakhir</th>
-                                                                                                    <td>{{ $warrantyInfo[$transaction_item->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }}</td>
+                                                                                                    <td>{{ $warrantyInfo[$service->id]['end_warranty']->isoFormat('dddd, D MMMM Y HH:mm') }}</td>
                                                                                                 </tr>
                                                                                                 <tr>
                                                                                                     <th scope="row">Status Garansi</th>
-                                                                                                    @if ($warrantyInfo[$transaction_item->id]['end_warranty'] < now())
+                                                                                                    @if ($warrantyInfo[$service->id]['end_warranty'] < now())
                                                                                                         <td><span class="badge bg-danger">Hangus</span></td>
                                                                                                     @else
-                                                                                                        <td>Tersisa {{ $warrantyInfo[$transaction_item->id]['sisa_warranty'] }}</td>
+                                                                                                        <td>Tersisa {{ $warrantyInfo[$service->id]['sisa_warranty'] }}</td>
                                                                                                     @endif
                                                                                                 </tr>
                                                                                             @endif
@@ -619,8 +746,8 @@
                                                                                     </table>
                                                                                     <!-- Form Check -->
                                                                                     <div class="form-check d-flex justify-content-end gap-2 mt-4">
-                                                                                        <input class="form-check-input" type="checkbox" value="" id="garansiCheckbox{{ $transaction_item->id }}" required>
-                                                                                        <label class="form-check-label" for="garansiCheckbox{{ $transaction_item->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju menerima Garansi Servis</label>
+                                                                                        <input class="form-check-input" type="checkbox" value="" id="garansiCheckbox{{ $service->id }}" required>
+                                                                                        <label class="form-check-label" for="garansiCheckbox{{ $service->id }}">Dengan ini saya, <span class="text-danger">{{ Auth::user()->name }}</span> setuju menerima Garansi Servis</label>
                                                                                     </div>
                                                                                     <!-- End Form Check -->
                                                                                 </div>

@@ -45,21 +45,37 @@
                                     <dl class="row mb-2">
                                         <dt class="col-sm-4 fw-bold text-muted">Kerusakan</dt>
                                         <dd class="col-sm-8">
-                                            <span class="fw-bold fs-6">{{ $service->kerusakan }}</span>
+                                            <span class="fw-bold fs-6">{{ $service->service_detail->kerusakan }}</span>
                                         </dd>
                                     </dl>
-                                    <dl class="row mb-0">
-                                        <dt class="col-sm-4 fw-bold text-muted">Tindakan</dt>
-                                        <dd class="col-sm-8">
-                                            <span class="fw-bold fs-6">{{ $service->estimasi_tindakan }}</span>
-                                        </dd>
-                                    </dl>
+
+                                    {{-- Estimasi Tindakan dan Biaya --}}
                                     <dl class="row mb-2">
-                                        <dt class="col-sm-4 fw-bold text-muted">Estimasi Biaya</dt>
+                                        <dt class="col-sm-4 fw-bold text-muted">Estimasi Tindakan dan Biaya</dt>
                                         <dd class="col-sm-8">
-                                            <span class="fw-bold fs-6">{{ 'Rp. '.number_format($service->estimasi_biaya) ?? '' }}</span>
+                                            <span class="fw-bold fs-6">
+                                            @if (count(json_decode($service->estimasi_tindakan)) === 1)
+                                                {{ json_decode($service->estimasi_tindakan)[0] }} ({{ 'Rp. '.number_format(json_decode($service->estimasi_biaya)[0]) }})
+                                            @else
+                                                <ul class="list-unstyled">
+                                                    @foreach (json_decode($service->estimasi_tindakan) as $index => $tindakan)
+                                                        <li>{{ $tindakan }} ({{ 'Rp. '.number_format(json_decode($service->estimasi_biaya)[$index]) }})</li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                            </span>
                                         </dd>
                                     </dl>
+                                    @if (count(json_decode($service->estimasi_tindakan)) > 1)
+                                        <dl class="row mb-2">
+                                            <dt class="col-sm-4 fw-bold text-muted">Total Estimasi Biaya</dt>
+                                            <dd class="col-sm-8">
+                                                <span class="fw-bold fs-6">{{ 'Rp. '.number_format(array_sum(json_decode($service->estimasi_biaya))) }}</span>
+                                            </dd>
+                                        </dl>
+                                    @endif
+                                    {{-- End Estimasi Tindakan dan Biaya --}}
+                                    
                                     <p>Pelanggan <span class="fw-bold">Tidak Setuju</span> dengan tindakan dan biaya servis yang akan dilakukan. Dan membatalkan proses servis.</p>
                                     <p>Silahkan segera melakukan servis sesuai dengan kesepakatan dengan pelanggan. Terima kasih atas kerjasamanya.</p>
                                 </div>

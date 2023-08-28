@@ -105,44 +105,44 @@
                                                     @forelse($service_detail as $key => $services_item)
                                                         <tr data-entry-id="{{ $services_item->id }}"
                                                             data-condition="@if ($services_item->kondisi == 1) done @elseif ($services_item->kondisi == 2) notdone @elseif ($services_item->kondisi == 3) cancel @endif">
-                                                            @if ($services_item->transaction?->warranty_history->status == 2)
+                                                            @if ($services_item->warranty_history?->status == 2)
                                                                 <td class="text-body fw-bold">
                                                                     {{ $services_item->service->kode_servis ?? '' }}</td>
                                                                 <td
-                                                                    data-order="{{ $services_item->transaction->warranty_history->updated_at }}">
-                                                                    {{ $services_item->transaction->warranty_history->updated_at->isoFormat('D MMM Y') }}
+                                                                    data-order="{{ $services_item->warranty_history->updated_at }}">
+                                                                    {{ $services_item->warranty_history?->updated_at->isoFormat('D MMM Y') }}
                                                                 </td>
                                                                 <td class="text-body fw-bold">
                                                                     {{ $services_item->service->customer->name ?? '' }}</td>
                                                                 <td>{{ $services_item->service->jenis ?? '' }}
                                                                     {{ $services_item->service->tipe ?? '' }}</td>
-                                                                <td>{{ $services_item->transaction->warranty_history->keterangan ?? '' }}
+                                                                <td>{{ $services_item->warranty_history->keterangan ?? '' }}
                                                                 </td>
                                                                 <td>
-                                                                    @if ($services_item->transaction->warranty_history->kondisi == 1)
+                                                                    @if ($services_item->warranty_history->kondisi == 1)
                                                                         <span
                                                                             class="badge bg-success">{{ 'Sudah Jadi' }}</span>
-                                                                    @elseif($services_item->transaction->warranty_history->kondisi == 2)
+                                                                    @elseif($services_item->warranty_history->kondisi == 2)
                                                                         <span
                                                                             class="badge bg-danger">{{ 'Tidak Bisa' }}</span>
-                                                                    @elseif($services_item->transaction->warranty_history->kondisi == 3)
+                                                                    @elseif($services_item->warranty_history->kondisi == 3)
                                                                         <span
                                                                             class="badge bg-secondary">{{ 'Dibatalkan' }}</span>
                                                                     @endif
                                                                 </td>
-                                                                <td>{{ $services_item->transaction->warranty_history->tindakan ?? '' }}
+                                                                <td>{{ $services_item->warranty_history->tindakan ?? '' }}
                                                                 </td>
                                                             @else
                                                                 <td class="text-body fw-bold">
                                                                     {{ $services_item->service->kode_servis ?? '' }}</td>
-                                                                <td data-order="{{ $services_item->created_at }}">
-                                                                    {{ $services_item['created_at']->isoFormat('D MMM Y') }}
+                                                                <td data-order="{{ $services_item->service->date_done }}">
+                                                                    {{ \Carbon\Carbon::parse($services_item->service->date_done)->isoFormat('D MMM Y HH:mm') }}
                                                                 </td>
                                                                 <td class="text-body fw-bold">
                                                                     {{ $services_item->service->customer->name ?? '' }}</td>
                                                                 <td>{{ $services_item->service->jenis ?? '' }}
                                                                     {{ $services_item->service->tipe ?? '' }}</td>
-                                                                <td>{{ $services_item->service->kerusakan ?? '' }}</td>
+                                                                <td>{{ $services_item->kerusakan ?? '' }}</td>
                                                                 <td>
                                                                     @if ($services_item->kondisi == 1)
                                                                         <span
@@ -155,12 +155,16 @@
                                                                             class="badge bg-secondary">{{ 'Dibatalkan' }}</span>
                                                                     @endif
                                                                 </td>
-                                                                <td>{{ $services_item->tindakan ?? '' }}</td>
+                                                                <td>
+                                                                    @if(isset($services_item->tindakan))
+                                                                        {{ implode(', ', json_decode($services_item->tindakan)) }}
+                                                                    @endif
+                                                                </td>
                                                             @endif
                                                             <td>
                                                                 @if ($services_item->service->status == 8)
                                                                     <span class="badge bg-primary">{{ 'Bisa Diambil' }}</span>
-                                                                @elseif($services_item->transaction->warranty_history->status == 2)
+                                                                @elseif($services_item->warranty_history->status == 2)
                                                                     <span
                                                                         class="badge bg-warning">{{ 'Garansi Bisa Diambil' }}</span>
                                                                 @else
@@ -178,13 +182,8 @@
                                                                                 <i class="mdi mdi-eye-outline"></i>
                                                                             </button>
                                                                             {{-- Content Modal --}}
-                                                                            <div class="modal fade bs-example-modal-center"
-                                                                                id="showModal{{ $services_item->id }}"
-                                                                                tabindex="-1" aria-hidden="true"
-                                                                                aria-labelledby="showServicesModalLabel"
-                                                                                aria-expanded="false">
-                                                                                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered"
-                                                                                    role="document">
+                                                                            <div class="modal fade bs-example-modal-center" id="showModal{{ $services_item->id }}" tabindex="-1" aria-hidden="true" aria-labelledby="showServicesModalLabel" aria-expanded="false">
+                                                                                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
                                                                                     <div class="modal-content">
                                                                                         <div class="modal-header">
                                                                                             <h5 class="modal-title"
@@ -194,7 +193,7 @@
                                                                                                 data-bs-dismiss="modal"
                                                                                                 aria-label="Close"></button>
                                                                                         </div>
-                                                                                        @if ($services_item->transaction?->warranty_history->status == 2)
+                                                                                        @if ($services_item->warranty_history?->status == 2)
                                                                                             {{-- start body garansi --}}
                                                                                             <div class="modal-body">
                                                                                                 <table
@@ -210,7 +209,7 @@
                                                                                                         <tr>
                                                                                                             <th scope="row">Tgl.
                                                                                                                 Klaim</th>
-                                                                                                            <td>{{ $services_item->transaction->warranty_history->created_at->isoFormat('dddd, D MMMM Y HH:mm') }}
+                                                                                                            <td>{{ $services_item->warranty_history->created_at->isoFormat('dddd, D MMMM Y HH:mm') }}
                                                                                                                 WIB</td>
                                                                                                         </tr>
                                                                                                         <tr>
@@ -229,26 +228,80 @@
                                                                                                         <tr>
                                                                                                             <th scope="row">
                                                                                                                 Kerusakan Awal</th>
-                                                                                                            <td>{{ isset($services_item->service->kerusakan) ? $services_item->service->kerusakan : 'N/A' }}
+                                                                                                            <td>{{ isset($services_item->kerusakan) ? $services_item->kerusakan : 'N/A' }}
                                                                                                             </td>
                                                                                                         </tr>
+
+                                                                                                        {{-- Tindakan dan Modal --}}
+                                                                                                        @if(isset($services_item->tindakan) && isset($services_item->modal))
+                                                                                                            @php
+                                                                                                                $tindakan = json_decode($services_item->tindakan, true);
+                                                                                                                $modal = json_decode($services_item->modal);
+                                                                                                                $totalModal = array_sum($modal);
+                                                                                                            @endphp
+
+                                                                                                            @if(count($tindakan) === 1)
+                                                                                                                <tr>
+                                                                                                                    <th scope="row">Tindakan</th>
+                                                                                                                    <td>{{ $tindakan[0] }}</td>
+                                                                                                                </tr>
+                                                                                                                <tr>
+                                                                                                                    <th scope="row">Modal</th>
+                                                                                                                    <td>RP. {{ number_format($modal[0]) }}</td>
+                                                                                                                </tr>
+                                                                                                            @else
+                                                                                                                <tr>
+                                                                                                                    <td colspan="2">
+                                                                                                                        <div class="accordion" id="accordionFlushShow">
+                                                                                                                            <div class="accordion-item">
+                                                                                                                                <h2 class="accordion-header" id="flush-headingOne">
+                                                                                                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="true" aria-controls="flush-collapseOne">
+                                                                                                                                        <span class="fw-bold">Tindakan dan Modal</span>
+                                                                                                                                    </button>
+                                                                                                                                </h2>
+                                                                                                                                <div id="flush-collapseOne" class="accordion-collapse collapse show" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushShow">
+                                                                                                                                    <div class="accordion-body">
+                                                                                                                                        <table class="table table-striped mb-0">
+                                                                                                                                            <thead class="table-secondary">
+                                                                                                                                                <tr>
+                                                                                                                                                    <th scope="col">#</th>
+                                                                                                                                                    <th scope="col">Tindakan</th>
+                                                                                                                                                    <th scope="col">Modal</th>
+                                                                                                                                                </tr>
+                                                                                                                                            </thead>
+                                                                                                                                            <tbody>
+                                                                                                                                                @foreach($tindakan as $index => $item)
+                                                                                                                                                    <tr>
+                                                                                                                                                        <th scope="row">{{ $index + 1 }}</th>
+                                                                                                                                                        <td>{{ $item }}</td>
+                                                                                                                                                        <td>RP. {{ number_format($modal[$index]) }}</td>
+                                                                                                                                                    </tr>
+                                                                                                                                                @endforeach
+                                                                                                                                            </tbody>
+                                                                                                                                            <tfoot class="table-secondary">
+                                                                                                                                                <tr>
+                                                                                                                                                    <th colspan="2" scope="row" class="fw-bold">Total Modal</th>
+                                                                                                                                                    <td class="fw-bold">RP. {{ number_format($totalModal) }}</td>
+                                                                                                                                                </tr>
+                                                                                                                                            </tfoot>
+                                                                                                                                        </table>
+                                                                                                                                    </div>
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                            @endif
+                                                                                                        @else
+                                                                                                            <tr>
+                                                                                                                <td colspan="2">N/A</td>
+                                                                                                            </tr>
+                                                                                                        @endif
+                                                                                                        {{-- End Tindakan dan Modal --}}
+
                                                                                                         <tr>
-                                                                                                            <th scope="row">
-                                                                                                                Tindakan</th>
-                                                                                                            <td>{{ isset($services_item->tindakan) ? $services_item->tindakan : 'N/A' }}
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                        <tr>
-                                                                                                            <th scope="row">
-                                                                                                                Modal</th>
-                                                                                                            <td>{{ isset($services_item->modal) ? 'RP. ' . number_format($services_item->modal) : 'N/A' }}
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                        <tr>
-                                                                                                            <th scope="row">
-                                                                                                                Biaya</th>
-                                                                                                            <td>{{ isset($services_item->biaya) ? 'RP. ' . number_format($services_item->biaya) : 'N/A' }}
-                                                                                                            </td>
+                                                                                                            <th scope="row">Biaya</th>
+                                                                                                            <td><span class="fw-bold">{{ isset($services_item->biaya) ? 'RP. ' . number_format($services_item->biaya) : 'N/A' }}</span></td>
                                                                                                         </tr>
                                                                                                         <tr class="table-info">
                                                                                                             <th colspan="2"
@@ -258,39 +311,39 @@
                                                                                                         <tr>
                                                                                                             <th scope="row">Ket.
                                                                                                                 Klaim</th>
-                                                                                                            <td>{{ isset($services_item->transaction->warranty_history->keterangan) ? $services_item->transaction->warranty_history->keterangan : 'N/A' }}
+                                                                                                            <td>{{ isset($services_item->warranty_history->keterangan) ? $services_item->warranty_history->keterangan : 'N/A' }}
                                                                                                             </td>
                                                                                                         </tr>
                                                                                                         <tr>
                                                                                                             <th scope="row">
                                                                                                                 Tindakan Garansi
                                                                                                             </th>
-                                                                                                            <td>{{ isset($services_item->transaction->warranty_history->tindakan) ? $services_item->transaction->warranty_history->tindakan : 'N/A' }}
+                                                                                                            <td>{{ isset($services_item->warranty_history->tindakan) ? $services_item->warranty_history->tindakan : 'N/A' }}
                                                                                                             </td>
                                                                                                         </tr>
                                                                                                         <tr>
                                                                                                             <th scope="row">
                                                                                                                 Kondisi</th>
                                                                                                             <td>
-                                                                                                                @if ($services_item->transaction->warranty_history->kondisi == 1)
+                                                                                                                @if ($services_item->warranty_history->kondisi == 1)
                                                                                                                     <span
                                                                                                                         class="badge bg-success">{{ 'Sudah Jadi' }}</span>
-                                                                                                                @elseif($services_item->transaction->warranty_history->kondisi == 2)
+                                                                                                                @elseif($services_item->warranty_history->kondisi == 2)
                                                                                                                     <span
                                                                                                                         class="badge bg-danger">{{ 'Tidak Bisa' }}</span>
-                                                                                                                @elseif($services_item->transaction->warranty_history->kondisi == 3)
+                                                                                                                @elseif($services_item->warranty_history->kondisi == 3)
                                                                                                                     <span
                                                                                                                         class="badge bg-secondary">{{ 'Dibatalkan' }}</span>
                                                                                                                 @endif
                                                                                                                 -
-                                                                                                                {{ $services_item->transaction->warranty_history->updated_at->isoFormat('dddd, D MMMM Y HH:mm') }}
+                                                                                                                {{ $services_item->warranty_history->updated_at->isoFormat('dddd, D MMMM Y HH:mm') }}
                                                                                                                 WIB
                                                                                                             </td>
                                                                                                         </tr>
                                                                                                         <tr>
                                                                                                             <th scope="row">
                                                                                                                 Catatan</th>
-                                                                                                            <td>{{ isset($services_item->transaction->warranty_history->catatan) ? $services_item->transaction->warranty_history->catatan : 'N/A' }}
+                                                                                                            <td>{{ isset($services_item->warranty_history->catatan) ? $services_item->warranty_history->catatan : 'N/A' }}
                                                                                                             </td>
                                                                                                         </tr>
                                                                                                         <tr>
@@ -300,7 +353,7 @@
                                                                                                                 @if ($services_item->service->status == 8)
                                                                                                                     <span
                                                                                                                         class="badge bg-primary">{{ 'Bisa Diambil' }}</span>
-                                                                                                                @elseif($services_item->transaction->warranty_history->status == 2)
+                                                                                                                @elseif($services_item->warranty_history->status == 2)
                                                                                                                     <span
                                                                                                                         class="badge bg-primary">{{ 'Garansi Bisa Diambil' }}</span>
                                                                                                                 @endif
@@ -355,7 +408,7 @@
                                                                                                         <tr>
                                                                                                             <th scope="row">
                                                                                                                 Kerusakan</th>
-                                                                                                            <td>{{ isset($services_item->service->kerusakan) ? $services_item->service->kerusakan : 'N/A' }}
+                                                                                                            <td>{{ isset($services_item->kerusakan) ? $services_item->kerusakan : 'N/A' }}
                                                                                                             </td>
                                                                                                         </tr>
                                                                                                         <tr>
@@ -373,28 +426,84 @@
                                                                                                                         class="badge bg-secondary">{{ 'Dibatalkan' }}</span>
                                                                                                                 @endif
                                                                                                                 -
-                                                                                                                {{ \Carbon\Carbon::parse($services_item->created_at)->isoFormat('dddd, D MMMM Y HH:mm') }}
+                                                                                                                {{ \Carbon\Carbon::parse($services_item->service->date_done)->isoFormat('dddd, D MMMM Y HH:mm') }}
                                                                                                                 WIB
                                                                                                             </td>
                                                                                                         </tr>
-                                                                                                        <tr>
-                                                                                                            <th scope="row">
-                                                                                                                Tindakan</th>
-                                                                                                            <td>{{ isset($services_item->tindakan) ? $services_item->tindakan : 'N/A' }}
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                        <tr>
-                                                                                                            <th scope="row">
-                                                                                                                Modal</th>
-                                                                                                            <td>{{ isset($services_item->modal) ? 'RP. ' . number_format($services_item->modal) : 'N/A' }}
-                                                                                                            </td>
-                                                                                                        </tr>
+                                                                                                        {{-- Tindakan dan Modal --}}
+                                                                                                        @if(isset($services_item->tindakan) && isset($services_item->modal))
+                                                                                                            @php
+                                                                                                                $tindakan = json_decode($services_item->tindakan, true);
+                                                                                                                $modal = json_decode($services_item->modal);
+                                                                                                                $totalModal = array_sum($modal);
+                                                                                                            @endphp
+
+                                                                                                            @if(count($tindakan) === 1)
+                                                                                                                <tr>
+                                                                                                                    <th scope="row">Tindakan</th>
+                                                                                                                    <td>{{ $tindakan[0] }}</td>
+                                                                                                                </tr>
+                                                                                                                <tr>
+                                                                                                                    <th scope="row">Modal</th>
+                                                                                                                    <td>RP. {{ number_format($modal[0]) }}</td>
+                                                                                                                </tr>
+                                                                                                            @else
+                                                                                                                <tr>
+                                                                                                                    <td colspan="2">
+                                                                                                                        <div class="accordion accordion-flush" id="accordionFlushShow">
+                                                                                                                            <div class="accordion-item">
+                                                                                                                                <h2 class="accordion-header" id="flush-headingOne">
+                                                                                                                                    <a class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="true" aria-controls="flush-collapseOne">
+                                                                                                                                        Tindakan dan Modal
+                                                                                                                                    </a>
+                                                                                                                                </h2>
+                                                                                                                                <div id="flush-collapseOne" class="accordion-collapse collapse show" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushShow">
+                                                                                                                                    <div class="accordion-body">
+                                                                                                                                        <table class="table table-striped mb-0">
+                                                                                                                                            <thead class="table-dark">
+                                                                                                                                                <tr>
+                                                                                                                                                    <th scope="col">#</th>
+                                                                                                                                                    <th scope="col">Tindakan</th>
+                                                                                                                                                    <th scope="col">Modal</th>
+                                                                                                                                                </tr>
+                                                                                                                                            </thead>
+                                                                                                                                            <tbody>
+                                                                                                                                                @foreach($tindakan as $index => $item)
+                                                                                                                                                    <tr>
+                                                                                                                                                        <th scope="row">{{ $index + 1 }}</th>
+                                                                                                                                                        <td>{{ $item }}</td>
+                                                                                                                                                        <td>RP. {{ number_format($modal[$index]) }}</td>
+                                                                                                                                                    </tr>
+                                                                                                                                                @endforeach
+                                                                                                                                            </tbody>
+                                                                                                                                            <tfoot class="table-secondary">
+                                                                                                                                                <tr>
+                                                                                                                                                    <th colspan="2" scope="row" class="fw-bold">Total Modal</th>
+                                                                                                                                                    <td>RP. {{ number_format($totalModal) }}</td>
+                                                                                                                                                </tr>
+                                                                                                                                            </tfoot>
+                                                                                                                                        </table>
+                                                                                                                                    </div>
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                            @endif
+                                                                                                        @else
+                                                                                                            <tr>
+                                                                                                                <td colspan="2">N/A</td>
+                                                                                                            </tr>
+                                                                                                        @endif
+                                                                                                        {{-- End Tindakan dan Modal --}}
+                                                                                                        
                                                                                                         <tr>
                                                                                                             <th scope="row">
                                                                                                                 Biaya</th>
                                                                                                             <td>{{ isset($services_item->biaya) ? 'RP. ' . number_format($services_item->biaya) : 'N/A' }}
                                                                                                             </td>
                                                                                                         </tr>
+                                                                                                        
                                                                                                         <tr>
                                                                                                             <th scope="row">
                                                                                                                 Status</th>
@@ -432,8 +541,7 @@
                                                                         {{-- Start Button Notif --}}
                                                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Konfirmasi Bisa Diambil Ke Pelanggan" class="disable-tooltip">
 
-                                                                            <form action="service-detail/notification"
-                                                                                method="POST">
+                                                                            <form action="service-detail/notification" method="POST">
                                                                                 @csrf
                                                                                 <input type="hidden" name="service_detail_id"
                                                                                     value="{{ $services_item->id }}">
@@ -554,7 +662,7 @@
                                                                         @endcan
                                                                         {{-- Start Modal Sudah Diambil --}}
                                                                         <form class="form form-horizontal"
-                                                                            action="{{ $services_item->transaction?->warranty_history->status == 2 ? route('backsite.transaction.warranty') : route('backsite.transaction.store') }}"
+                                                                            action="{{ $services_item->warranty_history?->status == 2 ? route('backsite.transaction.warranty') : route('backsite.transaction.store') }}"
                                                                             method="POST">
                                                                             @csrf
                                                                             <div class="modal fade bs-example-modal-center"
@@ -572,7 +680,7 @@
                                                                                                 data-bs-dismiss="modal"
                                                                                                 aria-label="Close"></button>
                                                                                         </div>
-                                                                                        @if ($services_item->transaction?->warranty_history->status == 2)
+                                                                                        @if ($services_item->warranty_history?->status == 2)
                                                                                             {{-- start body garansi --}}
                                                                                             <div class="modal-body">
                                                                                                 @if ($errors->any())
@@ -621,7 +729,7 @@
                                                                                                     <input type="text"
                                                                                                         class="form-control"
                                                                                                         disabled
-                                                                                                        value="{{ $services_item->service->kerusakan ?? '' }}">
+                                                                                                        value="{{ $services_item->kerusakan ?? '' }}">
                                                                                                 </div>
 
                                                                                                 <div class="mb-2">
@@ -631,7 +739,7 @@
                                                                                                     <input type="text"
                                                                                                         class="form-control"
                                                                                                         disabled
-                                                                                                        value="{{ $services_item->tindakan ?? '' }}"
+                                                                                                        value="{{ isset($services_item->tindakan) ? implode(', ', json_decode($services_item->tindakan)) : '' }}"
                                                                                                         required>
                                                                                                 </div>
 
@@ -653,7 +761,7 @@
                                                                                                     <input type="text"
                                                                                                         class="form-control"
                                                                                                         disabled
-                                                                                                        value="{{ $services_item->transaction->warranty_history->keterangan ?? '' }}"
+                                                                                                        value="{{ $services_item->warranty_history->keterangan ?? '' }}"
                                                                                                         required>
                                                                                                 </div>
 
@@ -663,17 +771,17 @@
                                                                                                     <input type="text"
                                                                                                         class="form-control"
                                                                                                         disabled
-                                                                                                        value="{{ $services_item->transaction->warranty_history->tindakan ?? '' }}"
+                                                                                                        value="{{ $services_item->warranty_history->tindakan ?? '' }}"
                                                                                                         required>
                                                                                                 </div>
 
                                                                                                 <div class="mb-2">
-                                                                                                    <label for="tindakan"
+                                                                                                    <label for="catatan"
                                                                                                         class="form-label">Catatan</label>
                                                                                                     <input type="text"
                                                                                                         class="form-control"
                                                                                                         disabled
-                                                                                                        value="{{ $services_item->transaction->warranty_history->catatan ?? '' }}"
+                                                                                                        value="{{ $services_item->warranty_history->catatan ?? '' }}"
                                                                                                         required>
                                                                                                 </div>
 
@@ -777,7 +885,7 @@
                                                                                                     <input type="text"
                                                                                                         class="form-control"
                                                                                                         disabled
-                                                                                                        value="{{ $services_item->service->kerusakan ?? '' }}">
+                                                                                                        value="{{ $services_item->kerusakan ?? '' }}">
                                                                                                 </div>
 
                                                                                                 <div class="mb-2">
@@ -826,7 +934,7 @@
                                                                                                     <input type="text"
                                                                                                         class="form-control"
                                                                                                         disabled
-                                                                                                        value="{{ $services_item->tindakan ?? '' }}"
+                                                                                                        value="{{ isset($services_item->tindakan) ? implode(', ', json_decode($services_item->tindakan)) : '' }}"
                                                                                                         required>
                                                                                                 </div>
 

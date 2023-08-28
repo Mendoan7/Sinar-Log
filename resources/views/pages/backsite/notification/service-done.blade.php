@@ -46,7 +46,7 @@
                                     <dl class="row mb-0">
                                         <dt class="col-sm-4 fw-bold text-muted">Kerusakan</dt>
                                         <dd class="col-sm-8">
-                                            <span class="fw-bold fs-6">{{ $service->kerusakan }}</span>
+                                            <span class="fw-bold fs-6">{{ $service->service_detail->kerusakan }}</span>
                                         </dd>
                                     </dl>
                                     <dl class="row mb-0">
@@ -66,7 +66,11 @@
                                     <dl class="row mb-0">
                                         <dt class="col-sm-4 fw-bold text-muted">Tindakan</dt>
                                         <dd class="col-sm-8">
-                                            <span class="fw-bold fs-6">{{ $service->service_detail->tindakan }}</span>
+                                            <span class="fw-bold fs-6">
+                                                @if(isset($service->service_detail->tindakan))
+                                                    {{ implode(', ', json_decode($service->service_detail->tindakan)) }}
+                                                @endif
+                                            </span>
                                         </dd>
                                     </dl>
                                     <p>Terima Kasih. :)</p>
@@ -75,7 +79,7 @@
 
                             <div class="d-flex flex-wrap gap-2">
                                 <a href="{{ route('backsite.notification.index') }}" class="btn btn-secondary">Kembali</a>
-                                <a href="{{ route('backsite.service.index') }}" class="btn btn-primary">Daftar Servis</a>
+                                <a href="{{ route('backsite.service-detail.index') }}" class="btn btn-primary">Daftar Servis Bisa Diambil</a>
                             </div>
                                 
                         </div>

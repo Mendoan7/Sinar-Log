@@ -26,7 +26,7 @@ class WarrantyHistory extends Model
 
     // declare fillable fields
     protected $fillable = [
-        'transaction_id',
+        'service_detail_id',
         'keterangan',
         'kondisi',
         'tindakan',
@@ -40,8 +40,8 @@ class WarrantyHistory extends Model
     ];
 
     // relasi database
-    public function transaction()
+    public function service_detail()
     {
-        return $this->belongsTo('App\Models\Operational\Transaction', 'transaction_id', 'id');
+        return $this->belongsTo('App\Models\Operational\ServiceDetail', 'service_detail_id', 'id');
     }
 }

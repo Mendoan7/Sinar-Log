@@ -27,8 +27,12 @@
                                                     <ul>
                                                         <li>No. Servis : {{ $service->kode_servis ?? '' }}</li>
                                                         <li>Barang Servis : {{ $service->jenis ?? '' }} {{ $service->tipe ?? '' }}</li>
-                                                        <li>Kerusakan : {{ $service->kerusakan ?? '' }}</li>
-                                                        <li>Tindakan : {{ $service->service_detail->tindakan ?? '' }}</li>
+                                                        <li>Kerusakan : {{ $service->service_detail->kerusakan ?? '' }}</li>
+                                                        <li>Tindakan : 
+                                                            @if(isset($service->service_detail->tindakan))
+                                                                {{ implode(', ', json_decode($service->service_detail->tindakan)) }}
+                                                            @endif
+                                                        </li>
                                                         <li>Kondisi : 
                                                             @if($service->service_detail->kondisi == 1)
                                                                 <b>Sudah Jadi</b>
@@ -47,13 +51,13 @@
                                                             @endif
                                                         </li>
                                                         <li>Garansi : 
-                                                            @if ($service->service_detail->transaction->garansi == 0)
+                                                            @if ($service->service_detail->garansi == 0)
                                                                 Tidak Ada
                                                             @else
-                                                                {{ $service->service_detail->transaction->garansi }} Hari
+                                                                {{ $service->service_detail->garansi }} Hari
                                                             @endif
                                                         </li>
-                                                        <li>Diambil : {{ $service->service_detail->transaction->pengambil ?? '' }} [{{ $service->service_detail->transaction->created_at ?? '' }}]</li>
+                                                        <li>Diambil : {{ $service->pengambil ?? '' }} [{{ $service->date_out ?? '' }}]</li>
                                                     </ul>
                                             </td>
                                         </tr>

@@ -55,7 +55,7 @@
                                 <div class="card-body">
                                     <div class="table-rep-plugin">
                                         <div class="table-responsive mb-0">
-                                            <table class="table table-striped">
+                                            <table id="employeeTable-buttons" class="table table-striped">
                                                 <thead class="table-dark">
                                                     <tr>
                                                         <th>Teknisi</th>
@@ -118,3 +118,18 @@
     </div>
 
 @endsection
+
+@push('after-script')
+    <script>
+        $(document).ready(function() {
+            $('#employeeTable-buttons').DataTable({
+                searching: false,
+                dom: 'Bfrtip',
+                buttons: [
+                    'excel', 'pdf', 'colvis'
+                    // 'copy' // Komentari atau hilangkan baris ini untuk menyembunyikan tombol "Copy"
+                ]
+            });
+        });
+    </script>
+@endpush

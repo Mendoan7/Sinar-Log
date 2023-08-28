@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('jenis');
             $table->string('tipe');
             $table->string('kelengkapan');
-            $table->string('kerusakan');
             $table->string('penerima');
             $table->unsignedBigInteger('teknisi')->nullable();
             $table->foreign('teknisi')->references('id')->on('users');
@@ -28,6 +27,10 @@ return new class extends Migration
             $table->string('estimasi_biaya')->nullable();
             $table->string('confirmation_token')->nullable();
             $table->timestamp('expired_time')->nullable();
+            $table->string('pengambil')->nullable();
+            $table->string('penyerah')->nullable();
+            $table->timestamp('date_done')->nullable();
+            $table->timestamp('date_out')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

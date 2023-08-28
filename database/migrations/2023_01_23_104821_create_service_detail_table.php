@@ -15,10 +15,13 @@ return new class extends Migration
     {
         Schema::create('service_detail', function (Blueprint $table) {
             $table->id();
-            $table->enum('kondisi', [1,2,3]);
-            $table->string('tindakan');
-            $table->string('modal');
-            $table->string('biaya');
+            $table->string('kerusakan');
+            $table->enum('kondisi', [1,2,3])->nullable();
+            $table->string('tindakan')->nullable();
+            $table->string('modal')->nullable();
+            $table->string('biaya')->nullable();
+            $table->string('pembayaran')->nullable();
+            $table->string('garansi')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

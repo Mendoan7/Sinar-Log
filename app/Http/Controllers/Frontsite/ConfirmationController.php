@@ -133,7 +133,11 @@ class ConfirmationController extends Controller
                         $status = 'already_confirm';
                     } else {
                         // Tampilkan halaman konfirmasi jika tidak ada aksi yang diberikan
-                        return view('pages.frontsite.confirmation.index', compact('serviceItem', 'status'));
+                        $estimasiTindakan = json_decode($serviceItem->estimasi_tindakan);
+                        $estimasiBiaya = json_decode($serviceItem->estimasi_biaya);
+                        $totalBiaya = array_sum($estimasiBiaya);
+
+                        return view('pages.frontsite.confirmation.index', compact('serviceItem', 'status', 'estimasiTindakan', 'estimasiBiaya', 'totalBiaya'));
                     }
                 }
             }

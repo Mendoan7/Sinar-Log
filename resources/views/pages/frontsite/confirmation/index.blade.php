@@ -70,6 +70,11 @@
                         <table class="w-full text-sm text-left text-gray-500">
                             <tbody>
                                 <tr class="bg-white border-b">
+                                    <td colspan="2" class="px-6 py-4 text-center">
+                                        <strong>Informasi Servis</strong>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b">
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                         No. Servis
                                     </th>
@@ -98,7 +103,7 @@
                                         Kerusakan
                                     </th>
                                     <td class="px-6 py-4">
-                                        {{ isset($serviceItem->kerusakan) ? $serviceItem->kerusakan : 'N/A' }}
+                                        {{ isset($serviceItem->service_detail->kerusakan) ? $serviceItem->service_detail->kerusakan : 'N/A' }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -107,22 +112,37 @@
                     <div class="flex flex-wrap -mx-3 mb-4">
                         <table class="w-full text-sm text-left text-gray-500">
                             <tbody>
+                                @if(isset($estimasiTindakan) && isset($estimasiBiaya))
                                 <tr class="bg-white border-b">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                        Tindakan
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        {{ isset($serviceItem->estimasi_tindakan) ? $serviceItem->estimasi_tindakan : 'N/A' }}
+                                    <td colspan="2" class="px-6 py-4 text-center">
+                                        <strong>Konfirmasi Tindakan dan Biaya</strong>
                                     </td>
                                 </tr>
-                                <tr class="bg-white border-b">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                        Estimasi Biaya
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        {{ isset($serviceItem->estimasi_biaya) ? 'Rp. '.number_format($serviceItem->estimasi_biaya) : 'N/A' }}
-                                    </td>
-                                </tr>
+                                    @foreach($estimasiTindakan as $index => $tindakan)
+                                        <tr class="bg-white border-b">
+                                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                                @if(count($estimasiTindakan) > 1)
+                                                    Konfirmasi {{ $index + 1 }}
+                                                @else
+                                                    Konfirmasi
+                                                @endif
+                                            </th>
+                                            <td class="px-6 py-4">
+                                                {{ $tindakan }} (Rp. {{ number_format($estimasiBiaya[$index]) }})
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                        <tr class="bg-white border-b">
+                                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Total Biaya</th>
+                                            <td class="px-6 py-4"><strong>Rp. {{ number_format(array_sum($estimasiBiaya)) }}</strong></td>
+                                        </tr>
+                                @else
+                                    <tr class="bg-white border-b">
+                                        <td colspan="2" class="px-6 py-4 text-center">
+                                            Tidak ada data estimasi tindakan dan estimasi biaya untuk dikonfirmasi.
+                                        </td>
+                                    </tr>
+                                @endif                                
                             </tbody>
                         </table>
                     </div>

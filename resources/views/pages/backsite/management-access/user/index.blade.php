@@ -11,7 +11,11 @@
         <div class="row">
           <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-              <h4 class="mb-sm-0 font-size-18">User</h4>
+                @if(auth()->user()->detail_user->type_user_id == 2)
+                <h4 class="mb-sm-0 font-size-18">Pegawai</h4>
+                @else
+                <h4 class="mb-sm-0 font-size-18">User</h4>
+                @endif
             </div>
           </div>
         </div>
@@ -32,6 +36,7 @@
                                             <th>Email</th>
                                             <th>Role</th>
                                             <th>Tipe User</th>
+                                            <th>Status</th>
                                             <th style="text-align:center; width:150px;">Action</th>
                                         </tr>
                                     </thead>
@@ -49,6 +54,13 @@
                                             </td>
                                             <td style="width:200px;">
                                                 <span class="badge bg-success mr-1 mb-1">{{ $user_item->detail_user->type_user->name ?? '' }}</span>
+                                            </td>
+                                            <td>
+                                                @if ($user_item->status)
+                                                    <span class="badge bg-success">Aktif</span>
+                                                @else
+                                                    <span class="badge bg-danger">Tidak Aktif</span>
+                                                @endif
                                             </td>
 
                                             <td class="text-center">
@@ -81,12 +93,28 @@
                                                         @can('user_delete')
                                                         {{-- Start Button Delete --}}
                                                         <form onsubmit="return confirm('Are you sure want to delete this data ?');"
-                                                            action="{{ route('backsite.role.destroy', $user_item->id) }}" method="POST">
+                                                            action="{{ route('backsite.user.destroy', $user_item->id) }}" method="POST">
                                                             <input type="hidden" name="_method" value="DELETE">
                                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                             <input type="submit" class="dropdown-item" value="Delete">
                                                         </form>
                                                         {{-- End Button Delete --}}
+                                                        @endcan
+
+                                                        @can('user_status')
+                                                        {{-- Start Button Activate/Deactivate --}}
+                                                        <form action="{{ route('backsite.user.status', ['user' => $user_item->id, 'status' => $user_item->status ? 'deactivate' : 'activate']) }}"  method="POST">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <button type="submit" class="dropdown-item">
+                                                                @if ($user_item->status)
+                                                                    Nonaktifkan
+                                                                @else
+                                                                    Aktifkan
+                                                                @endif
+                                                            </button>
+                                                        </form>
+                                                        {{-- End Button Activate/Deactivate --}}
                                                         @endcan
                                                     </div>                  
                                                 </div>

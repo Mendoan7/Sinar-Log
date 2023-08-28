@@ -56,6 +56,7 @@ Route::group(['prefix' => 'backsite', 'as' => 'backsite.', 'middleware' => ['aut
 
     // user
     Route::resource('user', UserController::class);
+    Route::put('users/{user}/{status}', [UserController::class, 'updateStatus'])->name('user.status');
 
     // type user
     Route::resource('type_user', TypeUserController::class);

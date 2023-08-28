@@ -107,7 +107,7 @@
                                 <div class="card-body">
                                     <div class="table-rep-plugin">
                                         <div class="table-responsive mb-0">
-                                            <table class="table table-striped">
+                                            <table id="transactionTable-buttons" class="table table-striped">
                                                 <thead class="table-dark">
                                                     <tr>
                                                         <th scope="col">Hari, Tanggal</th>
@@ -145,7 +145,7 @@
                                                         <th>{{ $total_success }}</th>
                                                         <th>{{ $total_out }}</th>
                                                         <th>{{ 'RP. ' . number_format($total_revenue) }}</th>
-                                                        <th>{{ 'RP. ' . number_format($total_modal) }}</th>
+                                                        <th>{{ 'RP. ' . number_format($total_modal_all) }}</th>
                                                         <th>{{ 'RP. ' . number_format($total_profit) }}</th>
                                                     </tr>
                                                 </tfoot>
@@ -263,5 +263,16 @@
             var chart = new ApexCharts(document.querySelector('#service_chart'), options);
             chart.render();
         })();
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#transactionTable-buttons').DataTable({
+                searching: false,
+                dom: 'Bfrtip',
+                buttons: [
+                    'excel', 'pdf', 'colvis'
+                ]
+            });
+        });
     </script>
 @endpush

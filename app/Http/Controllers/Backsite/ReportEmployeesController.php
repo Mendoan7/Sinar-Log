@@ -65,12 +65,8 @@ class ReportEmployeesController extends Controller
             $total_profit_service[$teknisi_id] = 0;
         }
 
-        $services = Service::with(['service_detail.transaction'])
-            ->whereHas('service_detail', function ($query) use ($start_date, $end_date) {
-                $query->whereHas('transaction', function ($query) use ($start_date, $end_date) {
-                    $query->whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date);
-                });
-            })
+        $services = Service::whereDate('date_out', '>=', $start_date)
+            ->whereDate('date_out', '<=', $end_date)
             ->where('status', 9)
             ->get();
 
@@ -78,10 +74,24 @@ class ReportEmployeesController extends Controller
         foreach ($services as $service) {
             $teknisi_id = $service->teknisi;
             if (isset($total_service[$teknisi_id])) {
-                $total_service[$teknisi_id]++;
-                $total_biaya_service[$teknisi_id] += $service->service_detail->biaya;
-                $total_modal_service[$teknisi_id] += $service->service_detail->modal;
-                $total_profit_service[$teknisi_id] += ($service->service_detail->biaya - $service->service_detail->modal);
+                $service_detail = $service->service_detail;
+                
+                if ($service_detail) {
+                    $biaya = $service_detail->biaya;
+                    $modal = json_decode($service_detail->modal, true);
+        
+                    if (is_array($modal)) {
+                        // Hitung total modal dari array
+                        $total_modal = array_sum($modal);
+                    } else {
+                        $total_modal = 0;
+                    }
+        
+                    $total_service[$teknisi_id]++;
+                    $total_biaya_service[$teknisi_id] += $biaya;
+                    $total_modal_service[$teknisi_id] += $total_modal;
+                    $total_profit_service[$teknisi_id] += ($biaya - $total_modal);
+                }
             }
         }
 
@@ -131,19 +141,13 @@ class ReportEmployeesController extends Controller
         $teknisi = User::findOrFail($teknisiId);
 
         // Ambil laporan teknisi
-        $laporanTeknisi = Service::with(['service_detail.transaction'])
-            ->where('teknisi', $teknisiId)
-            ->whereHas('service_detail', function ($query) use ($start_date, $end_date) {
-                $query->whereHas('transaction', function ($query) use ($start_date, $end_date) {
-                    $query->whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date);
-                });
-            })
+        $laporanTeknisi = Service::where('teknisi', $teknisiId)
+            ->whereDate('date_out', '>=', $start_date)->whereDate('date_out', '<=', $end_date)
             ->where('status', 9)
-            ->orderBy('created_at', 'asc')
+            ->orderBy('date_out', 'asc')
             ->get()
-            ->sortBy('service_detail.transaction.created_at')
             ->groupBy(function ($item) {
-                return $item->service_detail->transaction->created_at->format('Y-m-d');
+                return Carbon::parse($item->date_out)->format('Y-m-d');
             })
             ->map(function ($group) {
                 $totalService = $group->count();
@@ -151,10 +155,13 @@ class ReportEmployeesController extends Controller
                     return $item->service_detail->biaya;
                 });
                 $totalModal = $group->sum(function ($item) {
-                    return $item->service_detail->modal;
+                    $modalArray = json_decode($item->service_detail->modal, true);
+                    return is_array($modalArray) ? array_sum($modalArray) : 0;
                 });
                 $totalProfit = $group->sum(function ($item) {
-                    return $item->service_detail->biaya - $item->service_detail->modal;
+                    $modalArray = json_decode($item->service_detail->modal, true);
+                    $modalTotal = is_array($modalArray) ? array_sum($modalArray) : 0;
+                    return $item->service_detail->biaya - $modalTotal;
                 });
 
                 return [
@@ -214,20 +221,23 @@ class ReportEmployeesController extends Controller
         $teknisi = User::findOrFail($teknisiId);
 
         // Ambil data servis
-        $dataService = Service::with('service_detail.transaction')
-            ->where('teknisi', $teknisiId)
-            ->whereHas('service_detail', function ($query) {
-                $query->whereHas('transaction');
-            })
+        $dataService = Service::where('teknisi', $teknisiId)
             ->where('status', 9)
-            ->whereHas('service_detail.transaction', function ($query) use ($tanggal) {
-                $query->whereDate('created_at', $tanggal);
-            })
+            ->whereDate('date_out', $tanggal)
             ->get();
+
+        $totalBiaya = 0;
+        $totalModal = 0;
+
+        foreach ($dataService as $item) {
+            $totalBiaya += $item->service_detail['biaya'];
+            $modalArray = json_decode($item->service_detail['modal'], true);
+            $totalModal += array_sum($modalArray);
+        }
 
         $start_date = session('start_date', Carbon::now()->startOfMonth());
         $end_date = session('end_date', Carbon::now());
 
-        return view('pages.backsite.report.report-employees.detail', compact('teknisi', 'dataService', 'tanggal', 'start_date', 'end_date'));
+        return view('pages.backsite.report.report-employees.detail', compact('teknisi', 'dataService', 'tanggal', 'start_date', 'end_date', 'totalBiaya', 'totalModal'));
     }
 }

@@ -320,7 +320,7 @@
                                                     <td>{{ $service->updated_at ?? '' }}</td>
                                                     <td>{{ $service->customer->name ?? '' }}</td>
                                                     <td>{{ $service->jenis ?? '' }} {{ $service->tipe ?? '' }}</td>
-                                                    <td>{{ $service->kerusakan ?? '' }}</td>
+                                                    <td>{{ $service->service_detail->kerusakan ?? '' }}</td>
                                                     <td>
                                                         @if ($service->status == 1)
                                                             <span

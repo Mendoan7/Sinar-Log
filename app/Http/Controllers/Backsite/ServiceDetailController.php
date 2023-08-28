@@ -9,6 +9,7 @@ use App\Jobs\Notification\ServiceDoneEmailNotificationJob;
 use App\Jobs\Notification\ServiceDoneWhatsappNotificationJob;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Support\Facades\Notification;
@@ -44,7 +45,7 @@ class ServiceDetailController extends Controller
         $user = Auth::user(); //Cek user login
 
         $service_detailQuery = ServiceDetail::with('service')->whereHas('service', function ($query) {
-            $query->whereIn('status', [8])->orWhereHas('service_detail.transaction.warranty_history', function ($query) {
+            $query->whereIn('status', [8])->orWhereHas('service_detail.warranty_history', function ($query) {
                 $query->where('status', 2);
             });
         });
@@ -61,13 +62,13 @@ class ServiceDetailController extends Controller
         // Counting
         $all_count = $service_detail->count();
         $done_count = $service_detail->filter(function ($item) {
-            return optional($item->transaction)->warranty_history ? $item->transaction->warranty_history->kondisi == 1 : $item->kondisi == 1;
+            return optional($item)->warranty_history ? $item->warranty_history->kondisi == 1 : $item->kondisi == 1;
         })->count();
         $notdone_count = $service_detail->filter(function ($item) {
-            return optional($item->transaction)->warranty_history ? $item->transaction->warranty_history->kondisi == 2 : $item->kondisi == 2;
+            return optional($item)->warranty_history ? $item->warranty_history->kondisi == 2 : $item->kondisi == 2;
         })->count();
         $cancel_count = $service_detail->filter(function ($item) {
-            return optional($item->transaction)->warranty_history ? $item->transaction->warranty_history->kondisi == 3 : $item->kondisi == 3;
+            return optional($item)->warranty_history ? $item->warranty_history->kondisi == 3 : $item->kondisi == 3;
         })->count();
         
         // Filter Tab
@@ -81,9 +82,9 @@ class ServiceDetailController extends Controller
             }
     
             $service_detailQuery->where(function ($query) use ($kondisi) {
-                $query->whereHas('transaction.warranty_history', function ($query) use ($kondisi) {
+                $query->whereHas('warranty_history', function ($query) use ($kondisi) {
                     $query->where('kondisi', $kondisi);
-                })->orWhereDoesntHave('transaction.warranty_history')
+                })->orWhereDoesntHave('warranty_history')
                 ->where('kondisi', $kondisi);
             });
         }
@@ -111,23 +112,36 @@ class ServiceDetailController extends Controller
      */
     public function store(StoreServiceDetailRequest $request)
     {
-        $data = $request->all();
-    
-        $service = Service::where('id', $data['service_id'])->first();
+        $data = $request->only(['kondisi', 'tindakan', 'modal', 'biaya']);
+        $service_id = $request->input('service_id');
+
+        $service = Service::findOrFail($service_id);
+
+        $service_detail = $service->service_detail;
+
+        // Cek apakah ada service_detail terakit
+        if (!$service_detail) {
+            $service_detail = new ServiceDetail();
+            $service_detail->service_id = $service->id;
+        }
         
         $data['modal'] = str_replace(',', '', $data['modal']);
         $data['modal'] = str_replace('RP. ', '', $data['modal']);
         $data['biaya'] = str_replace(',', '', $data['biaya']);
         $data['biaya'] = str_replace('RP. ', '', $data['biaya']);
 
+        $data['tindakan'] = json_encode($data['tindakan']);
+        $data['modal'] = json_encode($data['modal']);
+
         // save to database
-        $service_detail = new ServiceDetail;
-        $service_detail->service_id = $service->id;
         $service_detail->kondisi = $data['kondisi'];
         $service_detail->tindakan = $data['tindakan'];
         $service_detail->modal = $data['modal'];
         $service_detail->biaya = $data['biaya'];
         $service_detail->save();
+
+        // Update service
+        $service->date_done = Carbon::now();
         $service->status = 8;
         $service->save();
 
@@ -207,8 +221,13 @@ class ServiceDetailController extends Controller
     {
         $service = Service::findOrFail($serviceId);
         
-        // Delete service_detail
-        $service->service_detail()->delete();
+        // Clear service_detail attributes except 'service_id' and 'kerusakan'
+        $service->service_detail()->update([
+            'kondisi' => null,
+            'tindakan' => null,
+            'modal' => null,
+            'biaya' => null,
+        ]);
         
         // Update service status
         $service->status = 2;
@@ -226,12 +245,12 @@ class ServiceDetailController extends Controller
         $service_id = $request->input('service_id');
         $service_detail = ServiceDetail::where('service_id', $service_id)->first();
 
-        $warranty_history = $service_detail->transaction->warranty_history;
+        $warranty_history = $service_detail->warranty_history;
 
         // Cek apakah sudah ada warranty_history terkait
         if (!$warranty_history) {
             $warranty_history = new WarrantyHistory;
-            $warranty_history->transaction_id = $service_detail->transaction_id;
+            $warranty_history->service_detail = $service_detail->id;
         }
 
         // save to database

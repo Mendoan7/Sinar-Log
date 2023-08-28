@@ -2,6 +2,8 @@
 
 namespace App\Models\Operational;
 
+use App\Models\Operational\WarrantyHistory;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,10 +26,13 @@ class ServiceDetail extends Model
     // declare fillable fields
     protected $fillable = [
         'service_id',
+        'kerusakan',
         'kondisi',
         'tindakan',
         'modal',
         'biaya',
+        'pembayaran',
+        'garansi',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -39,8 +44,8 @@ class ServiceDetail extends Model
     }
 
     // one to one
-    public function transaction()
+    public function warranty_history()
     {
-        return $this->hasOne('App\Models\Operational\Transaction', 'service_detail_id');
+        return $this->hasOne('App\Models\Operational\WarrantyHistory', 'service_detail_id');
     }
 }
